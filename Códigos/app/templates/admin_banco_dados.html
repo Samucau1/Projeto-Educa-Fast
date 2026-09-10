@@ -6,49 +6,52 @@
     <title>Banco de Dados | Secretaria Escolar DF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_banco_dados.css') }}">
+    {% include "partials/react_runtime.html" %}
 </head>
 <body class="flex">
+    <div id="admin-banco-dados-root" class="flex w-full" data-react-shell data-react-template="admin-banco-dados-template"></div>
+    <template id="admin-banco-dados-template">
 
     <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
         <div class="mb-10 text-center">
             <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Académica</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
         </div>
 
         <nav class="flex-1 space-y-2">
             <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏠</span> Painel Geral
+            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Painel Geral
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🎓</span> Alunos
+            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Alunos
             </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>👨‍🏫</span> Professores
+            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Professores
             </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <span>🗄️</span> Banco de Dados
+            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Banco de Dados
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📚</span> Disciplinas
+            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Disciplinas
             </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏫</span> Turmas
+            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Turmas
             </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📢</span> Comunicados
+            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Comunicados
             </a>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                <span>🚪</span> Sair do Sistema
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                Sair do Sistema
             </a>
         </div>
     </aside>
@@ -60,8 +63,8 @@
                 <p class="text-gray-400">Consulta e gerenciamento dos registros acadêmicos.</p>
             </div>
             <div class="flex flex-wrap items-center gap-4">
-                <button class="database-action-button">
-                    <span>⬇️</span>
+                <button class="banco-action-button">
+
                     Exportar CSV
                 </button>
                 <div class="flex items-center gap-4">
@@ -97,7 +100,7 @@
             </div>
         </div>
 
-        <section class="glass-card p-8 rounded-[32px] database-card">
+        <section class="glass-card p-8 rounded-[32px] banco-card">
             <div class="flex flex-col gap-4 mb-6 xl:flex-row xl:items-center xl:justify-between">
                 <div>
                     <h3 class="text-xl font-bold">Registros Acadêmicos</h3>
@@ -105,11 +108,10 @@
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row">
-                    <label class="database-search">
-                        <span>🔎</span>
-                        <input id="database-search-input" type="search" placeholder="Pesquisar por nome ou ID...">
+                    <label class="banco-search">
+                        <input id="banco-search-input" type="search" placeholder="Pesquisar por nome ou ID...">
                     </label>
-                    <select id="database-type-select" class="database-select" aria-label="Tipo de registro">
+                    <select id="banco-type-select" class="banco-select" aria-label="Tipo de registro">
                         <option value="todos">Todos os Tipos</option>
                         <option value="aluno">Alunos</option>
                         <option value="professor">Professores</option>
@@ -117,7 +119,7 @@
                 </div>
             </div>
 
-            <div class="database-table-wrapper">
+            <div class="banco-table-wrapper">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-gray-500 text-xs uppercase tracking-wider">
@@ -131,38 +133,38 @@
                     </thead>
                     <tbody class="text-sm">
                         {% for aluno in alunos %}
-                        <tr class="border-t border-white/5 database-row" data-type="aluno" data-search="{{ aluno.matricula }} {{ aluno.nome }} {{ aluno.email }} {{ aluno.curso }} {{ aluno.status }}">
+                        <tr class="border-t border-white/5 banco-row" data-type="aluno" data-search="{{ aluno.matricula }} {{ aluno.nome }} {{ aluno.email }} {{ aluno.curso }} {{ aluno.status }}">
                             <td class="py-4 font-medium text-white">{{ aluno.matricula }}</td>
                             <td class="py-4">
                                 <span class="block font-medium text-white">{{ aluno.nome }}</span>
                                 <span class="text-xs text-gray-500">{{ aluno.email }}</span>
                             </td>
-                            <td class="py-4"><span class="type-pill type-student">Aluno</span></td>
+                            <td class="py-4"><span class="type-pill tipo-aluno">Aluno</span></td>
                             <td class="py-4 text-gray-400">{{ aluno.curso }}</td>
                             <td class="py-4"><span class="status-pill {{ aluno.status_class }}">{{ aluno.status }}</span></td>
                             <td class="py-4 text-right">
-                                <a href="{{ url_for('home.admin_detalhes_aluno', aluno_id=aluno.id) }}" class="database-row-button">Gerir</a>
+                                <a href="{{ url_for('home.admin_detalhes_aluno', aluno_id=aluno.id) }}" class="banco-row-button">Gerenciar</a>
                             </td>
                         </tr>
                         {% endfor %}
 
                         {% for professor in professores %}
-                        <tr class="border-t border-white/5 database-row" data-type="professor" data-search="{{ professor.id }} {{ professor.nome }} {{ professor.email }} {{ professor.cpf }} {{ professor.disciplina }}">
+                        <tr class="border-t border-white/5 banco-row" data-type="professor" data-search="{{ professor.id }} {{ professor.nome }} {{ professor.email }} {{ professor.cpf }} {{ professor.disciplina }}">
                             <td class="py-4 font-medium text-white">PROF-{{ professor.id }}</td>
                             <td class="py-4">
                                 <span class="block font-medium text-white">{{ professor.nome }}</span>
                                 <span class="text-xs text-gray-500">{{ professor.email }}</span>
                             </td>
-                            <td class="py-4"><span class="type-pill type-teacher">Professor</span></td>
+                            <td class="py-4"><span class="type-pill tipo-professor">Professor</span></td>
                             <td class="py-4 text-gray-400">{{ professor.disciplina }}</td>
                             <td class="py-4"><span class="status-pill status-active">Ativo</span></td>
                             <td class="py-4 text-right">
-                                <a href="{{ url_for('home.admin_detalhes_professor', professor_id=professor.id) }}" class="database-row-button">Gerir</a>
+                                <a href="{{ url_for('home.admin_detalhes_professor', professor_id=professor.id) }}" class="banco-row-button">Gerenciar</a>
                             </td>
                         </tr>
                         {% endfor %}
 
-                        <tr id="database-empty-row" class="hidden border-t border-white/5">
+                        <tr id="banco-empty-row" class="hidden border-t border-white/5">
                             <td class="py-6 text-gray-400" colspan="6">Nenhum registro encontrado para o filtro selecionado.</td>
                         </tr>
 
@@ -176,38 +178,8 @@
             </div>
         </section>
     </main>
-
-    <script>
-        const databaseSearchInput = document.getElementById("database-search-input");
-        const databaseTypeSelect = document.getElementById("database-type-select");
-        const databaseRows = Array.from(document.querySelectorAll(".database-row"));
-        const databaseEmptyRow = document.getElementById("database-empty-row");
-
-        function filterDatabaseRows() {
-            const searchTerm = databaseSearchInput.value.trim().toLowerCase();
-            const selectedType = databaseTypeSelect.value;
-            let visibleRows = 0;
-
-            databaseRows.forEach(function (row) {
-                const rowType = row.dataset.type;
-                const rowSearch = (row.dataset.search || "").toLowerCase();
-                const matchesType = selectedType === "todos" || rowType === selectedType;
-                const matchesSearch = !searchTerm || rowSearch.includes(searchTerm);
-                const isVisible = matchesType && matchesSearch;
-
-                row.classList.toggle("hidden", !isVisible);
-                if (isVisible) {
-                    visibleRows += 1;
-                }
-            });
-
-            if (databaseEmptyRow) {
-                databaseEmptyRow.classList.toggle("hidden", visibleRows > 0);
-            }
-        }
-
-        databaseSearchInput.addEventListener("input", filterDatabaseRows);
-        databaseTypeSelect.addEventListener("change", filterDatabaseRows);
-    </script>
+</template>
+    <script src="{{ url_for('static', filename='js/paginas/banco_dados.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
 </body>
 </html>

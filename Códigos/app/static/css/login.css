@@ -1,0 +1,13 @@
+body {
+    background:
+        radial-gradient(circle at 78% 18%, rgba(35, 100, 158, 0.28), transparent 34%),
+        linear-gradient(135deg, #123f65 0%, #06385d 45%, #042f50 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+.glass {
+    background: rgba(33, 78, 118, 0.78);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(143, 180, 213, 0.28);
+}

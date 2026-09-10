@@ -5,50 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Alunos | Secretaria Escolar DF</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+    {% include "partials/react_runtime.html" %}
 </head>
 <body class="flex">
+    <div id="admin-cadastro-aluno-root" class="flex w-full" data-react-shell data-react-template="admin-cadastro-aluno-template"></div>
+    <template id="admin-cadastro-aluno-template">
     <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
         <div class="mb-10 text-center">
             <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Académica</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
         </div>
 
         <nav class="flex-1 space-y-2">
             <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏠</span> Painel Geral
+            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Painel Geral
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <span>🎓</span> Alunos
+            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Alunos
             </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>👨‍🏫</span> Professores
+            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Professores
             </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🗄️</span> Banco de Dados
+            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Banco de Dados
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📚</span> Disciplinas
+            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Disciplinas
             </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏫</span> Turmas
+            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Turmas
             </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📢</span> Comunicados
+            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Comunicados
             </a>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                <span>🚪</span> Sair do Sistema
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                Sair do Sistema
             </a>
         </div>
     </aside>
@@ -61,43 +63,38 @@
             </div>
 
             <div class="flex flex-wrap gap-4">
-                <button type="reset" form="student-form" class="inline-flex h-12 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 font-bold text-white transition hover:bg-white/10">
-                    <i data-lucide="rotate-ccw" class="h-5 w-5"></i>
+                <button type="reset" form="aluno-form" class="inline-flex h-12 items-center rounded-xl border border-white/10 bg-white/5 px-6 font-bold text-white transition hover:bg-white/10">
                     Limpar
                 </button>
-                <button type="submit" form="student-form" class="inline-flex h-12 items-center gap-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-7 font-bold text-white transition hover:brightness-110">
-                    <i data-lucide="save" class="h-5 w-5"></i>
+                <button type="submit" form="aluno-form" class="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-7 font-bold text-white transition hover:brightness-110">
                     Salvar Registro
                 </button>
             </div>
         </header>
 
             <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_368px]">
-                <form id="student-form" class="glass-card cadastro-card rounded-[32px] px-6 py-8 md:px-10 lg:px-10" enctype="multipart/form-data">
+                <form id="aluno-form" class="glass-card cadastro-card rounded-[32px] px-6 py-8 md:px-10 lg:px-10" enctype="multipart/form-data">
                     <section>
                         <h2 class="text-xl font-extrabold text-white">Informações Pessoais</h2>
                         <div class="mt-5 border-t border-white/10 pt-7">
                             <div class="grid gap-8 md:grid-cols-2">
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Nome Completo</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="circle-user-round" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <input type="text" name="nome" placeholder="Ex: João da Silva" required>
                                     </span>
                                 </label>
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Número de Matrícula</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="hash" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <input type="text" name="matricula" placeholder="Ex: 20240001" required>
                                     </span>
                                 </label>
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Curso / Série</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="briefcase-business" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <select name="curso">
                                             <option value="">Selecione um curso</option>
                                             <option>Ensino Fundamental</option>
@@ -109,8 +106,7 @@
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Status da Matrícula</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="calendar-days" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <select name="status">
                                             <option>Ativo</option>
                                             <option>Pendente</option>
@@ -121,16 +117,14 @@
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">E-mail de Acesso</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="mail" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <input type="email" name="email" placeholder="aluno@email.com" required>
                                     </span>
                                 </label>
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Senha Inicial</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-4">
-                                        <i data-lucide="lock" class="h-5 w-5 text-slate-400"></i>
+                                    <span class="field flex h-14 items-center rounded-2xl px-4">
                                         <input type="password" name="senha" placeholder="Defina uma senha" required>
                                     </span>
                                 </label>
@@ -151,23 +145,21 @@
 
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-medium text-slate-300">Data de Nascimento</span>
-                                    <span class="field flex h-14 items-center gap-3 rounded-2xl px-5">
+                                    <span class="field flex h-14 items-center rounded-2xl px-5">
                                         <input type="date" name="data_nascimento">
-                                        <i data-lucide="calendar" class="h-5 w-5 text-white"></i>
                                     </span>
                                 </label>
                             </div>
                         </div>
                     </section>
-                    <p id="student-feedback" class="mt-8 hidden rounded-2xl border px-4 py-3 text-sm font-semibold"></p>
+                    <p id="aluno-feedback" class="mt-8 hidden rounded-2xl border px-4 py-3 text-sm font-semibold"></p>
                 </form>
 
                 <aside class="space-y-8">
                     <section class="glass-card cadastro-card rounded-[32px] px-8 py-9">
                         <h2 class="text-lg font-extrabold text-white">Foto do Aluno</h2>
                         <label class="mx-auto mt-7 flex aspect-square w-40 cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-cyan-400/35 bg-white/5 text-center transition hover:border-cyan-300 hover:bg-white/10">
-                            <input type="file" name="foto_perfil" form="student-form" class="sr-only" accept="image/png,image/jpeg">
-                            <i data-lucide="circle-user-round" class="h-12 w-12 text-slate-400"></i>
+                            <input type="file" name="foto_perfil" form="aluno-form" class="sr-only" accept="image/png,image/jpeg">
                             <span class="mt-3 text-xs text-slate-400">Carregar Imagem</span>
                         </label>
                         <p class="mt-7 text-center text-[11px] leading-5 text-slate-400">Formatos aceitos: JPG, PNG.<br>Tamanho máximo: 2MB.</p>
@@ -180,46 +172,15 @@
                 </aside>
             </div>
     </main>
-
+</template>
     <script>
-        const studentForm = document.getElementById("student-form");
-        const studentFeedback = document.getElementById("student-feedback");
-
-        function showStudentFeedback(message, success) {
-            studentFeedback.textContent = message;
-            studentFeedback.className = success
-                ? "mt-8 rounded-2xl border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm font-semibold text-green-200"
-                : "mt-8 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-200";
-        }
-
-        studentForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(studentForm);
-
-            fetch("{{ url_for('auth.cadastro_aluno') }}", {
-                method: "POST",
-                body: formData
-            })
-                .then(function (response) {
-                    return response.json().then(function (data) {
-                        if (!response.ok) {
-                            throw new Error(data.erro || "Erro ao cadastrar aluno");
-                        }
-
-                        return data;
-                    });
-                })
-                .then(function () {
-                    studentForm.reset();
-                    showStudentFeedback("Aluno cadastrado com sucesso.", true);
-                })
-                .catch(function (error) {
-                    showStudentFeedback(error.message || "Erro ao cadastrar aluno.", false);
-                });
-        });
-
-        lucide.createIcons();
+        window.__REACT_PAGE__ = {
+            routes: {
+                cadastroAluno: {{ url_for('auth.cadastro_aluno')|tojson }}
+            }
+        };
     </script>
+    <script src="{{ url_for('static', filename='js/paginas/cadastro.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
 </body>
 </html>

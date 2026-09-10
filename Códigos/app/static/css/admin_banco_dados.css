@@ -1,4 +1,4 @@
-.database-action-button {
+.banco-action-button {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -12,16 +12,16 @@
     transition: all 0.2s ease;
 }
 
-.database-action-button:hover {
+.banco-action-button:hover {
     background: rgba(6, 182, 212, 0.16);
 }
 
-.database-card:hover {
+.banco-card:hover {
     transform: none;
 }
 
-.database-search,
-.database-select {
+.banco-search,
+.banco-select {
     min-height: 44px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
@@ -29,7 +29,7 @@
     color: white;
 }
 
-.database-search {
+.banco-search {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -37,7 +37,7 @@
     padding: 0 14px;
 }
 
-.database-search input {
+.banco-search input {
     width: 100%;
     min-width: 0;
     border: 0;
@@ -46,25 +46,25 @@
     color: white;
 }
 
-.database-search input::placeholder {
+.banco-search input::placeholder {
     color: rgb(156 163 175);
 }
 
-.database-select {
+.banco-select {
     min-width: 180px;
     padding: 0 14px;
     outline: 0;
 }
 
-.database-select option {
+.banco-select option {
     color: #111827;
 }
 
-.database-table-wrapper {
+.banco-table-wrapper {
     overflow-x: auto;
 }
 
-.database-table-wrapper table {
+.banco-table-wrapper table {
     min-width: 780px;
 }
 
@@ -88,13 +88,13 @@
     font-weight: 800;
 }
 
-.type-student {
+.tipo-aluno {
     border: 1px solid rgba(34, 211, 238, 0.18);
     background: rgba(34, 211, 238, 0.1);
     color: #67e8f9;
 }
 
-.type-teacher {
+.tipo-professor {
     border: 1px solid rgba(168, 85, 247, 0.18);
     background: rgba(168, 85, 247, 0.1);
     color: #c084fc;
@@ -124,7 +124,7 @@
     color: #cbd5e1;
 }
 
-.database-row-button {
+.banco-row-button {
     display: inline-flex;
     align-items: center;
     min-height: 30px;
@@ -137,7 +137,7 @@
     transition: background 0.2s ease;
 }
 
-.database-row-button:hover {
+.banco-row-button:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -156,8 +156,8 @@
         padding: 24px;
     }
 
-    .database-search,
-    .database-select {
+    .banco-search,
+    .banco-select {
         width: 100%;
     }
 }

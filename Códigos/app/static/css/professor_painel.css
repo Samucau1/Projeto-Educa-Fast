@@ -1,13 +1,13 @@
-.teacher-card:hover {
+.professor-card:hover {
     transform: none;
 }
 
-.teacher-panel-hidden {
+.professor-panel-hidden {
     display: none !important;
 }
 
-.teacher-pill,
-.teacher-chip {
+.professor-pill,
+.professor-chip {
     border: 1px solid rgba(34, 211, 238, 0.26);
     border-radius: 999px;
     color: #67e8f9;
@@ -15,19 +15,19 @@
     font-weight: 800;
 }
 
-.teacher-pill {
+.professor-pill {
     padding: 7px 12px;
 }
 
-.teacher-chip {
+.professor-chip {
     padding: 6px 10px;
 }
 
-.teacher-table-wrapper {
+.professor-table-wrapper {
     overflow-x: auto;
 }
 
-.teacher-activity-panel {
+.professor-activity-panel {
     margin-bottom: 24px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
@@ -35,20 +35,20 @@
     padding: 18px;
 }
 
-.teacher-activity-panel h4 {
+.professor-activity-panel h4 {
     margin: 0;
     color: white;
     font-size: 15px;
     font-weight: 800;
 }
 
-.teacher-activity-panel p {
+.professor-activity-panel p {
     margin: 5px 0 0;
     color: #9ca3af;
     font-size: 13px;
 }
 
-.teacher-activity-form {
+.professor-activity-form {
     display: grid;
     grid-template-columns: minmax(150px, 0.8fr) minmax(180px, 1fr) 140px minmax(160px, 1fr) 150px;
     gap: 10px;
@@ -56,9 +56,9 @@
     margin-top: 16px;
 }
 
-.teacher-activity-form select,
-.teacher-activity-form input,
-.teacher-activity-form textarea {
+.professor-activity-form select,
+.professor-activity-form input,
+.professor-activity-form textarea {
     width: 100%;
     min-height: 44px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -69,18 +69,18 @@
     outline: none;
 }
 
-.teacher-activity-form textarea {
+.professor-activity-form textarea {
     grid-column: 1 / 5;
     min-height: 78px;
     padding: 12px;
     resize: vertical;
 }
 
-.teacher-activity-form input[type="file"] {
+.professor-activity-form input[type="file"] {
     padding: 10px;
 }
 
-.teacher-activity-form input[type="file"]::file-selector-button {
+.professor-activity-form input[type="file"]::file-selector-button {
     margin-right: 12px;
     border: 0;
     border-radius: 10px;
@@ -90,11 +90,11 @@
     font-weight: 700;
 }
 
-.teacher-activity-form option {
+.professor-activity-form option {
     color: #111827;
 }
 
-.teacher-activity-form button {
+.professor-activity-form button {
     min-height: 44px;
     border-radius: 12px;
     background: linear-gradient(90deg, #06b6d4, #2563eb);
@@ -103,33 +103,33 @@
     font-weight: 800;
 }
 
-.teacher-activity-list {
+.professor-activity-list {
     margin-top: 16px;
     display: grid;
     gap: 10px;
 }
 
-.teacher-activity-list article,
-.teacher-empty-line {
+.professor-activity-list article,
+.professor-empty-line {
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 14px;
     background: rgba(0, 0, 0, 0.12);
     padding: 14px;
 }
 
-.teacher-activity-list article {
+.professor-activity-list article {
     display: flex;
     justify-content: space-between;
     gap: 16px;
 }
 
-.teacher-activity-list strong {
+.professor-activity-list strong {
     display: block;
     color: #67e8f9;
     font-size: 14px;
 }
 
-.teacher-activity-list a {
+.professor-activity-list a {
     display: inline-block;
     margin-top: 8px;
     color: #67e8f9;
@@ -138,28 +138,28 @@
     text-decoration: none;
 }
 
-.teacher-activity-list span,
-.teacher-activity-list small,
-.teacher-empty-line {
+.professor-activity-list span,
+.professor-activity-list small,
+.professor-empty-line {
     color: #9ca3af;
     font-size: 12px;
 }
 
-.teacher-table-wrapper table {
+.professor-table-wrapper table {
     min-width: 880px;
 }
 
-.teacher-grade-form {
+.professor-grade-form {
     display: grid;
     grid-template-columns: minmax(180px, 1fr) 100px minmax(180px, 1fr) 130px;
     gap: 10px;
     align-items: center;
 }
 
-.teacher-grade-form select,
-.teacher-grade-form input,
-.teacher-doc-form select,
-.teacher-doc-form input {
+.professor-grade-form select,
+.professor-grade-form input,
+.professor-doc-form select,
+.professor-doc-form input {
     width: 100%;
     min-height: 44px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -170,13 +170,13 @@
     outline: none;
 }
 
-.teacher-grade-form option,
-.teacher-doc-form option {
+.professor-grade-form option,
+.professor-doc-form option {
     color: #111827;
 }
 
-.teacher-grade-form button,
-.teacher-doc-form button {
+.professor-grade-form button,
+.professor-doc-form button {
     min-height: 44px;
     border-radius: 12px;
     background: linear-gradient(90deg, #06b6d4, #2563eb);
@@ -185,7 +185,7 @@
     font-weight: 800;
 }
 
-.teacher-doc-block {
+.professor-doc-block {
     margin-top: 24px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
@@ -193,13 +193,13 @@
     padding: 18px;
 }
 
-.teacher-doc-block h3 {
+.professor-doc-block h3 {
     margin: 0 0 16px;
     color: #67e8f9;
     font-weight: 800;
 }
 
-.teacher-request-status {
+.professor-request-status {
     min-width: 78px;
     border-radius: 999px;
     padding: 5px 10px;
@@ -207,22 +207,22 @@
     font-size: 11px;
 }
 
-.teacher-request-status-pendente {
+.professor-request-status-pendente {
     border: 1px solid rgba(250, 204, 21, 0.28);
     color: #facc15;
 }
 
-.teacher-request-status-enviado {
+.professor-request-status-enviado {
     border: 1px solid rgba(34, 211, 238, 0.28);
     color: #22d3ee;
 }
 
-.teacher-doc-form {
+.professor-doc-form {
     display: grid;
     gap: 14px;
 }
 
-.teacher-doc-form label span {
+.professor-doc-form label span {
     display: block;
     margin-bottom: 7px;
     color: #cbd5e1;
@@ -230,11 +230,11 @@
     font-weight: 800;
 }
 
-.teacher-doc-form input[type="file"] {
+.professor-doc-form input[type="file"] {
     padding: 10px;
 }
 
-.teacher-doc-form input[type="file"]::file-selector-button {
+.professor-doc-form input[type="file"]::file-selector-button {
     margin-right: 12px;
     border: 0;
     border-radius: 10px;
@@ -244,7 +244,7 @@
     font-weight: 700;
 }
 
-.teacher-doc-item {
+.professor-doc-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -255,22 +255,22 @@
     padding: 16px;
 }
 
-.teacher-doc-item h3 {
+.professor-doc-item h3 {
     margin: 0;
     color: white;
     font-size: 14px;
     font-weight: 800;
 }
 
-.teacher-doc-item p,
-.teacher-doc-item span {
+.professor-doc-item p,
+.professor-doc-item span {
     display: block;
     margin-top: 5px;
     color: #9ca3af;
     font-size: 12px;
 }
 
-.teacher-doc-item a {
+.professor-doc-item a {
     color: #67e8f9;
     font-size: 13px;
     font-weight: 800;
@@ -292,19 +292,19 @@
         padding: 24px;
     }
 
-    .teacher-grade-form {
+    .professor-grade-form {
         grid-template-columns: 1fr;
     }
 
-    .teacher-activity-form {
+    .professor-activity-form {
         grid-template-columns: 1fr;
     }
 
-    .teacher-activity-form textarea {
+    .professor-activity-form textarea {
         grid-column: auto;
     }
 
-    .teacher-activity-list article {
+    .professor-activity-list article {
         display: block;
     }
 }

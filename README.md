@@ -13,13 +13,21 @@ Códigos/
 |   |-- static/
 |   |   |-- css/
 |   |   `-- js/
+|   |       |-- compartilhado/
+|   |       `-- paginas/
 |   |-- templates/
+|   |   `-- partials/
 |   `-- views/
-`-- database/
+|-- app.py
+|-- config.py
+|-- docker-compose.yml
+|-- Dockerfile
+`-- requirements.txt
 ```
 
 ## Tecnologias
 - HTML5
+- React 18 via CDN
 - Tailwind CSS
 - Python 3.12
 - Flask
@@ -68,7 +76,7 @@ docker compose ps
 6. Execute o seed para criar o usuário administrador inicial:
 
 ```bash
-docker compose exec app python3 -m app.seed
+docker compose exec app python -m app.seed
 ```
 
 7. Acesse a aplicação em `http://localhost:5000`.
@@ -112,10 +120,38 @@ No ambiente Docker, as variáveis são lidas do arquivo `.env` via `docker-compo
 
 ## Arquitetura
 
-- `app/controllers`: controla o fluxo das requisições e integra as camadas da aplicação
+- `app/controllers`: concentra regras de aplicação e operações de cadastro, documentos e dashboards
 - `app/models`: concentra regras de negócio e acesso aos dados
 - `app/routes`: organiza e registra as rotas da aplicação
 - `app/views`: centraliza a renderização das respostas
-- `app/templates`: armazena os templates HTML
-- `app/static`: guarda arquivos estáticos como CSS, JavaScript e imagens
-- `database`: reúne scripts e artefatos relacionados ao banco de dados
+- `app/templates`: armazena os templates HTML/Jinja usados pelo React Shell
+- `app/templates/partials`: armazena trechos compartilhados de template, como o runtime do React
+- `app/static/css`: guarda os estilos por área/página
+- `app/static/js/compartilhado`: guarda JavaScript compartilhado
+- `app/static/js/paginas`: guarda JavaScript específico de cada página
+
+## Comandos úteis
+
+Ver containers:
+
+```bash
+docker compose ps
+```
+
+Ver logs da aplicação:
+
+```bash
+docker compose logs -f app
+```
+
+Executar seed:
+
+```bash
+docker compose exec app python -m app.seed
+```
+
+Parar os containers:
+
+```bash
+docker compose down
+```

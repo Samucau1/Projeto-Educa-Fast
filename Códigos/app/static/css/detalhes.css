@@ -2,12 +2,12 @@
     transform: none;
 }
 
-.document-request-form {
+.documento-request-form {
     display: grid;
     gap: 16px;
 }
 
-.student-edit-form {
+.aluno-edit-form {
     display: grid;
     gap: 14px;
     margin-top: 28px;
@@ -16,20 +16,20 @@
     text-align: left;
 }
 
-.student-edit-form h3 {
+.aluno-edit-form h3 {
     color: white;
     font-size: 18px;
     font-weight: 800;
 }
 
-.student-edit-grid {
+.aluno-edit-grid {
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.document-request-form label span,
-.student-edit-form label span {
+.documento-request-form label span,
+.aluno-edit-form label span {
     display: block;
     margin-bottom: 8px;
     color: #cbd5e1;
@@ -37,10 +37,10 @@
     font-weight: 700;
 }
 
-.document-request-form input,
-.document-request-form textarea,
-.student-edit-form input,
-.student-edit-form select {
+.documento-request-form input,
+.documento-request-form textarea,
+.aluno-edit-form input,
+.aluno-edit-form select {
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
@@ -49,32 +49,32 @@
     outline: none;
 }
 
-.document-request-form input,
-.student-edit-form input,
-.student-edit-form select {
+.documento-request-form input,
+.aluno-edit-form input,
+.aluno-edit-form select {
     min-height: 48px;
     padding: 0 16px;
 }
 
-.student-edit-form select option {
+.aluno-edit-form select option {
     background: #111827;
     color: white;
 }
 
-.document-request-form textarea {
+.documento-request-form textarea {
     min-height: 110px;
     padding: 14px 16px;
     resize: vertical;
 }
 
-.document-request-form input::placeholder,
-.document-request-form textarea::placeholder,
-.student-edit-form input::placeholder {
+.documento-request-form input::placeholder,
+.documento-request-form textarea::placeholder,
+.aluno-edit-form input::placeholder {
     color: rgba(156, 163, 175, 0.78);
 }
 
-.document-request-form button,
-.student-edit-form button {
+.documento-request-form button,
+.aluno-edit-form button {
     justify-self: end;
     min-height: 48px;
     border-radius: 14px;
@@ -84,7 +84,7 @@
     font-weight: 800;
 }
 
-.document-request-item {
+.documento-request-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -96,7 +96,7 @@
     padding: 16px;
 }
 
-.document-status {
+.documento-status {
     display: inline-flex;
     min-width: 78px;
     justify-content: center;
@@ -106,12 +106,12 @@
     font-weight: 800;
 }
 
-.document-status-pendente {
+.documento-status-pendente {
     border: 1px solid rgba(250, 204, 21, 0.28);
     color: #facc15;
 }
 
-.document-status-enviado {
+.documento-status-enviado {
     border: 1px solid rgba(34, 211, 238, 0.28);
     color: #22d3ee;
 }
@@ -131,19 +131,19 @@
         padding: 24px;
     }
 
-    .document-request-form button {
+    .documento-request-form button {
         width: 100%;
     }
 
-    .student-edit-grid {
+    .aluno-edit-grid {
         grid-template-columns: 1fr;
     }
 
-    .student-edit-form button {
+    .aluno-edit-form button {
         width: 100%;
     }
 
-    .document-request-item {
+    .documento-request-item {
         align-items: flex-start;
         flex-direction: column;
     }

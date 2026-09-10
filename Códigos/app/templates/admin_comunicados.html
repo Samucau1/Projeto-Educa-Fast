@@ -6,49 +6,52 @@
     <title>Comunicados | Secretaria Escolar DF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_comunicados.css') }}">
+    {% include "partials/react_runtime.html" %}
 </head>
 <body class="flex">
+    <div id="admin-comunicados-root" class="flex w-full" data-react-shell data-react-template="admin-comunicados-template"></div>
+    <template id="admin-comunicados-template">
 
     <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
         <div class="mb-10 text-center">
             <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Académica</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
         </div>
 
         <nav class="flex-1 space-y-2">
             <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏠</span> Painel Geral
+            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Painel Geral
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🎓</span> Alunos
+            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Alunos
             </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>👨‍🏫</span> Professores
+            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Professores
             </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🗄️</span> Banco de Dados
+            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Banco de Dados
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📚</span> Disciplinas
+            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Disciplinas
             </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏫</span> Turmas
+            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Turmas
             </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <span>📢</span> Comunicados
+            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Comunicados
             </a>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                <span>🚪</span> Sair do Sistema
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                Sair do Sistema
             </a>
         </div>
     </aside>
@@ -71,7 +74,6 @@
         <div class="comunicados-layout">
             <section class="glass-card comunicado-card rounded-[20px] p-10">
                 <div class="mb-10 flex items-center gap-4">
-                    <div class="comunicado-icon">✉️</div>
                     <h2 class="text-2xl font-bold">Comunicado Geral</h2>
                 </div>
 
@@ -93,7 +95,7 @@
                     <div class="flex justify-end">
                         <button type="submit" class="comunicado-submit">
                             Disparar Comunicado
-                            <span>➤</span>
+
                         </button>
                     </div>
                 </form>
@@ -124,5 +126,8 @@
         </div>
     </main>
 
+
+    </template>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
 </body>
 </html>

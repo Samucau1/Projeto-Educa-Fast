@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Secretaria Escolar DF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    {% include "partials/react_runtime.html" %}
+</head>
+<body class="flex">
+    <div id="admin-painel-root" class="flex w-full" data-react-shell data-react-template="admin-painel-template"></div>
+    <template id="admin-painel-template">
+        <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
+            <div class="mb-10 text-center">
+                <h2 class="text-xl font-bold tracking-tighter text-cyan-300">SECRETARIA DF</h2>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest">Gestão Acadêmica</p>
+            </div>
+
+            <nav class="flex-1 space-y-2">
+                <div class="text-[10px] font-bold text-slate-400 mb-2 ml-4">PRINCIPAL</div>
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                    Painel Geral
+                </a>
+
+                <div class="text-[10px] font-bold text-slate-400 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
+                <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Alunos
+                </a>
+                <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Professores
+                </a>
+                <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Banco de Dados
+                </a>
+
+                <div class="text-[10px] font-bold text-slate-400 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
+                <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Disciplinas
+                </a>
+                <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Turmas
+                </a>
+                <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-slate-300 hover:text-white">
+                    Comunicados
+                </a>
+            </nav>
+
+            <div class="mt-auto pt-6 border-t border-white/10">
+                <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                    Sair do Sistema
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-10 overflow-y-auto">
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-3xl font-bold">Olá, {{ session.get("user_email", "Administrador") }}!</h1>
+                    <p class="text-slate-300">Bem-vindo ao centro de controle da sua escola.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm font-bold">Admin Secretaria</p>
+                        <p class="text-[10px] text-cyan-300">Online agora</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 border-2 border-white/20"></div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="glass-card p-6 rounded-3xl">
+                    <p class="text-slate-300 text-sm">Total de Alunos</p>
+                    <h2 class="text-4xl font-bold mt-2">{{ total_alunos }}</h2>
+                    <div class="mt-4 text-xs text-emerald-300">Registros cadastrados</div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl">
+                    <p class="text-slate-300 text-sm">Professores Cadastrados</p>
+                    <h2 class="text-4xl font-bold mt-2">{{ total_professores }}</h2>
+                    <div class="mt-4 text-xs text-cyan-300">Todos os departamentos</div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl">
+                    <p class="text-slate-300 text-sm">Matrículas Pendentes</p>
+                    <h2 class="text-4xl font-bold mt-2">{{ matriculas_pendentes }}</h2>
+                    <div class="mt-4 text-xs text-violet-300">{{ matriculas_hoje }} criadas hoje</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 rounded-[32px]">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Últimos Registros</h3>
+                    <button class="text-sm text-cyan-300 hover:underline">Ver todos</button>
+                </div>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-slate-400 text-xs uppercase tracking-wider">
+                            <th class="pb-4 font-medium">Nome</th>
+                            <th class="pb-4 font-medium">Tipo</th>
+                            <th class="pb-4 font-medium">Data</th>
+                            <th class="pb-4 font-medium text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for registro in registros_recentes %}
+                        <tr class="border-t border-white/5">
+                            <td class="py-4 font-medium text-white">{{ registro.nome }}</td>
+                            <td class="py-4 text-slate-300">{{ registro.tipo }}</td>
+                            <td class="py-4 text-slate-300">{{ registro.created_at_label }}</td>
+                            <td class="py-4 text-right">
+                                {% if registro.aluno_id %}
+                                <a href="{{ url_for('home.admin_detalhes_aluno', aluno_id=registro.aluno_id) }}" class="bg-white/10 px-3 py-1 rounded-lg hover:bg-white/20">Gerenciar</a>
+                                {% else %}
+                                <button class="bg-white/10 px-3 py-1 rounded-lg opacity-60">Gerenciar</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="border-t border-white/5">
+                            <td class="py-6 text-slate-300" colspan="4">Nenhum registro encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </template>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
+</body>
+</html>

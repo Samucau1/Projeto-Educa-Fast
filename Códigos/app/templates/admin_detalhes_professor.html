@@ -6,49 +6,52 @@
     <title>Detalhes do Professor | Secretaria DF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalhes_aluno.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalhes.css') }}">
+    {% include "partials/react_runtime.html" %}
 </head>
 <body class="flex">
+    <div id="admin-detalhes-professor-root" class="flex w-full" data-react-shell data-react-template="admin-detalhes-professor-template"></div>
+    <template id="admin-detalhes-professor-template">
 
     <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
         <div class="mb-10 text-center">
             <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Académica</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
         </div>
 
         <nav class="flex-1 space-y-2">
             <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏠</span> Painel Geral
+            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Painel Geral
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🎓</span> Alunos
+            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Alunos
             </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <span>👨‍🏫</span> Professores
+            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Professores
             </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🗄️</span> Banco de Dados
+            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Banco de Dados
             </a>
 
             <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📚</span> Disciplinas
+            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Disciplinas
             </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>🏫</span> Turmas
+            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Turmas
             </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📢</span> Comunicados
+            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Comunicados
             </a>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                <span>🚪</span> Sair do Sistema
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                Sair do Sistema
             </a>
         </div>
     </aside>
@@ -81,7 +84,7 @@
                 <p class="text-gray-400 text-sm mt-1">{{ professor.regime }}</p>
                 <p class="text-gray-500 text-xs mt-1">{{ professor.email }}</p>
 
-                <form action="{{ url_for('home.admin_editar_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="student-edit-form">
+                <form action="{{ url_for('home.admin_editar_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="aluno-edit-form">
                     <h3>Editar Dados</h3>
                     <label>
                         <span>Foto de Perfil</span>
@@ -95,7 +98,7 @@
                         <span>E-mail</span>
                         <input name="email" type="email" value="{{ professor.email }}" required>
                     </label>
-                    <div class="student-edit-grid">
+                    <div class="aluno-edit-grid">
                         <label>
                             <span>CPF</span>
                             <input name="cpf" type="text" value="{{ professor.cpf_value }}" required>
@@ -113,7 +116,7 @@
                         <span>Formação Acadêmica</span>
                         <input name="formacao_academica" type="text" value="{{ professor.formacao_value }}">
                     </label>
-                    <div class="student-edit-grid">
+                    <div class="aluno-edit-grid">
                         <label>
                             <span>Regime</span>
                             <select name="regime_trabalho">
@@ -151,7 +154,7 @@
                     <div>
                         <h4 class="mb-4 text-sm font-bold uppercase tracking-wider text-gray-400">Disciplinas associadas</h4>
                         {% for disciplina in disciplinas %}
-                        <div class="document-request-item">
+                        <div class="documento-request-item">
                             <div>
                                 <span class="block text-white">{{ disciplina.nome }}</span>
                                 <span class="text-xs text-gray-500">{{ disciplina.codigo }} • {{ disciplina.carga_horaria }}h</span>
@@ -168,12 +171,12 @@
                     <div>
                         <h4 class="mb-4 text-sm font-bold uppercase tracking-wider text-gray-400">Últimas notas lançadas</h4>
                         {% for nota in notas %}
-                        <div class="document-request-item">
+                        <div class="documento-request-item">
                             <div>
                                 <span class="block text-white">{{ nota.aluno }}</span>
                                 <span class="text-xs text-gray-500">{{ nota.disciplina }} • {{ nota.observacao }}</span>
                             </div>
-                            <span class="document-status document-status-enviado">{{ nota.nota }}</span>
+                            <span class="documento-status documento-status-enviado">{{ nota.nota }}</span>
                         </div>
                         {% else %}
                         <div class="bg-white/5 p-4 rounded-xl mb-4 border border-white/5 text-gray-400">
@@ -207,13 +210,13 @@
                     <span class="text-sm text-cyan-400">Solicitações e arquivos</span>
                 </div>
 
-                <div class="flex gap-4 border-b border-white/10 mb-6" data-document-tabs>
-                    <button type="button" class="document-tab pb-2 border-b-2 border-cyan-400 text-white" data-document-tab="solicitacoes">Solicitações</button>
-                    <button type="button" class="document-tab pb-2 text-gray-500" data-document-tab="enviados">Enviados</button>
+                <div class="flex gap-4 border-b border-white/10 mb-6" data-documento-tabs>
+                    <button type="button" class="documento-tab pb-2 border-b-2 border-cyan-400 text-white" data-documento-tab="solicitacoes">Solicitações</button>
+                    <button type="button" class="documento-tab pb-2 text-gray-500" data-documento-tab="enviados">Enviados</button>
                 </div>
 
-                <div data-document-panel="solicitacoes">
-                    <form action="{{ url_for('home.admin_solicitar_documento_professor', professor_id=professor.id) }}" method="post" class="document-request-form">
+                <div data-documento-panel="solicitacoes">
+                    <form action="{{ url_for('home.admin_solicitar_documento_professor', professor_id=professor.id) }}" method="post" class="documento-request-form">
                         <label>
                             <span>Documento solicitado</span>
                             <input name="titulo" type="text" placeholder="Ex: Certificado atualizado" required>
@@ -225,7 +228,7 @@
                         <button>Disparar solicitação</button>
                     </form>
 
-                    <form action="{{ url_for('document.upload_arquivo_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="document-request-form mt-8">
+                    <form action="{{ url_for('document.upload_arquivo_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="documento-request-form mt-8">
                         <input type="hidden" name="redirect_to" value="{{ url_for('home.admin_detalhes_professor', professor_id=professor.id) }}">
                         <label>
                             <span>Documentos do professor</span>
@@ -241,13 +244,13 @@
                     <div class="mt-8">
                         <h4 class="mb-4 text-sm font-bold uppercase tracking-wider text-gray-400">Solicitações enviadas</h4>
                         {% for solicitacao in solicitacoes_documentos %}
-                        <div class="document-request-item">
+                        <div class="documento-request-item">
                             <div>
                                 <span class="block text-white">{{ solicitacao.titulo }}</span>
                                 <span class="text-xs text-gray-500">{{ solicitacao.mensagem }}</span>
                             </div>
                             <div class="text-right">
-                                <span class="document-status document-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</span>
+                                <span class="documento-status documento-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</span>
                                 <span class="block text-xs text-gray-500 mt-2">{{ solicitacao.data }}</span>
                             </div>
                         </div>
@@ -259,7 +262,7 @@
                     </div>
                 </div>
 
-                <div class="hidden" data-document-panel="enviados">
+                <div class="hidden" data-documento-panel="enviados">
                     <h4 class="mb-4 text-sm font-bold uppercase tracking-wider text-gray-400">Documentos do professor</h4>
                     {% for arquivo in arquivos_professor %}
                         <div class="bg-white/5 p-4 rounded-xl mb-4 flex justify-between border border-white/5">
@@ -279,51 +282,7 @@
             </div>
         </div>
     </main>
-    <script>
-        const professorSectionTabs = Array.from(document.querySelectorAll("[data-professor-section-tab]"));
-        const professorSectionPanels = Array.from(document.querySelectorAll("[data-professor-section-panel]"));
-        const documentTabs = Array.from(document.querySelectorAll("[data-document-tab]"));
-        const documentPanels = Array.from(document.querySelectorAll("[data-document-panel]"));
-
-        function activateProfessorSection(activeTab) {
-            professorSectionTabs.forEach(function (tab) {
-                const isActive = tab.dataset.professorSectionTab === activeTab;
-                tab.classList.toggle("border-b-2", isActive);
-                tab.classList.toggle("border-cyan-400", isActive);
-                tab.classList.toggle("text-white", isActive);
-                tab.classList.toggle("text-gray-500", !isActive);
-            });
-
-            professorSectionPanels.forEach(function (panel) {
-                panel.classList.toggle("hidden", panel.dataset.professorSectionPanel !== activeTab);
-            });
-        }
-
-        function activateDocumentTab(activeTab) {
-            documentTabs.forEach(function (tab) {
-                const isActive = tab.dataset.documentTab === activeTab;
-                tab.classList.toggle("border-b-2", isActive);
-                tab.classList.toggle("border-cyan-400", isActive);
-                tab.classList.toggle("text-white", isActive);
-                tab.classList.toggle("text-gray-500", !isActive);
-            });
-
-            documentPanels.forEach(function (panel) {
-                panel.classList.toggle("hidden", panel.dataset.documentPanel !== activeTab);
-            });
-        }
-
-        professorSectionTabs.forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                activateProfessorSection(tab.dataset.professorSectionTab);
-            });
-        });
-
-        documentTabs.forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                activateDocumentTab(tab.dataset.documentTab);
-            });
-        });
-    </script>
+</template>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
 </body>
 </html>

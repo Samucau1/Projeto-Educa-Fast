@@ -22,7 +22,7 @@ def dashboard():
     if not data:
         abort(404)
 
-    return render_template("aluno_dashboard.html", **data)
+    return render_template("aluno_painel.html", **data)
 
 
 @aluno_bp.route("/aluno/disciplinas/<int:disciplina_id>", methods=["GET"])

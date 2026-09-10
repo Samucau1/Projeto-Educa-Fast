@@ -42,7 +42,7 @@ def home():
 @home_blueprint.route("/dashboard", methods=["GET"])
 @home_blueprint.route("/dashboard.html", methods=["GET"])
 @home_blueprint.route("/admin/dashboard", methods=["GET"])
-@home_blueprint.route("/admin_dashboard.html", methods=["GET"])
+@home_blueprint.route("/admin_painel.html", methods=["GET"])
 def admin_dashboard():
     admin_required()
 

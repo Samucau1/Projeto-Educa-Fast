@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Secretaria Escolar DF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    {% include "partials/react_runtime.html" %}
+</head>
+<body class="flex items-center justify-center h-screen">
+    <div id="login-root" class="w-full" data-react-shell data-react-template="login-template"></div>
+    <template id="login-template">
+        <div class="glass p-10 rounded-[32px] w-full max-w-md shadow-2xl mx-auto">
+            <h1 class="text-white text-3xl font-bold text-center mb-8">Secretaria DF</h1>
+            <form id="login-form" class="space-y-6">
+                <input name="email" id="email" type="email" placeholder="E-mail Institucional" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-cyan-500">
+                <input name="senha" id="senha" type="password" placeholder="Senha" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-cyan-500">
+                <p id="login-error" class="hidden text-sm text-red-300"></p>
+                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-xl disabled:opacity-70">Acessar Sistema</button>
+            </form>
+        </div>
+    </template>
+    <script src="{{ url_for('static', filename='js/paginas/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
+</body>
+</html>

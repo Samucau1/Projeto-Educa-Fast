@@ -6,10 +6,13 @@
     <title>Área do Professor | Secretaria Escolar DF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/professor_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/professor_painel.css') }}">
+    {% include "partials/react_runtime.html" %}
 </head>
 <body class="flex">
+    <div id="professor-painel-root" class="flex w-full" data-react-shell data-react-template="professor-painel-template"></div>
+    <template id="professor-painel-template">
     <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
         <div class="mb-10 text-center">
             <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
@@ -18,20 +21,20 @@
 
         <nav class="flex-1 space-y-2">
             <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">MINHA ÁREA</div>
-            <button type="button" data-teacher-tab="turmas" class="teacher-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <span>🏫</span> Turmas
+            <button type="button" data-professor-tab="turmas" class="professor-nav-link w-full flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Turmas
             </button>
-            <button type="button" data-teacher-tab="notas" class="teacher-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📊</span> Notas
+            <button type="button" data-professor-tab="notas" class="professor-nav-link w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Notas
             </button>
-            <button type="button" data-teacher-tab="documentos" class="teacher-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                <span>📄</span> Documentos
+            <button type="button" data-professor-tab="documentos" class="professor-nav-link w-full flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
+                Documentos
             </button>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                <span>🚪</span> Sair do Sistema
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
+                Sair do Sistema
             </a>
         </div>
     </aside>
@@ -55,40 +58,40 @@
             </div>
         </header>
 
-        <section data-teacher-panel="turmas" class="space-y-6">
+        <section data-professor-panel="turmas" class="space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Turmas</h2>
                 <span class="text-sm text-gray-400">Turmas associadas ao seu cadastro</span>
             </div>
 
             {% for turma in turmas %}
-            <article class="glass-card teacher-card rounded-[28px] p-6">
+            <article class="glass-card professor-card rounded-[28px] p-6">
                 <div class="flex flex-wrap items-start justify-between gap-4 mb-5">
                     <div>
                         <h3 class="text-lg font-bold text-cyan-400">{{ turma.nome }}</h3>
                         <p class="text-sm text-gray-400">{{ turma.codigo }} · {{ turma.ano_letivo }} · {{ turma.turno }}</p>
                     </div>
-                    <span class="teacher-pill">{{ turma.alunos|length }} alunos</span>
+                    <span class="professor-pill">{{ turma.alunos|length }} alunos</span>
                 </div>
 
                 <div class="mb-5">
                     <p class="text-xs uppercase tracking-wider text-gray-500 mb-2">Disciplinas nesta turma</p>
                     <div class="flex flex-wrap gap-2">
                         {% for disciplina in turma.disciplinas %}
-                        <span class="teacher-chip">{{ disciplina.nome }}</span>
+                        <span class="professor-chip">{{ disciplina.nome }}</span>
                         {% else %}
                         <span class="text-sm text-gray-400">Nenhuma disciplina associada ao professor nesta turma.</span>
                         {% endfor %}
                     </div>
                 </div>
 
-                <div class="teacher-activity-panel">
+                <div class="professor-activity-panel">
                     <div>
                         <h4>Lançar atividade</h4>
                         <p>Publique uma atividade para esta turma.</p>
                     </div>
                     {% if turma.disciplinas %}
-                    <form action="{{ url_for('professor.lancar_atividade') }}" method="post" enctype="multipart/form-data" class="teacher-activity-form">
+                    <form action="{{ url_for('professor.lancar_atividade') }}" method="post" enctype="multipart/form-data" class="professor-activity-form">
                         <input type="hidden" name="turma_id" value="{{ turma.id }}">
                         <select name="disciplina_id" required>
                             {% for disciplina in turma.disciplinas %}
@@ -105,7 +108,7 @@
                     <p class="text-sm text-gray-400">Associe uma disciplina ao professor e à turma para lançar atividade.</p>
                     {% endif %}
 
-                    <div class="teacher-activity-list">
+                    <div class="professor-activity-list">
                         {% for atividade in turma.atividades %}
                         <article>
                             <div>
@@ -119,12 +122,12 @@
                             <small>{{ atividade.data }}</small>
                         </article>
                         {% else %}
-                        <div class="teacher-empty-line">Nenhuma atividade lançada para esta turma.</div>
+                        <div class="professor-empty-line">Nenhuma atividade lançada para esta turma.</div>
                         {% endfor %}
                     </div>
                 </div>
 
-                <div class="teacher-table-wrapper">
+                <div class="professor-table-wrapper">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="text-gray-500 text-xs uppercase tracking-wider">
@@ -144,7 +147,7 @@
                                 </td>
                                 <td class="py-4" colspan="4">
                                     {% if turma.disciplinas %}
-                                    <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="teacher-grade-form">
+                                    <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form">
                                         <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                         <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
                                         <select name="disciplina_id" required>
@@ -171,14 +174,14 @@
                 </div>
             </article>
             {% else %}
-            <div class="glass-card teacher-card rounded-[28px] p-6 text-gray-400">
+            <div class="glass-card professor-card rounded-[28px] p-6 text-gray-400">
                 Nenhuma turma associada ao seu cadastro.
             </div>
             {% endfor %}
         </section>
 
-        <section data-teacher-panel="notas" class="teacher-panel-hidden">
-            <div class="glass-card teacher-card rounded-[32px] p-8 mb-8">
+        <section data-professor-panel="notas" class="professor-panel-hidden">
+            <div class="glass-card professor-card rounded-[32px] p-8 mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Lançar Notas</h2>
                     <span class="text-sm text-gray-400">Por turma, aluno e disciplina</span>
@@ -186,17 +189,17 @@
 
                 <div class="space-y-5">
                     {% for turma in turmas %}
-                    <article class="teacher-doc-block">
+                    <article class="professor-doc-block">
                         <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
                             <div>
                                 <h3>{{ turma.nome }}</h3>
                                 <p class="text-sm text-gray-400">{{ turma.codigo }} · {{ turma.ano_letivo }} · {{ turma.turno }}</p>
                             </div>
-                            <span class="teacher-pill">{{ turma.alunos|length }} alunos</span>
+                            <span class="professor-pill">{{ turma.alunos|length }} alunos</span>
                         </div>
 
                         {% if turma.alunos and turma.disciplinas %}
-                        <div class="teacher-table-wrapper">
+                        <div class="professor-table-wrapper">
                             <table class="w-full text-left">
                                 <thead>
                                     <tr class="text-gray-500 text-xs uppercase tracking-wider">
@@ -212,7 +215,7 @@
                                             <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
                                         </td>
                                         <td class="py-4">
-                                            <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="teacher-grade-form">
+                                            <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form">
                                                 <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                                 <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
                                                 <select name="disciplina_id" required>
@@ -235,7 +238,7 @@
                         {% endif %}
                     </article>
                     {% else %}
-                    <div class="teacher-doc-block">
+                    <div class="professor-doc-block">
                         <h3>Nenhuma turma disponível</h3>
                         <p class="text-sm text-gray-400">Quando a administração associar turmas ao seu cadastro, o lançamento de notas aparecerá aqui.</p>
                     </div>
@@ -243,13 +246,13 @@
                 </div>
             </div>
 
-            <div class="glass-card teacher-card rounded-[32px] p-8">
+            <div class="glass-card professor-card rounded-[32px] p-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Notas Lançadas</h2>
                     <span class="text-sm text-gray-400">Histórico recente</span>
                 </div>
 
-                <div class="teacher-table-wrapper">
+                <div class="professor-table-wrapper">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-gray-500 text-xs uppercase tracking-wider">
@@ -282,23 +285,23 @@
             </div>
         </section>
 
-        <section data-teacher-panel="documentos" class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] teacher-panel-hidden">
-            <div class="glass-card teacher-card rounded-[32px] p-8">
+        <section data-professor-panel="documentos" class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] professor-panel-hidden">
+            <div class="glass-card professor-card rounded-[32px] p-8">
                 <h2 class="text-xl font-bold">Solicitações da Secretaria</h2>
                 <p class="mt-1 text-sm text-gray-400">Anexe aqui os documentos pedidos pela secretaria.</p>
 
                 {% for solicitacao in solicitacoes_documentos %}
-                <article class="teacher-doc-block">
+                <article class="professor-doc-block">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div>
                             <h3>{{ solicitacao.titulo }}</h3>
                             <p class="text-sm text-gray-400">{{ solicitacao.mensagem }}</p>
                             <span class="text-xs text-gray-500">{{ solicitacao.data }}</span>
                         </div>
-                        <strong class="teacher-request-status teacher-request-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</strong>
+                        <strong class="professor-request-status professor-request-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</strong>
                     </div>
                     {% if solicitacao.status != "enviado" %}
-                    <form action="{{ url_for('professor.upload_documento_professor') }}" method="post" enctype="multipart/form-data" class="teacher-doc-form mt-4">
+                    <form action="{{ url_for('professor.upload_documento_professor') }}" method="post" enctype="multipart/form-data" class="professor-doc-form mt-4">
                         <input type="hidden" name="solicitacao_id" value="{{ solicitacao.id }}">
                         <label>
                             <span>Arquivo</span>
@@ -309,20 +312,20 @@
                     {% endif %}
                 </article>
                 {% else %}
-                <div class="teacher-doc-block">
+                <div class="professor-doc-block">
                     <h3>Nenhuma solicitação</h3>
                     <p class="text-sm text-gray-400">Quando a secretaria solicitar um documento, ele aparecerá aqui.</p>
                 </div>
                 {% endfor %}
             </div>
 
-            <div class="glass-card teacher-card rounded-[32px] p-8">
+            <div class="glass-card professor-card rounded-[32px] p-8">
                 <h2 class="text-xl font-bold">Documentos Enviados</h2>
                 <p class="mt-1 text-sm text-gray-400">Histórico dos arquivos respondidos à secretaria.</p>
 
                 <div class="mt-6 space-y-4">
                     {% for documento in documentos %}
-                    <article class="teacher-doc-item">
+                    <article class="professor-doc-item">
                         <div>
                             <h3>{{ documento.titulo }}</h3>
                             <p>{{ documento.disciplina }}</p>
@@ -331,7 +334,7 @@
                         <a href="{{ url_for('document.download_arquivo', filename=documento.arquivo) }}">Baixar</a>
                     </article>
                     {% else %}
-                    <div class="teacher-doc-item">
+                    <div class="professor-doc-item">
                         <div>
                             <h3>Nenhum documento enviado</h3>
                             <p>Os documentos enviados aparecerão aqui.</p>
@@ -342,31 +345,7 @@
             </div>
         </section>
     </main>
-
-    <script>
-        const teacherNavLinks = Array.from(document.querySelectorAll("[data-teacher-tab]"));
-        const teacherPanels = Array.from(document.querySelectorAll("[data-teacher-panel]"));
-
-        function activateTeacherTab(activeTab) {
-            teacherNavLinks.forEach(function (link) {
-                const isActive = link.dataset.teacherTab === activeTab;
-                link.classList.toggle("bg-cyan-500/10", isActive);
-                link.classList.toggle("text-cyan-400", isActive);
-                link.classList.toggle("border", isActive);
-                link.classList.toggle("border-cyan-500/20", isActive);
-                link.classList.toggle("text-gray-300", !isActive);
-            });
-
-            teacherPanels.forEach(function (panel) {
-                panel.classList.toggle("teacher-panel-hidden", panel.dataset.teacherPanel !== activeTab);
-            });
-        }
-
-        teacherNavLinks.forEach(function (link) {
-            link.addEventListener("click", function () {
-                activateTeacherTab(link.dataset.teacherTab);
-            });
-        });
-    </script>
+</template>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
 </body>
 </html>

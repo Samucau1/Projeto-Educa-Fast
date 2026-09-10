@@ -19,7 +19,7 @@ def dashboard():
     if not data:
         abort(404)
 
-    return render_template("professor_dashboard.html", **data)
+    return render_template("professor_painel.html", **data)
 
 
 @professor_bp.route("/professor/notas/salvar", methods=["POST"])

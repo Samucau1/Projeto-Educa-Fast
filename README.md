@@ -359,6 +359,7 @@ O comando atual executa o servidor de desenvolvimento Flask com `debug=True`. Um
 
 ## Documentação e licença
 
+- [Documentação completa do sistema](Documentos/DOCUMENTACAO_DO_SISTEMA.md)
 - [Especificação de casos de uso](Documentos/Especificação%20de%20Casos%20de%20Uso.md)
 - [Documentos do projeto](Documentos/)
 - [Referência do protótipo](Protótipo/)

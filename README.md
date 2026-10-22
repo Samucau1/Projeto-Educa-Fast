@@ -2,6 +2,22 @@
 
 Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, comunicados, notas, atividades e documentos. A aplicação possui áreas para a secretaria (administrador), professores e alunos.
 
+## Índice
+
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias e arquitetura](#tecnologias-e-arquitetura)
+- [Arquitetura em camadas](#arquitetura-em-camadas)
+- [Telas do sistema](#telas-do-sistema)
+- [Estrutura](#estrutura)
+- [Executar com Docker Compose](#executar-com-docker-compose)
+- [Executar localmente sem Docker](#executar-localmente-sem-docker)
+- [Configuração](#configuração)
+- [Persistência](#persistência)
+- [Principais rotas](#principais-rotas)
+- [Comandos úteis](#comandos-úteis)
+- [Validação e limites atuais](#validação-e-limites-atuais)
+- [Documentação e licença](#documentação-e-licença)
+
 ## Funcionalidades
 
 | Perfil | Recursos implementados |
@@ -16,14 +32,144 @@ Os cadastros incluem dados específicos de cada perfil e foto opcional em JPG ou
 
 - **Backend:** Python 3.12, Flask 3.1 e templates Jinja.
 - **Banco:** SQLAlchemy 2.0, PyMySQL e MySQL 8.4.
-- **Interface:** HTML, CSS, JavaScript, Tailwind CSS e React 18 via CDN.
+- **Interface:** HTML5, CSS, JavaScript, Tailwind CSS e React 18 via CDN.
 - **Ambiente:** Docker, Docker Compose e python-dotenv.
+- **Dependência de criptografia:** cryptography, incluída nos requisitos Python.
 
 O ponto de entrada `Códigos/app.py` chama `create_app()`, carrega a configuração, inicializa o banco e registra os blueprints. As rotas encaminham as operações aos controllers, que consultam os modelos SQLAlchemy e retornam páginas ou respostas JSON.
 
 O HTML é renderizado no servidor com Jinja. Um shell React monta esse conteúdo no navegador, e scripts compartilhados e por página controlam abas, formulários e interações. Não há etapa de build com Node.js. O navegador precisa de internet para carregar as dependências externas da interface.
 
 O login verifica senhas armazenadas como hash pelo Werkzeug, estabelece uma sessão Flask e retorna um JWT HS256. As páginas verificam o perfil pela sessão; algumas rotas JSON exigem o cabeçalho `Authorization: Bearer <token>`.
+
+## Arquitetura em camadas
+
+A organização segue uma separação de responsabilidades semelhante ao MVC, com blueprints para as rotas. As views de `app/views/` atendem à página inicial e ao dashboard administrativo; outras rotas renderizam os templates diretamente.
+
+```mermaid
+flowchart TD
+    Navegador["Navegador: administrador, professor ou aluno"]
+    Rotas["Flask: blueprints em app/routes"]
+    Acesso["Sessão Flask, guards e validação JWT"]
+    Controllers["Controllers: operações e validações"]
+    Modelos["Modelos SQLAlchemy e sessões do banco"]
+    Banco[(MySQL)]
+    Templates["Views e templates Jinja"]
+    Interface["Shell React, JavaScript e CSS"]
+    Arquivos["Pasta de uploads"]
+
+    Navegador -->|Requisição HTTP| Rotas
+    Rotas --> Acesso
+    Acesso --> Controllers
+    Controllers --> Modelos
+    Modelos <--> Banco
+    Controllers -->|Contexto da página| Templates
+    Templates --> Interface
+    Interface -->|HTML e interações| Navegador
+    Controllers -->|Resposta JSON ou redirecionamento| Navegador
+    Controllers <--> Arquivos
+```
+
+| Camada | Arquivos/pastas | Responsabilidade |
+| --- | --- | --- |
+| Inicialização | `app.py`, `app/__init__.py`, `config.py` | Criar a aplicação, carregar configurações e registrar rotas. |
+| Entrada HTTP | `app/routes/` | Receber formulários, JSON e arquivos; selecionar a operação e montar a resposta. |
+| Autenticação e acesso | `app/auth.py`, `app/routes/guards.py` | Assinar/validar JWTs e verificar o perfil nas rotas protegidas. |
+| Aplicação | `app/controllers/` | Executar cadastros, associações, consultas dos painéis, notas, atividades e documentos. |
+| Persistência | `app/models/`, `app/database.py` | Mapear entidades e vínculos, abrir sessões e inicializar o esquema. |
+| Apresentação | `app/views/`, `app/templates/` | Renderizar páginas com os dados preparados pelo backend. |
+| Interação no navegador | `app/static/js/compartilhado/`, `app/static/js/paginas/` | Montar o shell React, alternar abas e processar interações específicas. |
+| Estilos e recursos comuns | `app/static/css/`, `app/templates/partials/` | Definir estilos por tela e carregar o runtime compartilhado do React. |
+
+### Implantação com containers
+
+```mermaid
+flowchart LR
+    Browser["Navegador"] -->|localhost:5000| App["Serviço app / flask_app\nPython e Flask :5000"]
+    App -->|db:3306| DB["Serviço db / mysql_db\nMySQL 8.4"]
+    Host["Cliente MySQL no host"] -->|localhost:3306| DB
+    DB --> Dados[(mysql_data)]
+    App --> Uploads[(uploads_data)]
+    Codigo["Pasta Códigos no host"] -->|Montada em /app| App
+```
+
+O serviço `app` usa o Dockerfile Python e depende do estado saudável de `db`. O serviço `db` usa a imagem `mysql:8.4`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
+
+### Organização dos dados
+
+| Grupo | Modelos e vínculos |
+| --- | --- |
+| Identidade | `UsuarioModel` armazena e-mail, hash de senha e perfil. `AlunoModel` e `ProfessorModel` armazenam os dados específicos e referenciam o usuário. |
+| Organização acadêmica | `TurmaModel` e `DisciplinaModel`, ligados por `TurmaDisciplinaModel`. Os vínculos de participação ficam em `AlunoTurmaModel`, `ProfessorTurmaModel` e `ProfessorDisciplinaModel`; também existe `AlunoDisciplinaModel`. |
+| Ensino | `AtividadeModel` relaciona professor, turma e disciplina. `NotaModel` relaciona aluno, professor e disciplina, com unicidade por aluno/disciplina. |
+| Comunicação | `ComunicadoModel` armazena os recados publicados pela secretaria. |
+| Documentação | `DocumentoModel` registra os metadados dos arquivos. `SolicitacaoDocumentoModel` registra destinatário, status e eventual documento enviado. Os arquivos ficam na pasta de uploads. |
+
+## Telas do sistema
+
+O catálogo abaixo descreve as telas implementadas e aponta para seus templates. Para visualizá-las em funcionamento, execute a aplicação e entre com o perfil correspondente. As abas dos painéis de professor e aluno são seções da mesma página.
+
+### Login
+
+| Tela e template | Rota | Conteúdo e ações |
+| --- | --- | --- |
+| [Login](Códigos/app/templates/login.html) | `/` | Campos de e-mail institucional e senha. Após autenticar, o usuário é direcionado ao painel de seu perfil. |
+
+### Secretaria / administrador
+
+| Tela e template | Rota principal | Conteúdo e ações |
+| --- | --- | --- |
+| [Dashboard da secretaria](Códigos/app/templates/admin_painel.html) | `/admin/dashboard` | Saudação, totais de alunos e professores, matrículas pendentes e últimos registros. Menu lateral para as áreas administrativas. |
+| [Cadastro de alunos](Códigos/app/templates/admin_cadastro_aluno.html) | `/admin/cadastro-alunos` | Dados pessoais e acadêmicos, matrícula, credenciais de acesso e foto de perfil. |
+| [Cadastro de professores](Códigos/app/templates/admin_cadastro_professores.html) | `/admin/cadastro-professores` | Nome, CPF, contato, disciplina principal, formação, regime de trabalho, admissão, credenciais e foto. |
+| [Banco de dados](Códigos/app/templates/admin_banco_dados.html) | `/admin/banco-de-dados` | Indicadores, listagem de registros acadêmicos e busca por nome ou ID, com acesso aos detalhes dos cadastros. É uma tela de consulta de pessoas, sem editor SQL. |
+| [Detalhes do aluno](Códigos/app/templates/admin_detalhes_aluno.html) | `/admin/alunos/<aluno_id>` | Perfil, edição cadastral, solicitações de documentos e arquivos enviados. |
+| [Detalhes do professor](Códigos/app/templates/admin_detalhes_professor.html) | `/admin/professores/<professor_id>` | Perfil e edição cadastral, aba de atuação e aba de documentos com solicitações e arquivos enviados. |
+| [Disciplinas](Códigos/app/templates/admin_disciplinas.html) | `/admin/disciplinas` | Criação com nome, código e carga horária; listagem e associação de professores. |
+| [Turmas](Códigos/app/templates/admin_turmas.html) | `/admin/turmas` | Cadastro e listagem de turmas, associação de alunos e professores e consulta das disciplinas vinculadas. |
+| [Comunicados](Códigos/app/templates/admin_comunicados.html) | `/admin/comunicados` | Formulário com título e mensagem e consulta dos recados publicados. |
+
+### Professor
+
+O [painel do professor](Códigos/app/templates/professor_painel.html), em `/professor/dashboard` (também `/professor`), reúne:
+
+| Aba | Conteúdo e ações |
+| --- | --- |
+| Turmas | Turmas vinculadas, alunos, disciplinas e lançamento de atividades, com possibilidade de anexar arquivo. |
+| Notas | Formulários de lançamento por aluno e disciplina, nota de 0 a 10, observação e consulta das notas lançadas. |
+| Documentos | Solicitações da secretaria, envio do arquivo de resposta e consulta dos documentos enviados. |
+
+### Aluno
+
+| Tela e template | Rota principal | Conteúdo e ações |
+| --- | --- | --- |
+| [Painel do aluno](Códigos/app/templates/aluno_painel.html) | `/aluno/dashboard` (também `/aluno`) | Abas de disciplinas, notas e documentos. Exibe as disciplinas associadas, as notas e observações e as solicitações de documentos, com upload de resposta e arquivos enviados. |
+| [Detalhes da disciplina](Códigos/app/templates/aluno_disciplina.html) | `/aluno/disciplinas/<disciplina_id>` | Informações da disciplina, professores e atividades com arquivos disponíveis para download. |
+
+### Navegação entre as telas
+
+```mermaid
+flowchart TD
+    Login["Login /"] --> Perfil{"Perfil autenticado"}
+    Perfil -->|admin| Admin["Dashboard da secretaria"]
+    Perfil -->|professor| Professor["Painel do professor"]
+    Perfil -->|aluno| Aluno["Painel do aluno"]
+    Admin --> Cadastros["Cadastro de alunos e professores"]
+    Admin --> Registros["Banco de dados"]
+    Registros --> Detalhes["Detalhes de aluno ou professor"]
+    Detalhes --> Documentos["Solicitar e consultar documentos"]
+    Admin --> Organizacao["Turmas e disciplinas"]
+    Admin --> Comunicados["Comunicados"]
+    Professor --> PT["Turmas e atividades"]
+    Professor --> PN["Notas"]
+    Professor --> PD["Documentos"]
+    Aluno --> AD["Disciplinas"]
+    AD --> Disciplina["Detalhes da disciplina e atividades"]
+    Aluno --> AN["Notas"]
+    Aluno --> AQ["Documentos"]
+```
+
+Para percorrer as telas com conteúdo, cadastre os usuários, configure as associações acadêmicas e lance dados conforme o [fluxo inicial](#5-preparar-o-fluxo-escolar). Listagens sem registros apresentam estados vazios; os dados exibidos dependem do perfil e dos vínculos cadastrados.
 
 ## Estrutura
 

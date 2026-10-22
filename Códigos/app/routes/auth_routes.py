@@ -38,7 +38,12 @@ def logout():
 
 @auth_bp.route('/cadastro', methods=['POST'])
 def cadastro():
+    error = admin_json_required()
+    if error:
+        return error
     data = _get_request_data()
+    if (data.get("tipo") or data.get("role") or "").strip().lower() == "admin" and session.get("user_role") != "superadmin":
+        return jsonify({"erro": "Apenas o superperfil pode criar administradores"}), 403
     response, status = cadastrar_usuario(data, request.files)
     return jsonify(response), status
 

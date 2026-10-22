@@ -1,64 +1,29 @@
+{% set page_title = 'Cadastro de alunos' %}
+{% from 'partials/gestao_icons.html' import icon %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Alunos | Secretaria Escolar DF</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Cadastro de Alunos | Educa Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
     {% include "partials/react_runtime.html" %}
 </head>
-<body class="flex">
+<body class="app-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
     <div id="admin-cadastro-aluno-root" class="flex w-full" data-react-shell data-react-template="admin-cadastro-aluno-template"></div>
     <template id="admin-cadastro-aluno-template">
-    <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
-        <div class="mb-10 text-center">
-            <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
-        </div>
+    {% include 'partials/workspace_sidebar.html' %}
 
-        <nav class="flex-1 space-y-2">
-            <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Painel Geral
-            </a>
-
-            <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                Alunos
-            </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Professores
-            </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Banco de Dados
-            </a>
-
-            <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Disciplinas
-            </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Turmas
-            </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Comunicados
-            </a>
-        </nav>
-
-        <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                Sair do Sistema
-            </a>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-10 overflow-y-auto">
+    <div class="workspace-main">
+    {% include 'partials/workspace_topbar.html' %}
+    <main id="main-content" class="app-content">
         <header class="mb-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div>
-                <h1 class="text-3xl font-bold">Cadastro de Alunos</h1>
+                <span class="eyebrow">GESTÃO ESCOLAR</span>
+                    <h1 class="text-3xl font-bold">Cadastro de Alunos</h1>
                 <p class="text-gray-400">Insira as informações do novo aluno no sistema.</p>
             </div>
 
@@ -160,18 +125,20 @@
                         <h2 class="text-lg font-extrabold text-white">Foto do Aluno</h2>
                         <label class="mx-auto mt-7 flex aspect-square w-40 cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-cyan-400/35 bg-white/5 text-center transition hover:border-cyan-300 hover:bg-white/10">
                             <input type="file" name="foto_perfil" form="aluno-form" class="sr-only" accept="image/png,image/jpeg">
+                            <span class="photo-upload-symbol">{{ icon('users') }}</span>
                             <span class="mt-3 text-xs text-slate-400">Carregar Imagem</span>
                         </label>
                         <p class="mt-7 text-center text-[11px] leading-5 text-slate-400">Formatos aceitos: JPG, PNG.<br>Tamanho máximo: 2MB.</p>
                     </section>
 
-                    <section class="rounded-[20px] border border-cyan-500/20 bg-cyan-500/10 px-8 py-8 shadow-2xl shadow-black/20">
+                    <section class="management-tip">
                         <h2 class="text-lg font-extrabold text-white">Dica de Gestão</h2>
-                        <p class="mt-5 text-sm leading-6 text-slate-300">Certifique-se de que todos os documentos originais foram digitalizados antes de finalizar o cadastro. O sistema enviará um e-mail automático de confirmação para o responsável.</p>
+                        <p class="mt-5 text-sm leading-6 text-slate-300">Confira a matrícula e o e-mail antes de salvar. Após o cadastro, compartilhe as credenciais com o aluno e organize os documentos na página de detalhes.</p>
                     </section>
                 </aside>
             </div>
     </main>
+    </div>
 </template>
     <script>
         window.__REACT_PAGE__ = {

@@ -1,5 +1,11 @@
 # Documentação do sistema — Educa Fast
 
+> **Atualização de 22/10/2026:** superperfil, gestão de permissões, cores e leitura de mensagens foram implementados. Consulte a seção 16 ao final. As seções anteriores registram a análise de 21/10/2026 e devem ser interpretadas com essas alterações, especialmente o cadastro genérico, que passou a exigir autenticação administrativa.
+
+> **Regressão de 22/10/2026:** a suíte foi ampliada para 17 testes e uma coleção Postman de 100 requisições/124 verificações. Foram corrigidos login com JSON inválido, notas não finitas, revogação de JWT no upload e autorização no download por JWT. A exceção de download descrita na análise original foi corrigida. Veja o [guia de testes](testes/README.md) e o [relatório com evidências e limitações](testes/RELATORIO_REGRESSAO.md).
+
+> **Validação Docker concluída:** as duas suítes também passaram integralmente com Python 3.12 e MySQL 8.4 em containers isolados. O arquivo `Códigos/docker-compose.test.yml` permite repetir a execução sem acessar o banco da instalação. As evidências adicionais estão em [testes/resultados/mysql](testes/resultados/mysql/).
+
 **Sistema:** Educa Fast / Secretaria Escolar DF  
 **Data da análise:** 21/10/2026  
 **Código de referência:** commit `d148af1`  
@@ -934,3 +940,64 @@ Fonte: [usuario_model.py](../Códigos/app/models/usuario_model.py).
 | `email` | `str` | `mapped_column(String(120), unique=True, nullable=False)` |
 | `senha` | `str` | `mapped_column(String(200), nullable=False)` |
 | `tipo` | `str` | `mapped_column(String(20), nullable=False)` |
+
+## 16. Superperfil, aparência e mensagens (22/10/2026)
+
+O novo perfil `superadmin` acessa a administração e possui uma área exclusiva para criar usuários `admin`, `professor` e `aluno`, alterar suas permissões e definir as cores globais. Cada usuário tem um perfil ativo. Ao trocar de perfil, os registros acadêmicos anteriores são preservados; ao atribuir professor ou aluno sem registro correspondente, é necessário informar nome e CPF ou matrícula, respectivamente. Superperfis não podem ser rebaixados pela interface.
+
+### 16.1 Ativar o primeiro superperfil
+
+Com o banco configurado, execute na pasta `Códigos`:
+
+```powershell
+python -m flask --app app.py criar-superusuario
+```
+
+No Docker Compose, com o serviço iniciado, execute nessa mesma pasta:
+
+```powershell
+docker compose exec app flask --app app.py criar-superusuario
+```
+
+O comando solicita e-mail exclusivo e senha de pelo menos oito caracteres, sem exibir a senha. Não apaga nem promove usuários existentes. Faça login na tela usual com as credenciais criadas. O superperfil é encaminhado para `/super/usuarios`.
+
+### 16.2 Permissões e rotas
+
+| Recurso | Superperfil | Admin | Professor | Aluno |
+| --- | --- | --- | --- | --- |
+| Criar aluno/professor | Sim | Sim | Não | Não |
+| Criar administrador | Sim | Não | Não | Não |
+| Alterar perfil de usuários | Sim | Não | Não | Não |
+| Alterar cores globais | Sim | Não | Não | Não |
+| Publicar comunicado geral | Sim | Sim | Não | Não |
+| Ler mensagens | Sim | Sim | Sim | Sim |
+
+| Caminho | Métodos | Finalidade |
+| --- | --- | --- |
+| `/super/usuarios` | GET, POST | Lista e criação de usuários |
+| `/super/usuarios/<user_id>/perfil` | POST | Atribuição de admin/professor/aluno |
+| `/super/layout` | GET, POST | Fundo e cor de destaque globais |
+| `/mensagens` | GET | Leitura de até 100 comunicados recentes, com texto integral |
+| `/admin/comunicados` | GET, POST | Disparador existente, agora acessível também ao superperfil |
+
+O cadastro genérico `POST /cadastro` deixou de ser público. Administradores só podem cadastrar aluno/professor; a criação de admin exige superperfil. O cadastro não permite criar `superadmin`; use o comando administrativo.
+
+As permissões de sessão são atualizadas a partir do banco em cada requisição dinâmica. O decorador JWT também consulta o perfil atual, impedindo que um token de professor continue concedendo essa permissão depois de uma alteração. Os formulários novos e a publicação de comunicados verificam token CSRF. Textos das mensagens são escapados na renderização.
+
+### 16.3 Persistência e interface
+
+A tabela existente `comunicados` já possuía gravação no backend. A atualização completa a disponibilização para os usuários pela página `/mensagens` e acrescenta acesso pelo menu compartilhado. Admin e superperfil publicam mensagens gerais para todos. Professores e alunos não têm permissão de envio, inclusive por requisição direta. As mensagens são internas ao sistema: não há disparo por e-mail, SMS, WhatsApp ou notificação push. A leitura é atualizada ao abrir ou recarregar a página.
+
+A nova tabela `configuracoes` contém `id` inteiro como chave primária, `cor_fundo` e `cor_destaque` como `VARCHAR(7)`. O registro de ID 1 guarda o tema global. A tabela é criada automaticamente por `init_db()`; não é necessário alterar colunas de tabelas existentes. As cores aceitam somente `#RRGGBB`. Os padrões são `#06385d` e `#22d3ee`; os painéis aplicam o fundo e os destaques compartilhados após recarregar.
+
+Implementação: `app/routes/gestao_routes.py`, `app/models/configuracao_model.py`, templates `super_usuarios.html`, `super_layout.html`, `mensagens.html` e partial `partials/gestao_global.html`. Os guards administrativos, login e rotas de documentos reconhecem o superperfil.
+
+### 16.4 Validação
+
+Na pasta `Códigos`, com as dependências instaladas:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+Os sete testes em `tests/test_gestao.py` passaram com SQLite em memória, sem acessar o banco da instalação. Cobrem envio e leitura por perfil, escape de conteúdo, bloqueio de escalada de privilégio, troca imediata de perfil em sessão e JWT, persistência/validação de cores, CSRF, renderização das páginas, limites das mensagens e comando de criação do superperfil. O MySQL e a apresentação visual em navegador não foram validados nesta execução.

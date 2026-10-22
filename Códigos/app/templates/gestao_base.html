@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title|default('Gestão') }} | Educa Fast</title>
+    {% include 'partials/workspace_head.html' %}
+</head>
+<body class="app-page native-page {% block page_class %}{% endblock %}">
+<a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+{% if session.get('user_id') %}{% include 'partials/workspace_sidebar.html' %}{% endif %}
+<div class="workspace-main {% if not session.get('user_id') %}public-workspace{% endif %}">
+    {% if session.get('user_id') %}{% include 'partials/workspace_topbar.html' %}{% endif %}
+    <main id="main-content" class="app-content">
+        {% if error %}<div class="notice notice-error" role="alert">{{ error }}</div>{% endif %}
+        {% for category, message in get_flashed_messages(with_categories=true) %}<div class="notice notice-success" role="status">{{ message }}</div>{% endfor %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>

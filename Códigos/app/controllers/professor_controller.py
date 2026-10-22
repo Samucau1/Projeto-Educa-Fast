@@ -417,7 +417,7 @@ def save_student_grade(user_id, data):
     except InvalidOperation:
         return {"erro": "Nota invalida"}, 400
 
-    if nota_value < 0 or nota_value > 10:
+    if not nota_value.is_finite() or nota_value < 0 or nota_value > 10:
         return {"erro": "Nota deve estar entre 0 e 10"}, 400
 
     db = get_session()

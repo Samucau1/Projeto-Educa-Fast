@@ -1,0 +1,5 @@
+<meta name="color-scheme" content="dark">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/design_system.css', v='20261022b') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css', v='20261022b') }}">
+<style>:root { --theme-background: {{ tema.cor_fundo|default('#06385d') }}; --accent: {{ tema.cor_destaque|default('#22d3ee') }}; }</style>
+<script src="{{ url_for('static', filename='js/compartilhado/app.js', v='20261022b') }}" defer></script>

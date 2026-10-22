@@ -1,0 +1,22 @@
+test_bootstrap_command (test_gestao.GestaoTest.test_bootstrap_command) ... ok
+test_broadcast_and_read_permissions (test_gestao.GestaoTest.test_broadcast_and_read_permissions) ... ok
+test_layout_persistence_validation_and_csrf (test_gestao.GestaoTest.test_layout_persistence_validation_and_csrf) ... ok
+test_old_jwt_uses_current_role (test_gestao.GestaoTest.test_old_jwt_uses_current_role) ... ok
+test_pages_and_broadcast_validation (test_gestao.GestaoTest.test_pages_and_broadcast_validation) ... ok
+test_registration_and_privilege_escalation_blocked (test_gestao.GestaoTest.test_registration_and_privilege_escalation_blocked) ... ok
+test_super_creates_admin_and_changes_role_immediately (test_gestao.GestaoTest.test_super_creates_admin_and_changes_role_immediately) ... ok
+test_academic_flow_and_student_isolation (test_regressao.RegressaoTest.test_academic_flow_and_student_isolation) ... ok
+test_broadcast_survives_logout_and_invalid_payload_not_saved (test_regressao.RegressaoTest.test_broadcast_survives_logout_and_invalid_payload_not_saved) ... ok
+test_document_upload_download_and_other_student_denied (test_regressao.RegressaoTest.test_document_upload_download_and_other_student_denied) ... ok
+test_grade_boundaries_and_nonfinite_values (test_regressao.RegressaoTest.test_grade_boundaries_and_nonfinite_values) ... ok
+test_jwt_download_obeys_same_ownership_as_session (test_regressao.RegressaoTest.test_jwt_download_obeys_same_ownership_as_session) ... ok
+test_login_logout_and_invalid_credentials (test_regressao.RegressaoTest.test_login_logout_and_invalid_credentials) ... ok
+test_login_rejects_non_object_json (test_regressao.RegressaoTest.test_login_rejects_non_object_json) ... ok
+test_registration_validation_duplicates_and_panels (test_regressao.RegressaoTest.test_registration_validation_duplicates_and_panels) ... ok
+test_requested_document_end_to_end (test_regressao.RegressaoTest.test_requested_document_end_to_end) ... ok
+test_revoked_teacher_jwt_cannot_upload (test_regressao.RegressaoTest.test_revoked_teacher_jwt_cannot_upload) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 12.615s
+
+OK

@@ -1,28 +1,35 @@
+{% from 'partials/gestao_icons.html' import icon %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Secretaria Escolar DF</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-    {% include "partials/react_runtime.html" %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar | Educa Fast</title>
+    {% include 'partials/workspace_head.html' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css', v='20261022b') }}">
+    <script src="{{ url_for('static', filename='js/paginas/login.js', v='20261022b') }}" defer></script>
 </head>
-<body class="flex items-center justify-center h-screen">
-    <div id="login-root" class="w-full" data-react-shell data-react-template="login-template"></div>
-    <template id="login-template">
-        <div class="glass p-10 rounded-[32px] w-full max-w-md shadow-2xl mx-auto">
-            <h1 class="text-white text-3xl font-bold text-center mb-8">Secretaria DF</h1>
-            <form id="login-form" class="space-y-6">
-                <input name="email" id="email" type="email" placeholder="E-mail Institucional" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-cyan-500">
-                <input name="senha" id="senha" type="password" placeholder="Senha" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-cyan-500">
-                <p id="login-error" class="hidden text-sm text-red-300"></p>
-                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-xl disabled:opacity-70">Acessar Sistema</button>
-            </form>
-        </div>
-    </template>
-    <script src="{{ url_for('static', filename='js/paginas/login.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
+<body class="login-page">
+    <main class="login-layout">
+        <section class="login-story" aria-label="Educa Fast, gestão escolar">
+            <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">ef<span>↗</span></span><span>educa<span class="brand-light">fast</span><small>GESTÃO ESCOLAR</small></span></a>
+            <div class="login-intro"><span class="eyebrow">MAIS CONEXÃO. MAIS POSSIBILIDADES.</span><h1>Sua escola.<br>Mais <span>conectada.</span></h1><p>Menos distância entre a gestão, os professores e quem está aqui para aprender.</p></div>
+            <div class="school-illustration" aria-hidden="true"><div class="school-orbit orbit-one"></div><div class="school-orbit orbit-two"></div><div class="school-center">ef<span>↗</span></div><span class="school-node node-users">{{ icon('users') }}</span><span class="school-node node-book">{{ icon('book') }}</span><span class="school-node node-mail">{{ icon('mail') }}</span><span class="school-node node-cap">{{ icon('cap') }}</span><span class="school-caption">Um lugar para toda a escola</span></div>
+            <div class="login-features"><span>{{ icon('grid') }} Gestão integrada</span><span>{{ icon('book') }} Aprendizado</span><span>{{ icon('mail') }} Comunicação</span></div>
+            <p class="login-story-footer">Pessoas e conhecimento, sempre mais próximos.</p>
+        </section>
+        <section class="login-access">
+            <div class="login-card"><span class="login-card-icon">{{ icon('shield') }}</span><span class="eyebrow">BOM TER VOCÊ POR AQUI</span><h2>Bem-vindo de volta<span>.</span></h2><p>Entre para acessar seu espaço na escola.</p>
+                <form id="login-form" class="login-form">
+                    <label class="login-field" for="email">E-mail institucional<span class="login-input-wrap">{{ icon('mail') }}<input name="email" id="email" type="email" placeholder="seu.nome@escola.com.br" autocomplete="username" required autofocus></span></label>
+                    <label class="login-field" for="senha">Senha<span class="login-input-wrap">{{ icon('lock') }}<input name="senha" id="senha" type="password" placeholder="Digite sua senha" autocomplete="current-password" required><button type="button" class="icon-button" data-toggle-password aria-label="Mostrar senha" aria-pressed="false">{{ icon('eye') }}</button></span></label>
+                    <p id="login-error" class="login-error" role="alert" hidden></p>
+                    <button type="submit" class="button button-primary login-submit">Acessar sistema {{ icon('arrow') }}</button>
+                </form>
+                <p class="login-help">Seu acesso é fornecido pela administração da escola.<br>Se precisar de ajuda, entre em contato com a secretaria.</p>
+            </div>
+            <div class="login-access-footer"><span>{{ icon('shield') }} Um acesso para cada responsabilidade</span><small>Educa Fast · Gestão escolar</small></div>
+        </section>
+    </main>
 </body>
 </html>

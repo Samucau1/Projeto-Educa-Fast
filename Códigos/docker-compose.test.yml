@@ -1,0 +1,53 @@
+# Ambiente descartável: não utiliza .env, portas ou volumes do MySQL instalado.
+services:
+  mysql_test:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root-exclusivo-do-container-de-testes
+      MYSQL_DATABASE: educafast_regressao
+      MYSQL_USER: testes
+      MYSQL_PASSWORD: senha-exclusiva-de-testes
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u testes -D educafast_regressao -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+  testes:
+    build:
+      context: ..
+      dockerfile: Códigos/tests/Dockerfile
+    environment:
+      EDUCAFAST_TEST_MYSQL: "1"
+      DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
+      SECRET_KEY: chave-exclusiva-do-container-de-testes
+    volumes:
+      - ../Documentos/testes/resultados:/workspace/Documentos/testes/resultados
+    depends_on:
+      mysql_test:
+        condition: service_healthy
+  manual:
+    profiles: ["manual"]
+    build:
+      context: ..
+      dockerfile: Códigos/tests/Dockerfile
+    command: ["python", "tests/servidor_manual.py"]
+    environment:
+      EDUCAFAST_MANUAL: "1"
+      EDUCAFAST_TEST_MYSQL: "1"
+      DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
+      SECRET_KEY: chave-exclusiva-do-ambiente-manual
+      UPLOAD_FOLDER: /tmp/educafast-uploads
+    ports:
+      - "127.0.0.1:5050:5000"
+    depends_on:
+      mysql_test:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s

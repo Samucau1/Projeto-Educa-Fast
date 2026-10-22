@@ -16,5 +16,9 @@ def create_app():
     init_db()
 
     register_routes(app)
+    from .routes.gestao_routes import init_gestao
+    init_gestao(app)
+    from .views.error_view import register_error_pages
+    register_error_pages(app)
 
     return app

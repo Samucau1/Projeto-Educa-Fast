@@ -1,0 +1,11 @@
+.git
+.venv
+venv
+.cache
+**/__pycache__
+**/*.pyc
+**/.env
+**/.env.*
+Documentos
+Protótipo
+**/uploads

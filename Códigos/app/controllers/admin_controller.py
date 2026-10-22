@@ -194,11 +194,13 @@ def get_comunicados(limit=8):
 
 def criar_comunicado(data, criado_por=None):
     titulo = (data.get("titulo") or "").strip()
-    destinatario = (data.get("destinatario") or "Geral").strip()
+    destinatario = "Geral"
     mensagem = (data.get("mensagem") or "").strip()
 
     if not titulo or not mensagem:
         return {"erro": "Titulo e mensagem sao obrigatorios"}, 400
+    if len(titulo) > 150 or len(mensagem) > 10000:
+        return {"erro": "Use ate 150 caracteres no titulo e 10000 na mensagem"}, 400
 
     db = get_session()
     try:

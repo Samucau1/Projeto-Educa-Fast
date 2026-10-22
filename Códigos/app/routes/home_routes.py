@@ -28,7 +28,7 @@ home_blueprint = Blueprint("home", __name__)
 
 @home_blueprint.route("/", methods=["GET"])
 def home():
-    if normalize_role(session.get("user_role")) == "admin":
+    if normalize_role(session.get("user_role")) in {"admin", "superadmin"}:
         return redirect(url_for("home.admin_dashboard"))
     if normalize_role(session.get("user_role")) == "aluno":
         return redirect(url_for("aluno.dashboard"))

@@ -1,0 +1,12 @@
+{
+  "data_sao_paulo": "2026-10-22T18:29:52.684575-03:00",
+  "newman": "6.2.1",
+  "banco": "SQLite descartável com foreign_keys=ON",
+  "requisicoes": 100,
+  "verificacoes": 124,
+  "falhas": 0,
+  "erros": 0,
+  "duracao_segundos": 57.518,
+  "exit_code": 0,
+  "aprovado": true
+}

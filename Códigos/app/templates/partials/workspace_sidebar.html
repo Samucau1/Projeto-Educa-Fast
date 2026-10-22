@@ -1,0 +1,54 @@
+{% from 'partials/gestao_icons.html' import icon %}
+{% set role = session.get('user_role') %}
+{% set role_labels = {'superadmin':'Superperfil', 'admin':'Administrador', 'professor':'Professor', 'aluno':'Aluno'} %}
+{% macro nav_link(endpoint, text, symbol, related=[]) %}
+{% set active = request.endpoint == endpoint or request.endpoint in related %}
+<a href="{{ url_for(endpoint) }}" {% if active %}class="active" aria-current="page"{% endif %}>{{ icon(symbol) }} {{ text }}{% if active %}<span class="active-dot"></span>{% endif %}</a>
+{% endmacro %}
+<aside class="workspace-sidebar">
+    <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">ef<span>↗</span></span><span>educa<span class="brand-light">fast</span><small>GESTÃO ESCOLAR</small></span></a>
+    <div class="workspace-label">ESPAÇO DE TRABALHO <span>ESCOLA</span></div>
+    <nav class="sidebar-nav" aria-label="Navegação principal">
+        {% if role in ['admin','superadmin'] %}
+            {{ nav_link('home.admin_dashboard', 'Visão geral', 'grid') }}
+            <span class="nav-section">PESSOAS & ACESSOS</span>
+            {% if role == 'superadmin' %}{{ nav_link('gestao.usuarios', 'Usuários e permissões', 'users') }}{% endif %}
+            {{ nav_link('home.admin_cadastro_alunos', 'Alunos', 'cap', ['home.admin_detalhes_aluno','home.admin_detalhes_aluno_legacy']) }}
+            {{ nav_link('home.admin_cadastro_professores', 'Professores', 'book', ['home.admin_detalhes_professor','home.admin_detalhes_professor_legacy']) }}
+            {{ nav_link('home.admin_banco_dados', 'Registros acadêmicos', 'users') }}
+            <span class="nav-section">ORGANIZAÇÃO DA ESCOLA</span>
+            {{ nav_link('home.admin_turmas', 'Turmas', 'grid') }}
+            {{ nav_link('home.admin_disciplinas', 'Disciplinas', 'book') }}
+            {{ nav_link('home.admin_comunicados', 'Publicar comunicado', 'mail') }}
+        {% elif role == 'aluno' %}
+            <span class="nav-section">MINHA ESCOLA</span>
+            {% if request.endpoint == 'aluno.dashboard' %}
+            <button type="button" data-aluno-tab="disciplinas" class="active" aria-pressed="true">{{ icon('book') }} Disciplinas</button>
+            <button type="button" data-aluno-tab="notas" aria-pressed="false">{{ icon('cap') }} Minhas notas</button>
+            <button type="button" data-aluno-tab="documentos" aria-pressed="false">{{ icon('users') }} Documentos</button>
+            {% else %}
+            {{ nav_link('aluno.dashboard', 'Minhas disciplinas', 'book', ['aluno.disciplina_detail']) }}
+            <a href="{{ url_for('aluno.dashboard') }}#notas">{{ icon('cap') }} Minhas notas</a>
+            <a href="{{ url_for('aluno.dashboard') }}#documentos">{{ icon('users') }} Documentos</a>
+            {% endif %}
+        {% elif role == 'professor' %}
+            <span class="nav-section">MINHA ESCOLA</span>
+            {% if request.endpoint == 'professor.dashboard' %}
+            <button type="button" data-professor-tab="turmas" class="active" aria-pressed="true">{{ icon('grid') }} Minhas turmas</button>
+            <button type="button" data-professor-tab="notas" aria-pressed="false">{{ icon('cap') }} Lançar notas</button>
+            <button type="button" data-professor-tab="documentos" aria-pressed="false">{{ icon('users') }} Documentos</button>
+            {% else %}
+            {{ nav_link('professor.dashboard', 'Minhas turmas', 'grid') }}
+            <a href="{{ url_for('professor.dashboard') }}#notas">{{ icon('cap') }} Lançar notas</a>
+            <a href="{{ url_for('professor.dashboard') }}#documentos">{{ icon('users') }} Documentos</a>
+            {% endif %}
+        {% endif %}
+        <span class="nav-section">COMUNIDADE</span>
+        {{ nav_link('gestao.mensagens', 'Mensagens', 'mail') }}
+        {% if role == 'superadmin' %}{{ nav_link('gestao.layout', 'Aparência', 'palette') }}{% endif %}
+    </nav>
+    <div class="sidebar-bottom">
+        <div class="security-note">{{ icon('shield') }}<div><strong>Sua escola, mais conectada</strong><p>Pessoas, aprendizado e comunicação no mesmo lugar.</p></div></div>
+        <div class="account"><span class="avatar avatar-{{ role }}">{{ icon('shield' if role in ['admin','superadmin'] else 'cap') }}</span><div><strong>{{ role_labels.get(role, 'Usuário') }}</strong><small title="{{ session.get('user_email') }}">{{ session.get('user_email') }}</small></div><a href="{{ url_for('auth.logout') }}" aria-label="Sair do sistema" title="Sair do sistema">{{ icon('logout') }}</a></div>
+    </div>
+</aside>

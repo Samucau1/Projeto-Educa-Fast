@@ -1,0 +1,3366 @@
+{
+  "info": {
+    "name": "Educa Fast - API e regressao",
+    "description": "Executar integralmente em banco descartavel criado por tests/executar_postman.py --serve. Usa cookies de sessao, JWT e CSRF reais. Ha requisicoes que criam dados e alteram permissoes. Desative o redirecionamento automatico. Reinicie o servidor descartavel antes de cada execucao.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Visitante e autenticacao",
+      "item": [
+        {
+          "name": "Inicio e identificador da execucao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set(\"run_id\", String(Date.now()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Visitante bloqueado: /mensagens",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Visitante bloqueado: /admin/dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/dashboard"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Visitante bloqueado: /super/usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Visitante bloqueado: /super/layout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastro publico bloqueado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"tipo\": \"admin\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login vazio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login array",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "[1]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login numero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "123",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login email invalido por tipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": [\"admin@teste.local\"], \"senha\": \"x\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Senha errada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"errada\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Usuario inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"inexistente@teste.local\", \"senha\": \"x\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWT ausente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/professor/teste"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWT adulterado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer token.invalido.assinatura"
+              }
+            ],
+            "url": "{{base_url}}/professor/teste"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Superperfil, cadastro e layout",
+      "item": [
+        {
+          "name": "Login superadmin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"superadmin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil superadmin\", function () { pm.expect(pm.response.json().role).to.eql(\"superadmin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obter formulario e CSRF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
+                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar administrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"tipo\": \"admin\", \"nome\": \"Admin API\", \"email\": \"admin-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"novo_admin_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar aluno via API",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/aluno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Aluno API\", \"email\": \"aluno-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\", \"matricula\": \"API-{{run_id}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar professor via API",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/professor",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Professor API\", \"email\": \"prof-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\", \"cpf\": \"00000000002\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Email duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"tipo\": \"admin\", \"nome\": \"Duplicado\", \"email\": \"admin-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar aluno sem matricula",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/aluno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Sem matricula\", \"email\": \"sem-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar professor sem CPF",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/professor",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Sem CPF\", \"email\": \"semcpf-{{run_id}}@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superperfil nao pode ser criado por cadastro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"tipo\": \"superadmin\", \"nome\": \"Invalido\", \"email\": \"invalido@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superperfil nao pode ser rebaixado",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/{{superadmin_id}}/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "aluno",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Usuario inexistente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/999999/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atribuir professor sem dados obrigatorios",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/{{novo_admin_id}}/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "professor",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atribuir professor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/{{novo_admin_id}}/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "professor",
+                  "type": "text"
+                },
+                {
+                  "key": "nome",
+                  "value": "Professor convertido",
+                  "type": "text"
+                },
+                {
+                  "key": "cpf",
+                  "value": "00000000003",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obter formulario e CSRF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
+                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cores sem CSRF",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/layout",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "cor_fundo",
+                  "value": "#123456",
+                  "type": "text"
+                },
+                {
+                  "key": "cor_destaque",
+                  "value": "#abcdef",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Salvar cores",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/layout",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "cor_fundo",
+                  "value": "#123456",
+                  "type": "text"
+                },
+                {
+                  "key": "cor_destaque",
+                  "value": "#abcdef",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cores persistidas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: #123456\", function () { pm.expect(pm.response.text()).to.include(\"#123456\"); });",
+                  "pm.test(\"Conteudo esperado: #abcdef\", function () { pm.expect(pm.response.text()).to.include(\"#abcdef\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cor invalida rejeitada",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/layout",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "cor_fundo",
+                  "value": "red;}",
+                  "type": "text"
+                },
+                {
+                  "key": "cor_destaque",
+                  "value": "#abcdef",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: #RRGGBB\", function () { pm.expect(pm.response.text()).to.include(\"#RRGGBB\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cor anterior preservada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: value=\\\"#123456\\\"\", function () { pm.expect(pm.response.text()).to.include(\"value=\\\"#123456\\\"\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Comunicado do superperfil",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "Super {{run_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Comunicado do superperfil para todos",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Admin, turmas e comunicados",
+      "item": [
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/dashboard"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/cadastro-alunos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/cadastro-alunos"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/cadastro-professores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/cadastro-professores"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/banco-de-dados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/banco-de-dados"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/disciplinas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/disciplinas"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tela /admin/turmas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/turmas"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin nao cria outro admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"tipo\": \"admin\", \"nome\": \"Escalada\", \"email\": \"escalada@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin sem acesso ao superperfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin sem acesso ao layout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar disciplina",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/disciplinas",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nome",
+                  "value": "Matematica API",
+                  "type": "text"
+                },
+                {
+                  "key": "codigo",
+                  "value": "MAT",
+                  "type": "text"
+                },
+                {
+                  "key": "carga_horaria",
+                  "value": "60",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar turma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/turmas",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nome",
+                  "value": "Turma API",
+                  "type": "text"
+                },
+                {
+                  "key": "codigo",
+                  "value": "API-T1",
+                  "type": "text"
+                },
+                {
+                  "key": "ano_letivo",
+                  "value": "2026",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Vincular professor a disciplina",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/disciplinas",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "action",
+                  "value": "associate_teacher",
+                  "type": "text"
+                },
+                {
+                  "key": "professor_id",
+                  "value": "{{professor_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Vincular professor a turma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/turmas",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "action",
+                  "value": "associate_teacher",
+                  "type": "text"
+                },
+                {
+                  "key": "professor_id",
+                  "value": "{{professor_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Vincular aluno a turma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/turmas",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "action",
+                  "value": "associate_student",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obter formulario e CSRF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
+                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Comunicado sem CSRF",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "Sem CSRF",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Bloqueada",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Comunicado vazio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Vazia",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: obrigatorios\", function () { pm.expect(pm.response.text()).to.include(\"obrigatorios\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Comunicado com titulo acima do limite",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Limite",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: 150\", function () { pm.expect(pm.response.text()).to.include(\"150\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publicar mensagem geral",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "Regressao {{run_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Texto integral para todos <script>alert(1)</script>",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mensagem publicada e escapada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });",
+                  "pm.test(\"Conteudo esperado: Comunicado do superperfil para todos\", function () { pm.expect(pm.response.text()).to.include(\"Comunicado do superperfil para todos\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Upload sem arquivo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/arquivos/upload",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Professor e regressao academica",
+      "item": [
+        {
+          "name": "Login professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"professor@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil professor\", function () { pm.expect(pm.response.json().role).to.eql(\"professor\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Painel professor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/professor"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWT professor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_professor}}"
+              }
+            ],
+            "url": "{{base_url}}/professor/teste"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Busca aluno com JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_professor}}"
+              }
+            ],
+            "url": "{{base_url}}/alunos/busca?termo=Aluno"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Alunos encontrados\", function () { pm.expect(pm.response.json().alunos.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Busca vazia",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_professor}}"
+              }
+            ],
+            "url": "{{base_url}}/alunos/busca"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor le mensagens",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor nao publica",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "Bloqueada",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Bloqueada",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor nao cria usuarios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/aluno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Bloqueado\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor nao acessa admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/dashboard"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lancar atividade",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/atividades/lancar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "titulo",
+                  "value": "Atividade API",
+                  "type": "text"
+                },
+                {
+                  "key": "descricao",
+                  "value": "Exercicios de regressao",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atividade em turma sem vinculo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/atividades/lancar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "999",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "titulo",
+                  "value": "Invalida",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: -1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "-1",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: 11",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "11",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: abc",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "abc",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: NaN",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "NaN",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: sNaN",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "sNaN",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nota invalida: Infinity",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "Infinity",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Salvar nota com virgula",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "8,5",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar nota",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "9",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno fora da turma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{outro_aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "9",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Aluno, leitura e bloqueios",
+      "item": [
+        {
+          "name": "Login aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Painel aluno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/aluno"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno ve disciplina e atividade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/aluno/disciplinas/{{disciplina_id}}"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Atividade API\", function () { pm.expect(pm.response.text()).to.include(\"Atividade API\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno le mensagens e tema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });",
+                  "pm.test(\"Conteudo esperado: #123456\", function () { pm.expect(pm.response.text()).to.include(\"#123456\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno nao publica",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/admin/comunicados",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "titulo",
+                  "value": "Bloqueada",
+                  "type": "text"
+                },
+                {
+                  "key": "mensagem",
+                  "value": "Bloqueada",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno nao cria usuarios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/aluno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Bloqueado\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno nao usa JWT de professor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_aluno}}"
+              }
+            ],
+            "url": "{{base_url}}/professor/teste"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno nao altera nota",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/professor/notas/salvar",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "turma_id",
+                  "value": "{{turma_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "disciplina_id",
+                  "value": "{{disciplina_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "aluno_id",
+                  "value": "{{aluno_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "nota",
+                  "value": "10",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno bloqueado: /super/usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno bloqueado: /super/layout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno bloqueado: /admin/dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/dashboard"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno bloqueado: /professor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/professor"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login outro_aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"outro_aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_outro_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Outro aluno nao ve disciplina",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/aluno/disciplinas/{{disciplina_id}}"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/logout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mensagens bloqueadas apos logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - Revogacao de permissoes e restauracao do tema",
+      "item": [
+        {
+          "name": "Login superadmin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"superadmin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil superadmin\", function () { pm.expect(pm.response.json().role).to.eql(\"superadmin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obter formulario e CSRF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
+                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor passa a aluno",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/{{professor_user_id}}/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "aluno",
+                  "type": "text"
+                },
+                {
+                  "key": "nome",
+                  "value": "Professor convertido",
+                  "type": "text"
+                },
+                {
+                  "key": "matricula",
+                  "value": "CONVERTIDO",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWT antigo perde permissao de professor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_professor}}"
+              }
+            ],
+            "url": "{{base_url}}/professor/teste"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Restaurar professor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/usuarios/{{professor_user_id}}/perfil",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "professor",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Restaurar cores padrao",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/super/layout",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "cor_fundo",
+                  "value": "#06385d",
+                  "type": "text"
+                },
+                {
+                  "key": "cor_destaque",
+                  "value": "#22d3ee",
+                  "type": "text"
+                },
+                {
+                  "key": "csrf_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Conferir cores restauradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/layout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: value=\\\"#06385d\\\"\", function () { pm.expect(pm.response.text()).to.include(\"value=\\\"#06385d\\\"\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Encerrar sessao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/logout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "csrf_token",
+      "value": ""
+    },
+    {
+      "key": "run_id",
+      "value": ""
+    }
+  ]
+}

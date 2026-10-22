@@ -1,0 +1,23 @@
+{% extends 'gestao_base.html' %}
+{% from 'partials/gestao_icons.html' import icon %}
+{% set page_title = 'Aparência' %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">A IDENTIDADE DA SUA ESCOLA</span><h1>Seu espaço, suas cores<span>.</span></h1><p>Personalize o ambiente que conecta toda a comunidade escolar.</p></div><span class="access-label">{{ icon('palette') }} Aparência do sistema</span></section>
+<div class="theme-layout">
+    <form method="post" class="panel settings-card" id="theme-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <h2>Cores do layout</h2><p>Escolha as cores de fundo e destaque para todos os usuários.</p>
+        <div class="theme-color-row"><label for="cor-fundo">Fundo do ambiente<small>A base visual dos painéis e da navegação.</small></label><input id="cor-fundo" type="color" name="cor_fundo" value="{{ tema.cor_fundo }}" required><input type="text" data-color-hex="cor_fundo" value="{{ tema.cor_fundo }}" aria-label="Código da cor de fundo" pattern="#[0-9a-fA-F]{6}" maxlength="7" required></div>
+        <div class="theme-color-row"><label for="cor-destaque">Cor de destaque<small>Botões, links e elementos selecionados.</small></label><input id="cor-destaque" type="color" name="cor_destaque" value="{{ tema.cor_destaque }}" required><input type="text" data-color-hex="cor_destaque" value="{{ tema.cor_destaque }}" aria-label="Código da cor de destaque" pattern="#[0-9a-fA-F]{6}" maxlength="7" required></div>
+        <div class="theme-presets"><p>Ou comece com uma combinação</p><div class="preset-list">
+            {% for name, bg, accent in [('Original','#06385d','#22d3ee'),('Noturno','#16132b','#b2a1ff'),('Floresta','#12372d','#6ee7b7')] %}<button type="button" class="theme-preset" data-theme-preset="{{ bg }},{{ accent }}"><span style="background:{{ accent }}"></span>{{ name }}</button>{% endfor %}
+        </div></div>
+        <footer class="settings-footer"><button type="reset" class="button button-secondary">Desfazer ajustes</button><button type="submit" class="button button-primary">{{ icon('check') }} Salvar cores</button></footer>
+    </form>
+    <section class="panel settings-card theme-preview-card" aria-label="Prévia das cores">
+        <div class="theme-preview-heading"><span>Veja como vai ficar</span><span class="preview-label">Prévia ao vivo</span></div>
+        <div class="theme-preview" data-theme-preview style="--preview-bg:{{ tema.cor_fundo }};--preview-accent:{{ tema.cor_destaque }}"><div class="preview-sidebar" aria-hidden="true"><div class="preview-logo">ef</div><span class="preview-line active"></span><span class="preview-line"></span><span class="preview-line"></span><span class="preview-line"></span></div><div class="preview-content"><h3>Minha escola</h3><p>Um lugar para aprender e se conectar.</p><div class="preview-stats" aria-hidden="true"><div class="preview-stat"><span></span><strong></strong></div><div class="preview-stat"><span></span><strong></strong></div><div class="preview-stat"><span></span><strong></strong></div></div><span class="preview-button">{{ icon('plus') }} Novo registro</span></div></div>
+        <p class="settings-hint">{{ icon('info') }} Salve para aplicar as cores. Os outros usuários verão a atualização ao recarregar a página.</p>
+    </section>
+</div>
+{% endblock %}

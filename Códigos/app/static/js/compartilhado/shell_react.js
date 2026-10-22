@@ -95,6 +95,9 @@
         tabs.forEach(function (tab) {
             const ativa = tab.dataset[config.chaveAba] === abaAtiva;
 
+            tab.classList.toggle("active", ativa);
+            tab.setAttribute("aria-pressed", String(ativa));
+
             tab.classList.toggle("bg-cyan-500/10", ativa);
             tab.classList.toggle("text-cyan-400", ativa);
             tab.classList.toggle("border", ativa);

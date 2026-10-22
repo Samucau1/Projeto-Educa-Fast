@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Educa Fast - API e regressao" tests="100" time="2.568">
+  <testsuite name="01 - Visitante e autenticacao / Inicio e identificador da execucao" id="191b8973-e128-478b-ba64-6558f1280eb9" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.054">
+    <testcase name="HTTP 200" time="0.054" classname="01VisitanteEAutenticacaoInicioEIdentificadorDaExecucao"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Visitante bloqueado: /mensagens" id="76e2960d-78cf-49b6-a52f-8c0d9833cd6c" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="01VisitanteEAutenticacaoVisitanteBloqueadoMensagens"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Visitante bloqueado: /admin/dashboard" id="a9b01aae-15a3-4861-9e1b-954ae0003393" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="01VisitanteEAutenticacaoVisitanteBloqueadoAdminDashboard"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Visitante bloqueado: /super/usuarios" id="4f391f97-958a-4ddd-823d-bf5c462f9436" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 403" time="0.004" classname="01VisitanteEAutenticacaoVisitanteBloqueadoSuperUsuarios"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Visitante bloqueado: /super/layout" id="66243fcd-da7c-47ac-874f-a27fd6b1046e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="01VisitanteEAutenticacaoVisitanteBloqueadoSuperLayout"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Cadastro publico bloqueado" id="ac8c66c7-9be1-470f-b90a-3f53b4da6215" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="01VisitanteEAutenticacaoCadastroPublicoBloqueado"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Login vazio" id="87fef783-bbce-44f1-8532-0896cce20923" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="01VisitanteEAutenticacaoLoginVazio"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Login array" id="a262c2e8-0787-4a11-bb2d-c4f7ed9efa6d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 400" time="0.006" classname="01VisitanteEAutenticacaoLoginArray"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Login numero" id="9aac0639-a087-4880-ba88-e5e0d9327322" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 400" time="0.007" classname="01VisitanteEAutenticacaoLoginNumero"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Login email invalido por tipo" id="4dce2ec9-bab9-462d-ba02-844a6627913e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 400" time="0.004" classname="01VisitanteEAutenticacaoLoginEmailInvalidoPorTipo"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Senha errada" id="d236546e-0701-4862-b185-ebb9befc5a6e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.129">
+    <testcase name="HTTP 401" time="0.129" classname="01VisitanteEAutenticacaoSenhaErrada"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / Usuario inexistente" id="ee3f7f67-093b-4ce3-b488-9553f135d47b" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 404" time="0.005" classname="01VisitanteEAutenticacaoUsuarioInexistente"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / JWT ausente" id="1fc1585f-c7fd-4c36-a0ce-f162137e6d7e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 401" time="0.004" classname="01VisitanteEAutenticacaoJwtAusente"/>
+  </testsuite>
+  <testsuite name="01 - Visitante e autenticacao / JWT adulterado" id="a66041c6-23cf-4837-b440-eea7de1c9c91" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 401" time="0.004" classname="01VisitanteEAutenticacaoJwtAdulterado"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Login superadmin" id="74e15339-ba82-49c3-8cec-0bc8c232f413" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.123">
+    <testcase name="HTTP 200" time="0.123" classname="02SuperperfilCadastroELayoutLoginSuperadmin"/>
+    <testcase name="Perfil superadmin" time="0.123" classname="02SuperperfilCadastroELayoutLoginSuperadmin"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Obter formulario e CSRF" id="fe4aaed7-5f3d-4578-bf28-903302b026f4" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.052">
+    <testcase name="HTTP 200" time="0.052" classname="02SuperperfilCadastroELayoutObterFormularioECsrf"/>
+    <testcase name="CSRF presente" time="0.052" classname="02SuperperfilCadastroELayoutObterFormularioECsrf"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Criar administrador" id="143e0a06-a94c-49e2-9447-fbf680c145f1" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.134">
+    <testcase name="HTTP 201" time="0.134" classname="02SuperperfilCadastroELayoutCriarAdministrador"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Criar aluno via API" id="56b4db79-ac1d-4ccb-9c19-7e9cda61e3b9" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.138">
+    <testcase name="HTTP 201" time="0.138" classname="02SuperperfilCadastroELayoutCriarAlunoViaApi"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Criar professor via API" id="bf0720b3-e1eb-4ed5-9db2-d52eea06747e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.132">
+    <testcase name="HTTP 201" time="0.132" classname="02SuperperfilCadastroELayoutCriarProfessorViaApi"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Email duplicado" id="11aba950-c742-4a59-972b-2bae3196cda4" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 409" time="0.005" classname="02SuperperfilCadastroELayoutEmailDuplicado"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Criar aluno sem matricula" id="4b437616-c82d-42f0-a39b-cf9b20c66d6a" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.125">
+    <testcase name="HTTP 400" time="0.125" classname="02SuperperfilCadastroELayoutCriarAlunoSemMatricula"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Criar professor sem CPF" id="6ab571f7-5fdc-486c-9897-e68445864c22" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.133">
+    <testcase name="HTTP 400" time="0.133" classname="02SuperperfilCadastroELayoutCriarProfessorSemCpf"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Superperfil nao pode ser criado por cadastro" id="5ec617c9-97ee-459c-871e-d07d24c46063" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="02SuperperfilCadastroELayoutSuperperfilNaoPodeSerCriadoPorCadastro"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Superperfil nao pode ser rebaixado" id="c5339fc6-a71f-4497-b4be-b51db759955e" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 403" time="0.006" classname="02SuperperfilCadastroELayoutSuperperfilNaoPodeSerRebaixado"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Usuario inexistente" id="569db7b0-68c7-44ca-9e0d-61c55f7b846d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 404" time="0.005" classname="02SuperperfilCadastroELayoutUsuarioInexistente"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Atribuir professor sem dados obrigatorios" id="fad245a7-5d08-41f2-b528-def42251e972" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP 400" time="0.012" classname="02SuperperfilCadastroELayoutAtribuirProfessorSemDadosObrigatorios"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Atribuir professor" id="73b9ea93-2b0e-4a03-af37-8ebb4ee8070c" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.015">
+    <testcase name="HTTP 302" time="0.015" classname="02SuperperfilCadastroELayoutAtribuirProfessor"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Obter formulario e CSRF" id="b1a6861b-d48c-47aa-bfbd-5b8a81c1b57b" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 200" time="0.007" classname="02SuperperfilCadastroELayoutObterFormularioECsrf"/>
+    <testcase name="CSRF presente" time="0.007" classname="02SuperperfilCadastroELayoutObterFormularioECsrf"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Cores sem CSRF" id="1ea5ab64-4afa-48be-8d85-74d770300336" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="02SuperperfilCadastroELayoutCoresSemCsrf"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Salvar cores" id="06104e8e-0ea7-4f70-abc0-12a463fe9d98" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 302" time="0.013" classname="02SuperperfilCadastroELayoutSalvarCores"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Cores persistidas" id="9e973866-26fb-4ade-9394-5fd2fcc08dfc" timestamp="2026-10-22T21:29:41.978Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 200" time="0.004" classname="02SuperperfilCadastroELayoutCoresPersistidas"/>
+    <testcase name="Conteudo esperado: #123456" time="0.004" classname="02SuperperfilCadastroELayoutCoresPersistidas"/>
+    <testcase name="Conteudo esperado: #abcdef" time="0.004" classname="02SuperperfilCadastroELayoutCoresPersistidas"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Cor invalida rejeitada" id="a8cbf6dc-21dc-4d64-9fbc-ddf9345326e0" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 200" time="0.005" classname="02SuperperfilCadastroELayoutCorInvalidaRejeitada"/>
+    <testcase name="Conteudo esperado: #RRGGBB" time="0.005" classname="02SuperperfilCadastroELayoutCorInvalidaRejeitada"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Cor anterior preservada" id="06951d28-9b6e-4334-9880-34a1500560b6" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 200" time="0.004" classname="02SuperperfilCadastroELayoutCorAnteriorPreservada"/>
+    <testcase name="Conteudo esperado: value=&quot;#123456&quot;" time="0.004" classname="02SuperperfilCadastroELayoutCorAnteriorPreservada"/>
+  </testsuite>
+  <testsuite name="02 - Superperfil, cadastro e layout / Comunicado do superperfil" id="d9cffe1e-33ea-4576-9e46-580d21d58ae3" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 302" time="0.013" classname="02SuperperfilCadastroELayoutComunicadoDoSuperperfil"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Login admin" id="be1bc6f7-5b67-451c-8af9-d01eb08d6c6f" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.139">
+    <testcase name="HTTP 200" time="0.139" classname="03AdminTurmasEComunicadosLoginAdmin"/>
+    <testcase name="Perfil admin" time="0.139" classname="03AdminTurmasEComunicadosLoginAdmin"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/dashboard" id="8fc28e94-0bec-479b-a1b5-3154ce759957" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.022">
+    <testcase name="HTTP 200" time="0.022" classname="03AdminTurmasEComunicadosTelaAdminDashboard"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/cadastro-alunos" id="73994e3b-cb80-4b97-8b98-a2ee5816076b" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.074">
+    <testcase name="HTTP 200" time="0.074" classname="03AdminTurmasEComunicadosTelaAdminCadastroAlunos"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/cadastro-professores" id="14f7caa7-6ed3-4a4b-9b64-7547be59cd91" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.026">
+    <testcase name="HTTP 200" time="0.026" classname="03AdminTurmasEComunicadosTelaAdminCadastroProfessores"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/banco-de-dados" id="79a0d2f3-c702-444b-9a4e-f6fb0ee93cc5" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.041">
+    <testcase name="HTTP 200" time="0.041" classname="03AdminTurmasEComunicadosTelaAdminBancoDeDados"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/disciplinas" id="eae34756-5a4d-45d1-87a9-ec7b1719fb4d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.037">
+    <testcase name="HTTP 200" time="0.037" classname="03AdminTurmasEComunicadosTelaAdminDisciplinas"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Tela /admin/turmas" id="662d84fd-ee6a-4626-af43-b6902e56ff0f" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.058">
+    <testcase name="HTTP 200" time="0.058" classname="03AdminTurmasEComunicadosTelaAdminTurmas"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Admin nao cria outro admin" id="a1764fe6-cfe4-4468-b194-4afa060d01d0" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 403" time="0.004" classname="03AdminTurmasEComunicadosAdminNaoCriaOutroAdmin"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Admin sem acesso ao superperfil" id="7b30fab7-d634-4b11-8ce3-feee19dcd3be" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="03AdminTurmasEComunicadosAdminSemAcessoAoSuperperfil"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Admin sem acesso ao layout" id="d90ccdf3-4cab-44db-9de9-3b625a121e51" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 403" time="0.004" classname="03AdminTurmasEComunicadosAdminSemAcessoAoLayout"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Criar disciplina" id="ece98c1c-eac4-4955-94fe-ff1c058cf2f5" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 302" time="0.013" classname="03AdminTurmasEComunicadosCriarDisciplina"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Criar turma" id="d061a496-ffb8-4d61-887e-1dcc07f4d1f3" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 302" time="0.011" classname="03AdminTurmasEComunicadosCriarTurma"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Vincular professor a disciplina" id="4f368cdf-25a0-483b-a0ac-8f3484f48b15" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.015">
+    <testcase name="HTTP 302" time="0.015" classname="03AdminTurmasEComunicadosVincularProfessorADisciplina"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Vincular professor a turma" id="7e9db8c2-d6af-463f-92c9-1f2906f350fa" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.014">
+    <testcase name="HTTP 302" time="0.014" classname="03AdminTurmasEComunicadosVincularProfessorATurma"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Vincular aluno a turma" id="ddfaab51-112f-4fcc-98c6-dc46256064c5" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.014">
+    <testcase name="HTTP 302" time="0.014" classname="03AdminTurmasEComunicadosVincularAlunoATurma"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Obter formulario e CSRF" id="1126fbd0-5e31-4c5c-ae28-137faf6f9794" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 200" time="0.013" classname="03AdminTurmasEComunicadosObterFormularioECsrf"/>
+    <testcase name="CSRF presente" time="0.013" classname="03AdminTurmasEComunicadosObterFormularioECsrf"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Comunicado sem CSRF" id="e33c2b5b-1461-478f-900b-c21e54549fd2" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 400" time="0.004" classname="03AdminTurmasEComunicadosComunicadoSemCsrf"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Comunicado vazio" id="38758bfb-4302-41ed-ad6e-ee64c4c22dab" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 200" time="0.007" classname="03AdminTurmasEComunicadosComunicadoVazio"/>
+    <testcase name="Conteudo esperado: obrigatorios" time="0.007" classname="03AdminTurmasEComunicadosComunicadoVazio"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Comunicado com titulo acima do limite" id="e430a563-fae4-4bf6-87a5-2b3ff26438c3" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 200" time="0.006" classname="03AdminTurmasEComunicadosComunicadoComTituloAcimaDoLimite"/>
+    <testcase name="Conteudo esperado: 150" time="0.006" classname="03AdminTurmasEComunicadosComunicadoComTituloAcimaDoLimite"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Publicar mensagem geral" id="0649ad26-3454-42e5-94e6-4ea2d9495b1d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP 302" time="0.012" classname="03AdminTurmasEComunicadosPublicarMensagemGeral"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Mensagem publicada e escapada" id="436629fb-f3cd-4e06-bbce-417c14763cd5" timestamp="2026-10-22T21:29:41.978Z" tests="3" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 200" time="0.007" classname="03AdminTurmasEComunicadosMensagemPublicadaEEscapada"/>
+    <testcase name="Conteudo esperado: Texto integral para todos &amp;lt;script&amp;gt;" time="0.007" classname="03AdminTurmasEComunicadosMensagemPublicadaEEscapada"/>
+    <testcase name="Conteudo esperado: Comunicado do superperfil para todos" time="0.007" classname="03AdminTurmasEComunicadosMensagemPublicadaEEscapada"/>
+  </testsuite>
+  <testsuite name="03 - Admin, turmas e comunicados / Upload sem arquivo" id="c5a83e73-af92-4a63-a99e-f530472ac8a8" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 400" time="0.006" classname="03AdminTurmasEComunicadosUploadSemArquivo"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Login professor" id="ec52993c-2608-4f69-83a7-754031a9b431" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.131">
+    <testcase name="HTTP 200" time="0.131" classname="04ProfessorERegressaoAcademicaLoginProfessor"/>
+    <testcase name="Perfil professor" time="0.131" classname="04ProfessorERegressaoAcademicaLoginProfessor"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Painel professor" id="39f548df-b8cc-487f-b1f3-62f202487e21" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.045">
+    <testcase name="HTTP 200" time="0.045" classname="04ProfessorERegressaoAcademicaPainelProfessor"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / JWT professor" id="ae5e102b-1d9a-4a74-973d-ee653455bb2c" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 200" time="0.005" classname="04ProfessorERegressaoAcademicaJwtProfessor"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Busca aluno com JWT" id="81ba9596-a3ec-4a55-a406-6aae2ef4539b" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP 200" time="0.008" classname="04ProfessorERegressaoAcademicaBuscaAlunoComJwt"/>
+    <testcase name="Alunos encontrados" time="0.008" classname="04ProfessorERegressaoAcademicaBuscaAlunoComJwt"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Busca vazia" id="efa7d2cd-0df4-47e3-a3e7-fc173d396b42" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="04ProfessorERegressaoAcademicaBuscaVazia"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Professor le mensagens" id="3b3dc9aa-0287-4b64-a915-30ba27990613" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP 200" time="0.009" classname="04ProfessorERegressaoAcademicaProfessorLeMensagens"/>
+    <testcase name="Conteudo esperado: Texto integral para todos &amp;lt;script&amp;gt;" time="0.009" classname="04ProfessorERegressaoAcademicaProfessorLeMensagens"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Professor nao publica" id="6ed1f8dd-f63e-444f-b536-ac3f457a2ef6" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="04ProfessorERegressaoAcademicaProfessorNaoPublica"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Professor nao cria usuarios" id="539494d3-1040-4738-b7cb-bc833c542c48" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="04ProfessorERegressaoAcademicaProfessorNaoCriaUsuarios"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Professor nao acessa admin" id="2cb90673-6b30-440e-95be-428002bda245" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="04ProfessorERegressaoAcademicaProfessorNaoAcessaAdmin"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Lancar atividade" id="13e7aff6-7e18-4429-8958-904eb4abb2f0" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP 302" time="0.012" classname="04ProfessorERegressaoAcademicaLancarAtividade"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Atividade em turma sem vinculo" id="b503ec96-44c8-4651-a16a-f7df7152e854" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.010">
+    <testcase name="HTTP 403" time="0.010" classname="04ProfessorERegressaoAcademicaAtividadeEmTurmaSemVinculo"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: -1" id="278fafae-ab5a-400e-a9ee-4db8a3958c70" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP 400" time="0.009" classname="04ProfessorERegressaoAcademicaNotaInvalida1"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: 11" id="ddc1ed2b-baf2-4a6a-b8db-b03a7234837d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 400" time="0.004" classname="04ProfessorERegressaoAcademicaNotaInvalida11"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: abc" id="b73eee2f-3312-4041-9b5e-a58905ba684a" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 400" time="0.004" classname="04ProfessorERegressaoAcademicaNotaInvalidaAbc"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: NaN" id="cf709c26-521a-42b5-985e-cce3e8f114cb" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="04ProfessorERegressaoAcademicaNotaInvalidaNaN"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: sNaN" id="5d4d53fd-a51a-4f80-80ef-8b6c31067dbc" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="04ProfessorERegressaoAcademicaNotaInvalidaSNaN"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Nota invalida: Infinity" id="92fba809-4bcb-4428-9e98-bdfc330b4470" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 400" time="0.005" classname="04ProfessorERegressaoAcademicaNotaInvalidaInfinity"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Salvar nota com virgula" id="c033b148-10ad-49c2-8014-7ff9584057e8" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.016">
+    <testcase name="HTTP 302" time="0.016" classname="04ProfessorERegressaoAcademicaSalvarNotaComVirgula"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Atualizar nota" id="0ab80140-bf77-4aeb-8658-c64dd2e7b15c" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.018">
+    <testcase name="HTTP 302" time="0.018" classname="04ProfessorERegressaoAcademicaAtualizarNota"/>
+  </testsuite>
+  <testsuite name="04 - Professor e regressao academica / Aluno fora da turma" id="1cdd8cf2-1187-4b87-97bf-50daad0ff887" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP 403" time="0.012" classname="04ProfessorERegressaoAcademicaAlunoForaDaTurma"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Login aluno" id="ca7e509a-3f0e-4a93-9017-82e137973445" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.123">
+    <testcase name="HTTP 200" time="0.123" classname="05AlunoLeituraEBloqueiosLoginAluno"/>
+    <testcase name="Perfil aluno" time="0.123" classname="05AlunoLeituraEBloqueiosLoginAluno"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Painel aluno" id="8c9cb3e5-bb5e-40c2-b361-8d6b13d06d33" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.025">
+    <testcase name="HTTP 200" time="0.025" classname="05AlunoLeituraEBloqueiosPainelAluno"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno ve disciplina e atividade" id="bfad20c8-f63f-4dc2-b23d-23c58baca70e" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.020">
+    <testcase name="HTTP 200" time="0.020" classname="05AlunoLeituraEBloqueiosAlunoVeDisciplinaEAtividade"/>
+    <testcase name="Conteudo esperado: Atividade API" time="0.020" classname="05AlunoLeituraEBloqueiosAlunoVeDisciplinaEAtividade"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno le mensagens e tema" id="fbedf39b-b678-4e49-b282-d5b1f40acb69" timestamp="2026-10-22T21:29:41.978Z" tests="3" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP 200" time="0.008" classname="05AlunoLeituraEBloqueiosAlunoLeMensagensETema"/>
+    <testcase name="Conteudo esperado: Texto integral para todos &amp;lt;script&amp;gt;" time="0.008" classname="05AlunoLeituraEBloqueiosAlunoLeMensagensETema"/>
+    <testcase name="Conteudo esperado: #123456" time="0.008" classname="05AlunoLeituraEBloqueiosAlunoLeMensagensETema"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno nao publica" id="99503e77-6619-49fd-b1b1-5d69e2f8e532" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 403" time="0.006" classname="05AlunoLeituraEBloqueiosAlunoNaoPublica"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno nao cria usuarios" id="a1aab1ef-7a91-43b4-9e9a-137a6ca5ad8d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosAlunoNaoCriaUsuarios"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno nao usa JWT de professor" id="1ed9cdfd-6dcd-4866-a9f1-ed58f0a2cbc6" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosAlunoNaoUsaJwtDeProfessor"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno nao altera nota" id="2bb1d93e-243c-4b3c-8410-90f3ef8c66dc" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosAlunoNaoAlteraNota"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno bloqueado: /super/usuarios" id="f5dff034-8f60-4630-87bf-dbce4bf13f43" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosAlunoBloqueadoSuperUsuarios"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno bloqueado: /super/layout" id="e251027f-5667-4e77-90b0-98f66198dee8" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP 403" time="0.004" classname="05AlunoLeituraEBloqueiosAlunoBloqueadoSuperLayout"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno bloqueado: /admin/dashboard" id="9c7a39b4-6dea-4e9f-97f5-9a41365760a5" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 403" time="0.006" classname="05AlunoLeituraEBloqueiosAlunoBloqueadoAdminDashboard"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Aluno bloqueado: /professor" id="0e90d0ae-32d1-493a-9b1b-b300082170bc" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosAlunoBloqueadoProfessor"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Login outro_aluno" id="d7ca463b-d058-4c19-97cc-563be879bdc2" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.131">
+    <testcase name="HTTP 200" time="0.131" classname="05AlunoLeituraEBloqueiosLoginOutroAluno"/>
+    <testcase name="Perfil aluno" time="0.131" classname="05AlunoLeituraEBloqueiosLoginOutroAluno"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Outro aluno nao ve disciplina" id="0e983a44-8d6b-42a4-ad1f-46809668d9a2" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 404" time="0.007" classname="05AlunoLeituraEBloqueiosOutroAlunoNaoVeDisciplina"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Logout" id="3ec16a18-1294-4428-8e92-f40ee6a7e3bc" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 302" time="0.007" classname="05AlunoLeituraEBloqueiosLogout"/>
+  </testsuite>
+  <testsuite name="05 - Aluno, leitura e bloqueios / Mensagens bloqueadas apos logout" id="0d43437d-14a5-4331-9cbb-5c4e4559dd4d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 403" time="0.005" classname="05AlunoLeituraEBloqueiosMensagensBloqueadasAposLogout"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Login superadmin" id="92996a61-2d52-4619-908d-31abf56c0a51" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.111">
+    <testcase name="HTTP 200" time="0.111" classname="06RevogacaoDePermissoesERestauracaoDoTemaLoginSuperadmin"/>
+    <testcase name="Perfil superadmin" time="0.111" classname="06RevogacaoDePermissoesERestauracaoDoTemaLoginSuperadmin"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Obter formulario e CSRF" id="704a17ba-4852-458e-9c04-102c7c7d9c94" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.010">
+    <testcase name="HTTP 200" time="0.010" classname="06RevogacaoDePermissoesERestauracaoDoTemaObterFormularioECsrf"/>
+    <testcase name="CSRF presente" time="0.010" classname="06RevogacaoDePermissoesERestauracaoDoTemaObterFormularioECsrf"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Professor passa a aluno" id="c9d8f4cf-a544-4951-99d4-879438fd0d00" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 302" time="0.013" classname="06RevogacaoDePermissoesERestauracaoDoTemaProfessorPassaAAluno"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / JWT antigo perde permissao de professor" id="83527949-7a52-4b4e-ac0d-e33c7a34634d" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP 403" time="0.006" classname="06RevogacaoDePermissoesERestauracaoDoTemaJwtAntigoPerdePermissaoDeProfessor"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Restaurar professor" id="fb7165fa-6d46-45e2-98cf-796cc3ee463b" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP 302" time="0.012" classname="06RevogacaoDePermissoesERestauracaoDoTemaRestaurarProfessor"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Restaurar cores padrao" id="f7e90103-4aae-45ba-8ecc-55edb12d9741" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 302" time="0.011" classname="06RevogacaoDePermissoesERestauracaoDoTemaRestaurarCoresPadrao"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Conferir cores restauradas" id="af2bb477-58cf-4eaa-b380-895058d99298" timestamp="2026-10-22T21:29:41.978Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 200" time="0.005" classname="06RevogacaoDePermissoesERestauracaoDoTemaConferirCoresRestauradas"/>
+    <testcase name="Conteudo esperado: value=&quot;#06385d&quot;" time="0.005" classname="06RevogacaoDePermissoesERestauracaoDoTemaConferirCoresRestauradas"/>
+  </testsuite>
+  <testsuite name="06 - Revogacao de permissoes e restauracao do tema / Encerrar sessao" id="4fc9415e-7c3c-4192-b36c-a477769bdc8b" timestamp="2026-10-22T21:29:41.978Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP 302" time="0.005" classname="06RevogacaoDePermissoesERestauracaoDoTemaEncerrarSessao"/>
+  </testsuite>
+</testsuites>

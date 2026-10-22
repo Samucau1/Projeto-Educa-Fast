@@ -1,0 +1,453 @@
+newman
+
+Educa Fast - API e regressao
+
+□ 01 - Visitante e autenticacao
+└ Inicio e identificador da execucao
+  GET http://127.0.0.1:57435/ [200 OK, 2.7kB, 54ms]
+  √  HTTP 200
+
+└ Visitante bloqueado: /mensagens
+  GET http://127.0.0.1:57435/mensagens [403 FORBIDDEN, 408B, 5ms]
+  √  HTTP 403
+
+└ Visitante bloqueado: /admin/dashboard
+  GET http://127.0.0.1:57435/admin/dashboard [403 FORBIDDEN, 408B, 5ms]
+  √  HTTP 403
+
+└ Visitante bloqueado: /super/usuarios
+  GET http://127.0.0.1:57435/super/usuarios [403 FORBIDDEN, 408B, 4ms]
+  √  HTTP 403
+
+└ Visitante bloqueado: /super/layout
+  GET http://127.0.0.1:57435/super/layout [403 FORBIDDEN, 408B, 5ms]
+  √  HTTP 403
+
+└ Cadastro publico bloqueado
+  POST http://127.0.0.1:57435/cadastro [403 FORBIDDEN, 242B, 5ms]
+  √  HTTP 403
+
+└ Login vazio
+  POST http://127.0.0.1:57435/login [400 BAD REQUEST, 220B, 5ms]
+  √  HTTP 400
+
+└ Login array
+  POST http://127.0.0.1:57435/login [400 BAD REQUEST, 220B, 6ms]
+  √  HTTP 400
+
+└ Login numero
+  POST http://127.0.0.1:57435/login [400 BAD REQUEST, 220B, 7ms]
+  √  HTTP 400
+
+└ Login email invalido por tipo
+  POST http://127.0.0.1:57435/login [400 BAD REQUEST, 231B, 4ms]
+  √  HTTP 400
+
+└ Senha errada
+  POST http://127.0.0.1:57435/login [401 UNAUTHORIZED, 215B, 129ms]
+  √  HTTP 401
+
+└ Usuario inexistente
+  POST http://127.0.0.1:57435/login [404 NOT FOUND, 220B, 5ms]
+  √  HTTP 404
+
+└ JWT ausente
+  GET http://127.0.0.1:57435/professor/teste [401 UNAUTHORIZED, 224B, 4ms]
+  √  HTTP 401
+
+└ JWT adulterado
+  GET http://127.0.0.1:57435/professor/teste [401 UNAUTHORIZED, 219B, 4ms]
+  √  HTTP 401
+
+□ 02 - Superperfil, cadastro e layout
+└ Login superadmin
+  POST http://127.0.0.1:57435/login [200 OK, 732B, 123ms]
+  √  HTTP 200
+  √  Perfil superadmin
+
+└ Obter formulario e CSRF
+  GET http://127.0.0.1:57435/super/usuarios [200 OK, 34.46kB, 52ms]
+  √  HTTP 200
+  √  CSRF presente
+
+└ Criar administrador
+  POST http://127.0.0.1:57435/cadastro [201 CREATED, 508B, 134ms]
+  √  HTTP 201
+
+└ Criar aluno via API
+  POST http://127.0.0.1:57435/cadastro/aluno [201 CREATED, 508B, 138ms]
+  √  HTTP 201
+
+└ Criar professor via API
+  POST http://127.0.0.1:57435/cadastro/professor [201 CREATED, 515B, 132ms]
+  √  HTTP 201
+
+└ Email duplicado
+  POST http://127.0.0.1:57435/cadastro [409 CONFLICT, 460B, 5ms]
+  √  HTTP 409
+
+└ Criar aluno sem matricula
+  POST http://127.0.0.1:57435/cadastro/aluno [400 BAD REQUEST, 477B, 125ms]
+  √  HTTP 400
+
+└ Criar professor sem CPF
+  POST http://127.0.0.1:57435/cadastro/professor [400 BAD REQUEST, 475B, 133ms]
+  √  HTTP 400
+
+└ Superperfil nao pode ser criado por cadastro
+  POST http://127.0.0.1:57435/cadastro [400 BAD REQUEST, 493B, 5ms]
+  √  HTTP 400
+
+└ Superperfil nao pode ser rebaixado
+  POST http://127.0.0.1:57435/super/usuarios/1/perfil [403 FORBIDDEN, 651B, 6ms]
+  √  HTTP 403
+
+└ Usuario inexistente
+  POST http://127.0.0.1:57435/super/usuarios/999999/perfil [404 NOT FOUND, 645B, 5ms]
+  √  HTTP 404
+
+└ Atribuir professor sem dados obrigatorios
+  POST http://127.0.0.1:57435/super/usuarios/6/perfil [400 BAD REQUEST, 38.3kB, 12ms]
+  √  HTTP 400
+
+└ Atribuir professor
+  POST http://127.0.0.1:57435/super/usuarios/6/perfil [302 FOUND, 777B, 15ms]
+  √  HTTP 302
+
+└ Obter formulario e CSRF
+  GET http://127.0.0.1:57435/super/layout [200 OK, 2.37kB, 7ms]
+  √  HTTP 200
+  √  CSRF presente
+
+└ Cores sem CSRF
+  POST http://127.0.0.1:57435/super/layout [400 BAD REQUEST, 673B, 5ms]
+  √  HTTP 400
+
+└ Salvar cores
+  POST http://127.0.0.1:57435/super/layout [302 FOUND, 771B, 13ms]
+  √  HTTP 302
+
+└ Cores persistidas
+  GET http://127.0.0.1:57435/super/layout [200 OK, 2.37kB, 4ms]
+  √  HTTP 200
+  √  Conteudo esperado: #123456
+  √  Conteudo esperado: #abcdef
+
+└ Cor invalida rejeitada
+  POST http://127.0.0.1:57435/super/layout [200 OK, 2.43kB, 5ms]
+  √  HTTP 200
+  √  Conteudo esperado: #RRGGBB
+
+└ Cor anterior preservada
+  GET http://127.0.0.1:57435/super/layout [200 OK, 2.37kB, 4ms]
+  √  HTTP 200
+  √  Conteudo esperado: value="#123456"
+
+└ Comunicado do superperfil
+  POST http://127.0.0.1:57435/admin/comunicados [302 FOUND, 801B, 13ms]
+  √  HTTP 302
+
+□ 03 - Admin, turmas e comunicados
+└ Login admin
+  POST http://127.0.0.1:57435/login [200 OK, 788B, 139ms]
+  √  HTTP 200
+  √  Perfil admin
+
+└ Tela /admin/dashboard
+  GET http://127.0.0.1:57435/admin/dashboard [200 OK, 11.23kB, 22ms]
+  √  HTTP 200
+
+└ Tela /admin/cadastro-alunos
+  GET http://127.0.0.1:57435/admin/cadastro-alunos [200 OK, 12.47kB, 74ms]
+  √  HTTP 200
+
+└ Tela /admin/cadastro-professores
+  GET http://127.0.0.1:57435/admin/cadastro-professores [200 OK, 12.77kB, 26ms]
+  √  HTTP 200
+
+└ Tela /admin/banco-de-dados
+  GET http://127.0.0.1:57435/admin/banco-de-dados [200 OK, 15.46kB, 41ms]
+  √  HTTP 200
+
+└ Tela /admin/disciplinas
+  GET http://127.0.0.1:57435/admin/disciplinas [200 OK, 9.67kB, 37ms]
+  √  HTTP 200
+
+└ Tela /admin/turmas
+  GET http://127.0.0.1:57435/admin/turmas [200 OK, 12.32kB, 58ms]
+  √  HTTP 200
+
+└ Admin nao cria outro admin
+  POST http://127.0.0.1:57435/cadastro [403 FORBIDDEN, 579B, 4ms]
+  √  HTTP 403
+
+└ Admin sem acesso ao superperfil
+  GET http://127.0.0.1:57435/super/usuarios [403 FORBIDDEN, 742B, 5ms]
+  √  HTTP 403
+
+└ Admin sem acesso ao layout
+  GET http://127.0.0.1:57435/super/layout [403 FORBIDDEN, 742B, 4ms]
+  √  HTTP 403
+
+└ Criar disciplina
+  POST http://127.0.0.1:57435/admin/disciplinas [302 FOUND, 793B, 13ms]
+  √  HTTP 302
+
+└ Criar turma
+  POST http://127.0.0.1:57435/admin/turmas [302 FOUND, 778B, 11ms]
+  √  HTTP 302
+
+└ Vincular professor a disciplina
+  POST http://127.0.0.1:57435/admin/disciplinas [302 FOUND, 793B, 15ms]
+  √  HTTP 302
+
+└ Vincular professor a turma
+  POST http://127.0.0.1:57435/admin/turmas [302 FOUND, 778B, 14ms]
+  √  HTTP 302
+
+└ Vincular aluno a turma
+  POST http://127.0.0.1:57435/admin/turmas [302 FOUND, 778B, 14ms]
+  √  HTTP 302
+
+└ Obter formulario e CSRF
+  GET http://127.0.0.1:57435/admin/comunicados [200 OK, 7.44kB, 13ms]
+  √  HTTP 200
+  √  CSRF presente
+
+└ Comunicado sem CSRF
+  POST http://127.0.0.1:57435/admin/comunicados [400 BAD REQUEST, 665B, 4ms]
+  √  HTTP 400
+
+└ Comunicado vazio
+  POST http://127.0.0.1:57435/admin/comunicados [200 OK, 7.62kB, 7ms]
+  √  HTTP 200
+  √  Conteudo esperado: obrigatorios
+
+└ Comunicado com titulo acima do limite
+  POST http://127.0.0.1:57435/admin/comunicados [200 OK, 7.64kB, 6ms]
+  √  HTTP 200
+  √  Conteudo esperado: 150
+
+└ Publicar mensagem geral
+  POST http://127.0.0.1:57435/admin/comunicados [302 FOUND, 793B, 12ms]
+  √  HTTP 302
+
+└ Mensagem publicada e escapada
+  GET http://127.0.0.1:57435/mensagens [200 OK, 2.22kB, 7ms]
+  √  HTTP 200
+  √  Conteudo esperado: Texto integral para todos &lt;script&gt;
+  √  Conteudo esperado: Comunicado do superperfil para todos
+
+└ Upload sem arquivo
+  POST http://127.0.0.1:57435/arquivos/upload [400 BAD REQUEST, 553B, 6ms]
+  √  HTTP 400
+
+□ 04 - Professor e regressao academica
+└ Login professor
+  POST http://127.0.0.1:57435/login [200 OK, 822B, 131ms]
+  √  HTTP 200
+  √  Perfil professor
+
+└ Painel professor
+  GET http://127.0.0.1:57435/professor [200 OK, 15.47kB, 45ms]
+  √  HTTP 200
+
+└ JWT professor
+  GET http://127.0.0.1:57435/professor/teste [200 OK, 566B, 5ms]
+  √  HTTP 200
+
+└ Busca aluno com JWT
+  GET http://127.0.0.1:57435/alunos/busca?termo=Aluno [200 OK, 864B, 8ms]
+  √  HTTP 200
+  √  Alunos encontrados
+
+└ Busca vazia
+  GET http://127.0.0.1:57435/alunos/busca [400 BAD REQUEST, 565B, 5ms]
+  √  HTTP 400
+
+└ Professor le mensagens
+  GET http://127.0.0.1:57435/mensagens [200 OK, 2.16kB, 9ms]
+  √  HTTP 200
+  √  Conteudo esperado: Texto integral para todos &lt;script&gt;
+
+└ Professor nao publica
+  POST http://127.0.0.1:57435/admin/comunicados [403 FORBIDDEN, 748B, 5ms]
+  √  HTTP 403
+
+└ Professor nao cria usuarios
+  POST http://127.0.0.1:57435/cadastro/aluno [403 FORBIDDEN, 582B, 5ms]
+  √  HTTP 403
+
+└ Professor nao acessa admin
+  GET http://127.0.0.1:57435/admin/dashboard [403 FORBIDDEN, 748B, 5ms]
+  √  HTTP 403
+
+└ Lancar atividade
+  POST http://127.0.0.1:57435/professor/atividades/lancar [302 FOUND, 790B, 12ms]
+  √  HTTP 302
+
+└ Atividade em turma sem vinculo
+  POST http://127.0.0.1:57435/professor/atividades/lancar [403 FORBIDDEN, 573B, 10ms]
+  √  HTTP 403
+
+└ Nota invalida: -1
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 568B, 9ms]
+  √  HTTP 400
+
+└ Nota invalida: 11
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 568B, 4ms]
+  √  HTTP 400
+
+└ Nota invalida: abc
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 553B, 4ms]
+  √  HTTP 400
+
+└ Nota invalida: NaN
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 568B, 5ms]
+  √  HTTP 400
+
+└ Nota invalida: sNaN
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 568B, 5ms]
+  √  HTTP 400
+
+└ Nota invalida: Infinity
+  POST http://127.0.0.1:57435/professor/notas/salvar [400 BAD REQUEST, 568B, 5ms]
+  √  HTTP 400
+
+└ Salvar nota com virgula
+  POST http://127.0.0.1:57435/professor/notas/salvar [302 FOUND, 790B, 16ms]
+  √  HTTP 302
+
+└ Atualizar nota
+  POST http://127.0.0.1:57435/professor/notas/salvar [302 FOUND, 790B, 18ms]
+  √  HTTP 302
+
+└ Aluno fora da turma
+  POST http://127.0.0.1:57435/professor/notas/salvar [403 FORBIDDEN, 569B, 12ms]
+  √  HTTP 403
+
+□ 05 - Aluno, leitura e bloqueios
+└ Login aluno
+  POST http://127.0.0.1:57435/login [200 OK, 789B, 123ms]
+  √  HTTP 200
+  √  Perfil aluno
+
+└ Painel aluno
+  GET http://127.0.0.1:57435/aluno [200 OK, 8.39kB, 25ms]
+  √  HTTP 200
+
+└ Aluno ve disciplina e atividade
+  GET http://127.0.0.1:57435/aluno/disciplinas/1 [200 OK, 5.33kB, 20ms]
+  √  HTTP 200
+  √  Conteudo esperado: Atividade API
+
+└ Aluno le mensagens e tema
+  GET http://127.0.0.1:57435/mensagens [200 OK, 2.15kB, 8ms]
+  √  HTTP 200
+  √  Conteudo esperado: Texto integral para todos &lt;script&gt;
+  √  Conteudo esperado: #123456
+
+└ Aluno nao publica
+  POST http://127.0.0.1:57435/admin/comunicados [403 FORBIDDEN, 743B, 6ms]
+  √  HTTP 403
+
+└ Aluno nao cria usuarios
+  POST http://127.0.0.1:57435/cadastro/aluno [403 FORBIDDEN, 577B, 5ms]
+  √  HTTP 403
+
+└ Aluno nao usa JWT de professor
+  GET http://127.0.0.1:57435/professor/teste [403 FORBIDDEN, 573B, 5ms]
+  √  HTTP 403
+
+└ Aluno nao altera nota
+  POST http://127.0.0.1:57435/professor/notas/salvar [403 FORBIDDEN, 743B, 5ms]
+  √  HTTP 403
+
+└ Aluno bloqueado: /super/usuarios
+  GET http://127.0.0.1:57435/super/usuarios [403 FORBIDDEN, 743B, 5ms]
+  √  HTTP 403
+
+└ Aluno bloqueado: /super/layout
+  GET http://127.0.0.1:57435/super/layout [403 FORBIDDEN, 743B, 4ms]
+  √  HTTP 403
+
+└ Aluno bloqueado: /admin/dashboard
+  GET http://127.0.0.1:57435/admin/dashboard [403 FORBIDDEN, 743B, 6ms]
+  √  HTTP 403
+
+└ Aluno bloqueado: /professor
+  GET http://127.0.0.1:57435/professor [403 FORBIDDEN, 743B, 5ms]
+  √  HTTP 403
+
+└ Login outro_aluno
+  POST http://127.0.0.1:57435/login [200 OK, 810B, 131ms]
+  √  HTTP 200
+  √  Perfil aluno
+
+└ Outro aluno nao ve disciplina
+  GET http://127.0.0.1:57435/aluno/disciplinas/1 [404 NOT FOUND, 744B, 7ms]
+  √  HTTP 404
+
+└ Logout
+  GET http://127.0.0.1:57435/logout [302 FOUND, 483B, 7ms]
+  √  HTTP 302
+
+└ Mensagens bloqueadas apos logout
+  GET http://127.0.0.1:57435/mensagens [403 FORBIDDEN, 590B, 5ms]
+  √  HTTP 403
+
+□ 06 - Revogacao de permissoes e restauracao do tema
+└ Login superadmin
+  POST http://127.0.0.1:57435/login [200 OK, 733B, 111ms]
+  √  HTTP 200
+  √  Perfil superadmin
+
+└ Obter formulario e CSRF
+  GET http://127.0.0.1:57435/super/usuarios [200 OK, 37.8kB, 10ms]
+  √  HTTP 200
+  √  CSRF presente
+
+└ Professor passa a aluno
+  POST http://127.0.0.1:57435/super/usuarios/3/perfil [302 FOUND, 779B, 13ms]
+  √  HTTP 302
+
+└ JWT antigo perde permissao de professor
+  GET http://127.0.0.1:57435/professor/teste [403 FORBIDDEN, 582B, 6ms]
+  √  HTTP 403
+
+└ Restaurar professor
+  POST http://127.0.0.1:57435/super/usuarios/3/perfil [302 FOUND, 786B, 12ms]
+  √  HTTP 302
+
+└ Restaurar cores padrao
+  POST http://127.0.0.1:57435/super/layout [302 FOUND, 780B, 11ms]
+  √  HTTP 302
+
+└ Conferir cores restauradas
+  GET http://127.0.0.1:57435/super/layout [200 OK, 2.38kB, 5ms]
+  √  HTTP 200
+  √  Conteudo esperado: value="#06385d"
+
+└ Encerrar sessao
+  GET http://127.0.0.1:57435/logout [302 FOUND, 483B, 5ms]
+  √  HTTP 302
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │               100 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │               100 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 0 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │               124 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 10.5s                                      │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 256.69kB (approx)                         │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 25ms [min: 4ms, max: 139ms, s.d.: 40ms] │
+└────────────────────────────────────────────────────────────────┘

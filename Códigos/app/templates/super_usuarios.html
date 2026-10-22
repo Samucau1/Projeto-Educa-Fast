@@ -1,0 +1,104 @@
+{% set page_title = 'Usuários e permissões' %}
+{% from 'partials/gestao_icons.html' import icon %}
+{% set perfis = {'superadmin': 'Superperfil', 'admin': 'Administrador', 'professor': 'Professor', 'aluno': 'Aluno'} %}
+{% macro role_options(selected='aluno') %}
+<div class="role-options" role="group" aria-label="Perfil de acesso">
+    {% for role, symbol, description in [('aluno','cap','Consulta e aprendizado'), ('professor','book','Atividades e notas'), ('admin','shield','Gestão da escola')] %}
+    <label class="role-option"><input type="radio" name="tipo" value="{{ role }}" {% if role == selected %}checked{% endif %}>{{ icon(symbol) }}<strong>{{ perfis[role] }}</strong><span>{{ description }}</span><span class="role-check">{{ icon('check') }}</span></label>
+    {% endfor %}
+</div>
+{% endmacro %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Usuários e permissões | Educa Fast</title>
+    {% include 'partials/workspace_head.html' %}
+    <script src="{{ url_for('static', filename='js/paginas/super_usuarios.js') }}" defer></script>
+</head>
+<body class="app-page users-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    {% include 'partials/workspace_sidebar.html' %}
+    <div class="workspace-main">
+        {% include 'partials/workspace_topbar.html' %}
+        <main id="main-content">
+            <section class="page-heading"><div><span class="eyebrow">PESSOAS & ACESSOS</span><h1>Usuários e permissões<span>.</span></h1><p>As pessoas certas, com os acessos certos. Tudo em um só lugar.</p></div><button class="button button-primary" type="button" data-open-create>{{ icon('plus') }} Novo usuário</button></section>
+            {% for category, message in get_flashed_messages(with_categories=true) %}<div class="notice notice-success" role="status">{{ icon('check') }}<span>{{ message }}</span><button type="button" class="icon-button" data-dismiss-notice aria-label="Fechar aviso">{{ icon('close') }}</button></div>{% endfor %}
+            <section class="stats-grid" aria-label="Resumo dos usuários">
+                {% for label, value, symbol, color in [
+                    ('Total de usuários', usuarios|length, 'users', 'cyan'),
+                    ('Administradores', usuarios|selectattr('tipo','equalto','admin')|list|length, 'shield', 'violet'),
+                    ('Professores', usuarios|selectattr('tipo','equalto','professor')|list|length, 'book', 'amber'),
+                    ('Alunos', usuarios|selectattr('tipo','equalto','aluno')|list|length, 'cap', 'green')
+                ] %}<article class="stat-card"><span class="stat-icon {{ color }}">{{ icon(symbol) }}</span><div><span>{{ label }}</span><strong>{{ value }}</strong></div></article>{% endfor %}
+            </section>
+            <div class="tabs" role="tablist" aria-label="Gestão de acesso"><button type="button" class="tab active" id="tab-users" role="tab" aria-selected="true" aria-controls="panel-users" data-tab="panel-users">{{ icon('users') }} Usuários <span>{{ usuarios|length }}</span></button><button type="button" class="tab" id="tab-permissions" role="tab" aria-selected="false" aria-controls="panel-permissions" tabindex="-1" data-tab="panel-permissions">{{ icon('shield') }} Mapa de permissões</button></div>
+            <section class="users-panel panel" id="panel-users" role="tabpanel" aria-labelledby="tab-users">
+                <div class="list-toolbar"><div><h2>Todos os usuários</h2><p>Consulte os cadastros e ajuste os perfis de acesso.</p></div><div class="filters"><label class="search-field">{{ icon('search') }}<input type="search" id="user-search" placeholder="Buscar por nome ou e-mail" aria-label="Buscar usuário por nome ou e-mail"></label><label class="filter-field"><span class="sr-only">Filtrar por perfil</span><select id="role-filter"><option value="">Todos os perfis</option><option value="superadmin">Superperfil</option><option value="admin">Administrador</option><option value="professor">Professor</option><option value="aluno">Aluno</option></select></label></div></div>
+                <div class="table-scroll"><table class="users-table"><thead><tr><th scope="col">Usuário</th><th scope="col">Perfil de acesso</th><th scope="col">Permissões</th><th scope="col" class="action-heading">Ações</th></tr></thead><tbody>
+                {% for usuario in usuarios %}<tr data-user-row data-role="{{ usuario.tipo }}" data-search="{{ (usuario.nome ~ ' ' ~ usuario.email)|lower }}">
+                    <td><div class="user-identity"><span class="avatar avatar-{{ usuario.tipo }}">{{ usuario.nome[:2]|upper }}</span><div><strong>{{ usuario.nome }}</strong><span>{{ usuario.email }}</span></div>{% if usuario.id == session.get('user_id') %}<span class="you-tag">Você</span>{% endif %}</div></td>
+                    <td><span class="role-badge role-{{ usuario.tipo }}"><span></span>{{ perfis.get(usuario.tipo, usuario.tipo) }}</span></td>
+                    <td class="permission-summary">{{ {'superadmin':'Controle total do sistema', 'admin':'Gestão acadêmica e comunicados', 'professor':'Atividades e notas', 'aluno':'Consulta de informações'}.get(usuario.tipo, 'Sem perfil definido') }}</td>
+                    <td class="row-action">{% if usuario.tipo != 'superadmin' %}<button type="button" class="edit-button" data-edit-user="{{ usuario|tojson|forceescape }}" data-user-id="{{ usuario.id }}" aria-label="Editar permissões de {{ usuario.email }}">Gerenciar {{ icon('arrow') }}</button>{% else %}<span class="protected-label">{{ icon('lock') }} Protegido</span>{% endif %}</td>
+                </tr>{% endfor %}
+                </tbody></table></div>
+                <div class="empty-state" id="users-empty" hidden>{{ icon('search') }}<h3>Nenhum usuário encontrado</h3><p>Tente outro nome, e-mail ou perfil.</p><button type="button" class="button button-secondary" id="clear-filters">Limpar filtros</button></div>
+                <footer class="list-footer"><span id="results-count" role="status" aria-live="polite">{{ usuarios|length }} usuários cadastrados</span><span>{{ icon('lock') }} Apenas o superperfil pode alterar permissões</span></footer>
+            </section>
+            <section class="panel permission-panel" id="panel-permissions" role="tabpanel" aria-labelledby="tab-permissions" hidden>
+                <div class="permission-heading"><span class="stat-icon violet">{{ icon('shield') }}</span><div><h2>Um perfil para cada responsabilidade</h2><p>Confira o que cada pessoa pode fazer no sistema.</p></div></div>
+                <div class="table-scroll"><table class="permission-table"><thead><tr><th scope="col">Recurso</th>{% for role in ['superadmin','admin','professor','aluno'] %}<th scope="col"><span class="role-badge role-{{ role }}">{{ perfis[role] }}</span></th>{% endfor %}</tr></thead><tbody>
+                {% for resource, allowed in [('Criar alunos e professores', ['superadmin','admin']), ('Criar administradores e alterar perfis', ['superadmin']), ('Personalizar as cores do sistema', ['superadmin']), ('Publicar comunicados para todos', ['superadmin','admin']), ('Ler comunicados', ['superadmin','admin','professor','aluno']), ('Lançar atividades e notas', ['professor']), ('Consultar suas disciplinas e notas', ['aluno'])] %}
+                <tr><th scope="row">{{ resource }}</th>{% for role in ['superadmin','admin','professor','aluno'] %}<td>{% if role in allowed %}<span class="permission-yes" aria-label="Permitido">{{ icon('check') }}</span>{% else %}<span class="permission-no" aria-label="Não permitido">—</span>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+                </tbody></table></div><p class="panel-note">{{ icon('info') }} Atividades, notas e disciplinas respeitam os vínculos de cada professor e aluno.</p>
+            </section>
+            <p class="page-footnote">{{ icon('shield') }} Uma escola conectada começa com acessos bem definidos.</p>
+        </main>
+    </div>
+    <dialog class="user-dialog" id="create-dialog" {% if error %}data-open-on-load{% endif %} aria-labelledby="create-title">
+        <form method="post" action="{{ url_for('gestao.usuarios') }}" id="create-form" class="user-form" data-user-form="create">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <header class="dialog-heading"><div><span class="eyebrow">UM NOVO ACESSO À ESCOLA</span><h2 id="create-title">Criar usuário</h2><p>Escolha o perfil e preencha os dados de acesso.</p></div><button type="button" class="icon-button" data-close-dialog aria-label="Fechar cadastro">{{ icon('close') }}</button></header>
+            <div class="dialog-content">
+                {% if error %}<div class="notice notice-error" role="alert">{{ icon('info') }}<span>{{ error }}</span></div>{% endif %}
+                <fieldset class="role-fieldset"><legend>Qual será o perfil de acesso?</legend>{{ role_options(request.form.get('tipo', 'aluno') if error else 'aluno') }}</fieldset>
+                <div class="access-preview">{{ icon('shield') }}<p data-role-preview>O aluno pode consultar suas disciplinas, notas e mensagens.</p></div>
+                <div class="form-section-heading"><span>01</span><h3>Dados de acesso</h3></div>
+                <div class="form-grid">
+                    <label class="field field-full">Nome completo <input name="nome" required maxlength="120" placeholder="Como a pessoa se chama?" autocomplete="name" value="{{ request.form.get('nome','') if error else '' }}"></label>
+                    <label class="field">E-mail <input name="email" type="email" required maxlength="120" placeholder="nome@escola.com.br" autocomplete="email" value="{{ request.form.get('email','') if error else '' }}"></label>
+                    <label class="field">Senha de acesso <span class="password-field"><input name="senha" type="password" required minlength="8" autocomplete="new-password" placeholder="Pelo menos 8 caracteres"><button type="button" class="icon-button" data-toggle-password aria-label="Mostrar senha" aria-pressed="false">{{ icon('eye') }}</button></span><small>Compartilhe a senha com o novo usuário.</small></label>
+                </div>
+                <div data-academic-section><div class="form-section-heading"><span>02</span><h3>Dados acadêmicos</h3></div><div class="form-grid">
+                    <label class="field" data-academic="professor">CPF <input name="cpf" maxlength="14" placeholder="000.000.000-00" inputmode="numeric" value="{{ request.form.get('cpf','') if error else '' }}"><small>Necessário para cadastrar o professor.</small></label>
+                    <label class="field" data-academic="aluno">Matrícula <input name="matricula" maxlength="30" placeholder="Ex.: 2026-001" value="{{ request.form.get('matricula','') if error else '' }}"><small>Use uma matrícula exclusiva para este aluno.</small></label>
+                </div></div>
+            </div>
+            <footer class="dialog-footer"><span>{{ icon('lock') }} O usuário terá somente os acessos do perfil escolhido.</span><div><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary">{{ icon('plus') }} Criar usuário</button></div></footer>
+        </form>
+    </dialog>
+    <dialog class="user-dialog" id="permission-dialog" aria-labelledby="permission-title" data-open-user="{{ edit_user_id or '' }}" {% if permission_error %}data-submitted="{{ request.form.to_dict()|tojson|forceescape }}"{% endif %}>
+        <form method="post" id="permission-form" class="user-form" data-user-form="permission" data-action-template="{{ url_for('gestao.perfil', user_id=0) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <header class="dialog-heading"><div><span class="eyebrow">CONTROLE DE ACESSO</span><h2 id="permission-title">Gerenciar permissões</h2><p>Defina o que este usuário pode acessar.</p></div><button type="button" class="icon-button" data-close-dialog aria-label="Fechar permissões">{{ icon('close') }}</button></header>
+            <div class="dialog-content">
+                {% if permission_error %}<div class="notice notice-error" role="alert">{{ icon('info') }}<span>{{ permission_error }}</span></div>{% endif %}
+                <div class="selected-user"><span class="avatar" id="edit-avatar"></span><div><strong id="edit-name"></strong><span id="edit-email"></span></div><span class="you-tag" id="current-role"></span></div>
+                <fieldset class="role-fieldset"><legend>Perfil de acesso</legend>{{ role_options() }}</fieldset>
+                <div class="access-preview">{{ icon('shield') }}<p data-role-preview></p></div>
+                <div data-academic-section><div class="form-section-heading"><span>+</span><h3>Complete o cadastro acadêmico</h3></div><div class="form-grid">
+                    <label class="field field-full" data-academic="nome">Nome completo <input name="nome" maxlength="120" autocomplete="name"></label>
+                    <label class="field" data-academic="professor">CPF <input name="cpf" maxlength="14" placeholder="000.000.000-00" inputmode="numeric"></label>
+                    <label class="field" data-academic="aluno">Matrícula <input name="matricula" maxlength="30" placeholder="Ex.: 2026-001"></label>
+                </div></div>
+                <p class="preserved-note" data-existing-record hidden>{{ icon('check') }} Este usuário já possui cadastro acadêmico para o perfil selecionado.</p>
+                <div class="change-note">{{ icon('info') }}<p>A mudança vale no próximo acesso ou ao recarregar a página. Os vínculos acadêmicos existentes serão preservados.</p></div>
+            </div>
+            <footer class="dialog-footer"><span>{{ icon('shield') }} Alteração exclusiva do superperfil.</span><div><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary">{{ icon('check') }} Salvar permissões</button></div></footer>
+        </form>
+    </dialog>
+</body>
+</html>

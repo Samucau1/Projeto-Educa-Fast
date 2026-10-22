@@ -1,4 +1,5 @@
 import os
+from collections.abc import Mapping
 from datetime import datetime
 from uuid import uuid4
 
@@ -18,13 +19,13 @@ MAX_PROFILE_PHOTO_BYTES = 2 * 1024 * 1024
 
 
 def login_usuario(data):
-    if not data:
+    if not isinstance(data, Mapping) or not data:
         return {"erro": "Dados nao informados"}, 400
 
     email = data.get("email")
     senha = data.get("senha")
 
-    if not email or not senha:
+    if not isinstance(email, str) or not isinstance(senha, str) or not email or not senha:
         return {"erro": "E-mail e senha sao obrigatorios"}, 400
 
     session = get_session()
@@ -107,8 +108,8 @@ def cadastrar_usuario(data, files=None):
     senha = data.get("senha")
     nome = data.get("nome")
 
-    if tipo not in {"professor", "aluno"}:
-        return {"erro": "Tipo de usuario deve ser professor ou aluno"}, 400
+    if tipo not in {"admin", "professor", "aluno"}:
+        return {"erro": "Tipo de usuario deve ser admin, professor ou aluno"}, 400
 
     if not email or not senha or not nome:
         return {"erro": "E-mail, senha e nome sao obrigatorios"}, 400
@@ -154,7 +155,7 @@ def cadastrar_usuario(data, files=None):
                     data_admissao=_parse_date(data.get("data_admissao") or data.get("admissao")),
                 )
             )
-        else:
+        elif tipo == "aluno":
             cpf = data.get("cpf")
             matricula = data.get("matricula")
             if not matricula:

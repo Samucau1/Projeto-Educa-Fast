@@ -1,74 +1,33 @@
+{% set page_title = 'Comunicados' %}
+{% from 'partials/gestao_icons.html' import icon %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunicados | Secretaria Escolar DF</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Comunicados | Educa Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_comunicados.css') }}">
     {% include "partials/react_runtime.html" %}
 </head>
-<body class="flex">
+<body class="app-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
     <div id="admin-comunicados-root" class="flex w-full" data-react-shell data-react-template="admin-comunicados-template"></div>
     <template id="admin-comunicados-template">
 
-    <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
-        <div class="mb-10 text-center">
-            <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Gestão Acadêmica</p>
-        </div>
+    {% include 'partials/workspace_sidebar.html' %}
 
-        <nav class="flex-1 space-y-2">
-            <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">PRINCIPAL</div>
-            <a href="{{ url_for('home.admin_dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Painel Geral
-            </a>
-
-            <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">ADMINISTRAÇÃO</div>
-            <a href="{{ url_for('home.admin_cadastro_alunos') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Alunos
-            </a>
-            <a href="{{ url_for('home.admin_cadastro_professores') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Professores
-            </a>
-            <a href="{{ url_for('home.admin_banco_dados') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Banco de Dados
-            </a>
-
-            <div class="text-[10px] font-bold text-gray-500 mt-6 mb-2 ml-4">PEDAGÓGICO</div>
-            <a href="{{ url_for('home.admin_disciplinas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Disciplinas
-            </a>
-            <a href="{{ url_for('home.admin_turmas') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Turmas
-            </a>
-            <a href="{{ url_for('home.admin_comunicados') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                Comunicados
-            </a>
-        </nav>
-
-        <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                Sair do Sistema
-            </a>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-10 overflow-y-auto">
+    <div class="workspace-main">
+    {% include 'partials/workspace_topbar.html' %}
+    <main id="main-content" class="app-content">
         <header class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-3xl font-bold">Comunicados</h1>
-                <p class="text-gray-400">Envie recados institucionais para alunos, professores e responsáveis.</p>
+                <span class="eyebrow">GESTÃO ESCOLAR</span>
+                    <h1 class="text-3xl font-bold">Comunicados</h1>
+                <p class="text-gray-400">Envie recados institucionais para todos os usuários do sistema.</p>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-sm font-bold">Admin Secretaria</p>
-                    <p class="text-[10px] text-cyan-400">Online agora</p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 border-2 border-white/20"></div>
-            </div>
+
         </header>
 
         <div class="comunicados-layout">
@@ -82,14 +41,15 @@
                 {% endif %}
 
                 <form method="post" class="space-y-9">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <label class="block">
                         <span class="mb-2 block text-sm font-bold text-slate-300">Título do Recado</span>
-                        <input name="titulo" type="text" placeholder="Ex: Reunião de Pais e Mestres" class="comunicado-field" required>
+                        <input name="titulo" type="text" maxlength="150" placeholder="Ex: Reunião de Pais e Mestres" class="comunicado-field" required>
                     </label>
 
                     <label class="block">
                         <span class="mb-2 block text-sm font-bold text-slate-300">Mensagem</span>
-                        <textarea name="mensagem" rows="6" placeholder="Digite a mensagem oficial para envio imediato..." class="comunicado-field comunicado-textarea" required></textarea>
+                        <textarea name="mensagem" rows="6" maxlength="10000" placeholder="Digite a mensagem oficial para envio imediato..." class="comunicado-field comunicado-textarea" required></textarea>
                     </label>
 
                     <div class="flex justify-end">
@@ -121,10 +81,11 @@
                     {% endfor %}
                 </div>
 
-                <button class="ver-todos-button">Ver todos os envios</button>
+                <a href="{{ url_for('gestao.mensagens') }}" class="ver-todos-button">Ver mensagens completas</a>
             </aside>
         </div>
     </main>
+    </div>
 
 
     </template>

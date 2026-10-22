@@ -1,6 +1,6 @@
 (function () {
-    document.addEventListener("react-shell:mounted", function (event) {
-        const form = event.detail.root.querySelector("#login-form");
+    function inicializarLogin(root) {
+        const form = root.querySelector("#login-form");
 
         if (!form || form.dataset.pageBound === "true") {
             return;
@@ -8,7 +8,13 @@
 
         form.dataset.pageBound = "true";
         form.addEventListener("submit", enviarLogin);
-    });
+    }
+    document.addEventListener("react-shell:mounted", function (event) { inicializarLogin(event.detail.root); });
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () { inicializarLogin(document); });
+    } else {
+        inicializarLogin(document);
+    }
 
     function enviarLogin(event) {
         event.preventDefault();
@@ -50,6 +56,7 @@
 
     function redirecionarPorPerfil(data) {
         const destinos = {
+            SUPERADMIN: "/super/usuarios",
             ADMIN: "/admin/dashboard",
             ALUNO: "/aluno",
             PROFESSOR: "/professor"
@@ -65,10 +72,13 @@
     function definirErro(element, message) {
         element.textContent = message;
         element.classList.toggle("hidden", !message);
+        element.hidden = !message;
     }
 
     function definirCarregamento(button, loading) {
+        if (!button.dataset.originalLabel) button.dataset.originalLabel = button.innerHTML;
         button.disabled = loading;
-        button.textContent = loading ? "Entrando..." : "Acessar Sistema";
+        if (loading) button.textContent = "Entrando…";
+        else button.innerHTML = button.dataset.originalLabel;
     }
 })();

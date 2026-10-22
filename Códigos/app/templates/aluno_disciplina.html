@@ -1,42 +1,25 @@
+{% set page_title = 'Detalhes da disciplina' %}
+{% from 'partials/gestao_icons.html' import icon %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ disciplina.nome }} | Área do Aluno</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/aluno_painel.css') }}">
     {% include "partials/react_runtime.html" %}
 </head>
-<body class="flex">
+<body class="app-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
     <div id="aluno-disciplina-root" class="flex w-full" data-react-shell data-react-template="aluno-disciplina-template"></div>
     <template id="aluno-disciplina-template">
-    <aside class="w-72 glass-sidebar h-screen sticky top-0 flex flex-col p-6">
-        <div class="mb-10 text-center">
-            <h2 class="text-xl font-bold tracking-tighter text-cyan-400">SECRETARIA DF</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Portal do Aluno</p>
-        </div>
+    {% include 'partials/workspace_sidebar.html' %}
 
-        <nav class="flex-1 space-y-2">
-            <div class="text-[10px] font-bold text-gray-500 mb-2 ml-4">MINHA ÁREA</div>
-            <a href="{{ url_for('aluno.dashboard') }}" class="flex items-center px-4 py-3 rounded-xl hover:bg-white/5 transition-all text-gray-300 hover:text-white">
-                Voltar
-            </a>
-            <a href="{{ url_for('aluno.dashboard') }}" class="flex items-center px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                Disciplinas
-            </a>
-        </nav>
-
-        <div class="mt-auto pt-6 border-t border-white/10">
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
-                Sair do Sistema
-            </a>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-10 overflow-y-auto">
+    <div class="workspace-main">
+    {% include 'partials/workspace_topbar.html' %}
+    <main id="main-content" class="app-content">
         <header class="flex justify-between items-center mb-10">
             <div>
                 <p class="text-sm text-cyan-400 font-bold">Disciplina</p>
@@ -95,6 +78,7 @@
             </div>
         </section>
     </main>
+    </div>
 
     </template>
     <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>

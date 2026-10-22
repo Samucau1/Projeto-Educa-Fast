@@ -15,6 +15,7 @@ from .solicitacao_documento_model import SolicitacaoDocumentoModel
 from .turma_model import TurmaModel
 from .turma_disciplina_model import TurmaDisciplinaModel
 from .usuario_model import UsuarioModel
+from .configuracao_model import ConfiguracaoModel
 
 __all__ = [
     "UsuarioModel",

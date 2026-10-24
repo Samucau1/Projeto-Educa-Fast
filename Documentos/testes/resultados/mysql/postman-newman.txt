@@ -4,818 +4,902 @@ Educa Fast - API e regressao
 
 ❏ 01 - Visitante e autenticacao
 ↳ Inicio e identificador da execucao
-  GET http://127.0.0.1:41109/ [200 OK, 7.54kB, 31ms]
+  GET http://127.0.0.1:42537/ [200 OK, 7.61kB, 37ms]
   ✓  HTTP 200
 
 ↳ Visitante bloqueado: /mensagens
-  GET http://127.0.0.1:41109/mensagens [403 FORBIDDEN, 2.28kB, 9ms]
+  GET http://127.0.0.1:42537/mensagens [403 FORBIDDEN, 2.34kB, 12ms]
   ✓  HTTP 403
 
 ↳ Visitante bloqueado: /admin/dashboard
-  GET http://127.0.0.1:41109/admin/dashboard [403 FORBIDDEN, 2.28kB, 5ms]
+  GET http://127.0.0.1:42537/admin/dashboard [403 FORBIDDEN, 2.34kB, 5ms]
   ✓  HTTP 403
 
 ↳ Visitante bloqueado: /super/usuarios
-  GET http://127.0.0.1:41109/super/usuarios [403 FORBIDDEN, 2.28kB, 4ms]
+  GET http://127.0.0.1:42537/super/usuarios [403 FORBIDDEN, 2.34kB, 5ms]
   ✓  HTTP 403
 
 ↳ Visitante bloqueado: /super/layout
-  GET http://127.0.0.1:41109/super/layout [403 FORBIDDEN, 2.28kB, 5ms]
+  GET http://127.0.0.1:42537/super/layout [403 FORBIDDEN, 2.34kB, 6ms]
   ✓  HTTP 403
 
 ↳ Cadastro publico bloqueado
-  POST http://127.0.0.1:41109/cadastro [403 FORBIDDEN, 354B, 4ms]
+  POST http://127.0.0.1:42537/cadastro [403 FORBIDDEN, 354B, 6ms]
   ✓  HTTP 403
 
 ↳ Login vazio
-  POST http://127.0.0.1:41109/login [400 BAD REQUEST, 332B, 8ms]
+  POST http://127.0.0.1:42537/login [400 BAD REQUEST, 332B, 9ms]
   ✓  HTTP 400
 
 ↳ Login array
-  POST http://127.0.0.1:41109/login [400 BAD REQUEST, 332B, 8ms]
+  POST http://127.0.0.1:42537/login [400 BAD REQUEST, 332B, 9ms]
   ✓  HTTP 400
 
 ↳ Login numero
-  POST http://127.0.0.1:41109/login [400 BAD REQUEST, 332B, 7ms]
+  POST http://127.0.0.1:42537/login [400 BAD REQUEST, 332B, 9ms]
   ✓  HTTP 400
 
 ↳ Login email invalido por tipo
-  POST http://127.0.0.1:41109/login [400 BAD REQUEST, 343B, 6ms]
+  POST http://127.0.0.1:42537/login [400 BAD REQUEST, 343B, 11ms]
   ✓  HTTP 400
 
 ↳ Senha errada
-  POST http://127.0.0.1:41109/login [401 UNAUTHORIZED, 334B, 86ms]
+  POST http://127.0.0.1:42537/login [401 UNAUTHORIZED, 334B, 89ms]
   ✓  HTTP 401
 
 ↳ Usuario inexistente
-  POST http://127.0.0.1:41109/login [401 UNAUTHORIZED, 334B, 74ms]
+  POST http://127.0.0.1:42537/login [401 UNAUTHORIZED, 334B, 75ms]
   ✓  HTTP 401
 
 ↳ JWT ausente
-  GET http://127.0.0.1:41109/professor/teste [401 UNAUTHORIZED, 336B, 4ms]
+  GET http://127.0.0.1:42537/professor/teste [401 UNAUTHORIZED, 336B, 4ms]
   ✓  HTTP 401
 
 ↳ JWT adulterado
-  GET http://127.0.0.1:41109/professor/teste [401 UNAUTHORIZED, 331B, 3ms]
+  GET http://127.0.0.1:42537/professor/teste [401 UNAUTHORIZED, 331B, 4ms]
   ✓  HTTP 401
 
 ❏ 02 - Superperfil, cadastro e layout
 ↳ Login superadmin
-  POST http://127.0.0.1:41109/login [200 OK, 894B, 81ms]
+  POST http://127.0.0.1:42537/login [200 OK, 895B, 78ms]
   ✓  HTTP 200
   ✓  Perfil superadmin
 
 ↳ Obter formulario e CSRF
-  GET http://127.0.0.1:41109/super/usuarios [200 OK, 39.45kB, 40ms]
+  GET http://127.0.0.1:42537/super/usuarios [200 OK, 40.26kB, 49ms]
   ✓  HTTP 200
   ✓  CSRF presente
 
 ↳ Criar administrador
-  POST http://127.0.0.1:41109/cadastro [201 CREATED, 634B, 84ms]
+  POST http://127.0.0.1:42537/cadastro [201 CREATED, 635B, 80ms]
   ✓  HTTP 201
 
 ↳ Criar aluno via API
-  POST http://127.0.0.1:41109/cadastro/aluno [201 CREATED, 634B, 75ms]
+  POST http://127.0.0.1:42537/cadastro/aluno [201 CREATED, 635B, 111ms]
   ✓  HTTP 201
 
 ↳ Criar professor via API
-  POST http://127.0.0.1:41109/cadastro/professor [201 CREATED, 641B, 73ms]
+  POST http://127.0.0.1:42537/cadastro/professor [201 CREATED, 642B, 82ms]
   ✓  HTTP 201
 
 ↳ Email duplicado
-  POST http://127.0.0.1:41109/cadastro [409 CONFLICT, 586B, 6ms]
+  POST http://127.0.0.1:42537/cadastro [409 CONFLICT, 587B, 6ms]
   ✓  HTTP 409
 
 ↳ Criar aluno sem matricula
-  POST http://127.0.0.1:41109/cadastro/aluno [400 BAD REQUEST, 603B, 73ms]
+  POST http://127.0.0.1:42537/cadastro/aluno [400 BAD REQUEST, 604B, 78ms]
   ✓  HTTP 400
 
 ↳ Criar professor sem CPF
-  POST http://127.0.0.1:41109/cadastro/professor [400 BAD REQUEST, 601B, 71ms]
+  POST http://127.0.0.1:42537/cadastro/professor [400 BAD REQUEST, 602B, 77ms]
   ✓  HTTP 400
 
 ↳ Superperfil nao pode ser criado por cadastro
-  POST http://127.0.0.1:41109/cadastro [400 BAD REQUEST, 619B, 4ms]
+  POST http://127.0.0.1:42537/cadastro [400 BAD REQUEST, 620B, 4ms]
   ✓  HTTP 400
 
 ↳ Superperfil nao pode ser rebaixado
-  POST http://127.0.0.1:41109/super/usuarios/1/perfil [403 FORBIDDEN, 11.44kB, 6ms]
+  POST http://127.0.0.1:42537/super/usuarios/1/perfil [403 FORBIDDEN, 12.25kB, 6ms]
   ✓  HTTP 403
 
 ↳ Usuario inexistente
-  POST http://127.0.0.1:41109/super/usuarios/999999/perfil [404 NOT FOUND, 11.39kB, 6ms]
+  POST http://127.0.0.1:42537/super/usuarios/999999/perfil [404 NOT FOUND, 12.2kB, 7ms]
   ✓  HTTP 404
 
 ↳ Atribuir professor sem dados obrigatorios
-  POST http://127.0.0.1:41109/super/usuarios/6/perfil [400 BAD REQUEST, 43.22kB, 10ms]
+  POST http://127.0.0.1:42537/super/usuarios/6/perfil [400 BAD REQUEST, 44.03kB, 12ms]
   ✓  HTTP 400
 
 ↳ Atribuir professor
-  POST http://127.0.0.1:41109/super/usuarios/6/perfil [302 FOUND, 904B, 8ms]
+  POST http://127.0.0.1:42537/super/usuarios/6/perfil [302 FOUND, 905B, 16ms]
   ✓  HTTP 302
 
 ↳ Obter formulario e CSRF
-  GET http://127.0.0.1:41109/super/layout [200 OK, 14.7kB, 8ms]
+  GET http://127.0.0.1:42537/super/layout [200 OK, 15.65kB, 8ms]
   ✓  HTTP 200
   ✓  CSRF presente
 
 ↳ Cores sem CSRF
-  POST http://127.0.0.1:41109/super/layout [400 BAD REQUEST, 11.42kB, 5ms]
+  POST http://127.0.0.1:42537/super/layout [400 BAD REQUEST, 12.24kB, 6ms]
   ✓  HTTP 400
 
 ↳ Salvar cores
-  POST http://127.0.0.1:41109/super/layout [302 FOUND, 898B, 7ms]
+  POST http://127.0.0.1:42537/super/layout [302 FOUND, 899B, 9ms]
   ✓  HTTP 302
 
 ↳ Cores persistidas
-  GET http://127.0.0.1:41109/super/layout [200 OK, 14.7kB, 4ms]
+  GET http://127.0.0.1:42537/super/layout [200 OK, 15.65kB, 5ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: #123456
   ✓  Conteudo esperado: #abcdef
 
 ↳ Cor invalida rejeitada
-  POST http://127.0.0.1:41109/super/layout [200 OK, 14.67kB, 4ms]
+  POST http://127.0.0.1:42537/super/layout [200 OK, 15.62kB, 5ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: #RRGGBB
 
 ↳ Cor anterior preservada
-  GET http://127.0.0.1:41109/super/layout [200 OK, 14.59kB, 4ms]
+  GET http://127.0.0.1:42537/super/layout [200 OK, 15.53kB, 5ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: value="#123456"
 
 ↳ Comunicado do superperfil
-  POST http://127.0.0.1:41109/admin/comunicados [302 FOUND, 828B, 11ms]
+  POST http://127.0.0.1:42537/admin/comunicados [302 FOUND, 829B, 9ms]
   ✓  HTTP 302
 
 ❏ 03 - Admin, turmas e comunicados
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 862B, 73ms]
+  POST http://127.0.0.1:42537/login [200 OK, 861B, 76ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Tela /admin/dashboard
-  GET http://127.0.0.1:41109/admin/dashboard [200 OK, 16.37kB, 16ms]
+  GET http://127.0.0.1:42537/admin/dashboard [200 OK, 16.88kB, 18ms]
   ✓  HTTP 200
 
 ↳ Tela /admin/cadastro-alunos
-  GET http://127.0.0.1:41109/admin/cadastro-alunos [200 OK, 18.54kB, 10ms]
+  GET http://127.0.0.1:42537/admin/cadastro-alunos [200 OK, 19.05kB, 9ms]
   ✓  HTTP 200
 
 ↳ Tela /admin/cadastro-professores
-  GET http://127.0.0.1:41109/admin/cadastro-professores [200 OK, 18.95kB, 7ms]
+  GET http://127.0.0.1:42537/admin/cadastro-professores [200 OK, 19.46kB, 8ms]
   ✓  HTTP 200
 
 ↳ Tela /admin/banco-de-dados
-  GET http://127.0.0.1:41109/admin/banco-de-dados [200 OK, 20.75kB, 15ms]
+  GET http://127.0.0.1:42537/admin/banco-de-dados [200 OK, 21.25kB, 16ms]
   ✓  HTTP 200
 
 ↳ Tela /admin/disciplinas
-  GET http://127.0.0.1:41109/admin/disciplinas [200 OK, 15.19kB, 15ms]
+  GET http://127.0.0.1:42537/admin/disciplinas [200 OK, 15.7kB, 16ms]
   ✓  HTTP 200
 
 ↳ Tela /admin/turmas
-  GET http://127.0.0.1:41109/admin/turmas [200 OK, 17.94kB, 23ms]
+  GET http://127.0.0.1:42537/admin/turmas [200 OK, 18.44kB, 26ms]
   ✓  HTTP 200
 
 ↳ Admin nao cria outro admin
-  POST http://127.0.0.1:41109/cadastro [403 FORBIDDEN, 610B, 4ms]
+  POST http://127.0.0.1:42537/cadastro [403 FORBIDDEN, 609B, 6ms]
   ✓  HTTP 403
 
 ↳ Admin sem acesso ao superperfil
-  GET http://127.0.0.1:41109/super/usuarios [403 FORBIDDEN, 10.71kB, 5ms]
+  GET http://127.0.0.1:42537/super/usuarios [403 FORBIDDEN, 11.21kB, 4ms]
   ✓  HTTP 403
 
 ↳ Admin sem acesso ao layout
-  GET http://127.0.0.1:41109/super/layout [403 FORBIDDEN, 10.71kB, 4ms]
+  GET http://127.0.0.1:42537/super/layout [403 FORBIDDEN, 11.21kB, 6ms]
   ✓  HTTP 403
 
 ↳ Criar disciplina
-  POST http://127.0.0.1:41109/admin/disciplinas [302 FOUND, 824B, 7ms]
+  POST http://127.0.0.1:42537/admin/disciplinas [302 FOUND, 823B, 9ms]
   ✓  HTTP 302
 
 ↳ Criar turma
-  POST http://127.0.0.1:41109/admin/turmas [302 FOUND, 809B, 8ms]
+  POST http://127.0.0.1:42537/admin/turmas [302 FOUND, 808B, 7ms]
   ✓  HTTP 302
 
 ↳ Vincular professor a disciplina
-  POST http://127.0.0.1:41109/admin/disciplinas [302 FOUND, 824B, 8ms]
+  POST http://127.0.0.1:42537/admin/disciplinas [302 FOUND, 823B, 9ms]
   ✓  HTTP 302
 
 ↳ Vincular professor a turma
-  POST http://127.0.0.1:41109/admin/turmas [302 FOUND, 809B, 11ms]
+  POST http://127.0.0.1:42537/admin/turmas [302 FOUND, 808B, 12ms]
   ✓  HTTP 302
 
 ↳ Vincular aluno a turma
-  POST http://127.0.0.1:41109/admin/turmas [302 FOUND, 809B, 8ms]
+  POST http://127.0.0.1:42537/admin/turmas [302 FOUND, 808B, 9ms]
   ✓  HTTP 302
 
 ↳ Obter formulario e CSRF
-  GET http://127.0.0.1:41109/admin/comunicados [200 OK, 12.84kB, 10ms]
+  GET http://127.0.0.1:42537/admin/comunicados [200 OK, 13.35kB, 9ms]
   ✓  HTTP 200
   ✓  CSRF presente
 
 ↳ Comunicado sem CSRF
-  POST http://127.0.0.1:41109/admin/comunicados [400 BAD REQUEST, 10.69kB, 5ms]
+  POST http://127.0.0.1:42537/admin/comunicados [400 BAD REQUEST, 11.2kB, 5ms]
   ✓  HTTP 400
 
 ↳ Comunicado vazio
-  POST http://127.0.0.1:41109/admin/comunicados [200 OK, 13.02kB, 6ms]
+  POST http://127.0.0.1:42537/admin/comunicados [200 OK, 13.53kB, 6ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: obrigatorios
 
 ↳ Comunicado com titulo acima do limite
-  POST http://127.0.0.1:41109/admin/comunicados [200 OK, 13.04kB, 5ms]
+  POST http://127.0.0.1:42537/admin/comunicados [200 OK, 13.55kB, 7ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: 150
 
 ↳ Publicar mensagem geral
-  POST http://127.0.0.1:41109/admin/comunicados [302 FOUND, 824B, 6ms]
+  POST http://127.0.0.1:42537/admin/comunicados [302 FOUND, 823B, 6ms]
   ✓  HTTP 302
 
 ↳ Mensagem publicada e escapada
-  GET http://127.0.0.1:41109/mensagens [200 OK, 13.5kB, 9ms]
+  GET http://127.0.0.1:42537/mensagens [200 OK, 14.01kB, 9ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Texto integral para todos &lt;script&gt;
   ✓  Conteudo esperado: Comunicado do superperfil para todos
 
 ↳ Upload sem arquivo
-  POST http://127.0.0.1:41109/arquivos/upload [400 BAD REQUEST, 584B, 5ms]
+  POST http://127.0.0.1:42537/arquivos/upload [400 BAD REQUEST, 583B, 5ms]
   ✓  HTTP 400
 
 ❏ 04 - Professor e regressao academica
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 888B, 78ms]
+  POST http://127.0.0.1:42537/login [200 OK, 888B, 75ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Painel professor
-  GET http://127.0.0.1:41109/professor [200 OK, 19.78kB, 34ms]
+  GET http://127.0.0.1:42537/professor [200 OK, 20.29kB, 35ms]
   ✓  HTTP 200
 
 ↳ JWT professor
-  GET http://127.0.0.1:41109/professor/teste [200 OK, 595B, 5ms]
+  GET http://127.0.0.1:42537/professor/teste [200 OK, 595B, 5ms]
   ✓  HTTP 200
 
 ↳ Busca aluno com JWT
-  GET http://127.0.0.1:41109/alunos/busca?termo=Aluno [200 OK, 617B, 7ms]
+  GET http://127.0.0.1:42537/alunos/busca?termo=Aluno [200 OK, 617B, 7ms]
   ✓  HTTP 200
   ✓  Alunos encontrados
 
 ↳ Busca vazia
-  GET http://127.0.0.1:41109/alunos/busca [400 BAD REQUEST, 594B, 6ms]
+  GET http://127.0.0.1:42537/alunos/busca [400 BAD REQUEST, 594B, 5ms]
   ✓  HTTP 400
 
 ↳ Professor le mensagens
-  GET http://127.0.0.1:41109/mensagens [200 OK, 10.31kB, 6ms]
+  GET http://127.0.0.1:42537/mensagens [200 OK, 10.82kB, 6ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Texto integral para todos &lt;script&gt;
 
 ↳ Professor nao publica
-  POST http://127.0.0.1:41109/admin/comunicados [403 FORBIDDEN, 7.8kB, 4ms]
+  POST http://127.0.0.1:42537/admin/comunicados [403 FORBIDDEN, 8.31kB, 5ms]
   ✓  HTTP 403
 
 ↳ Professor nao cria usuarios
-  POST http://127.0.0.1:41109/cadastro/aluno [403 FORBIDDEN, 611B, 5ms]
+  POST http://127.0.0.1:42537/cadastro/aluno [403 FORBIDDEN, 611B, 4ms]
   ✓  HTTP 403
 
 ↳ Professor nao acessa admin
-  GET http://127.0.0.1:41109/admin/dashboard [403 FORBIDDEN, 7.8kB, 4ms]
+  GET http://127.0.0.1:42537/admin/dashboard [403 FORBIDDEN, 8.31kB, 5ms]
   ✓  HTTP 403
 
 ↳ Lancar atividade
-  POST http://127.0.0.1:41109/professor/atividades/lancar [302 FOUND, 819B, 10ms]
+  POST http://127.0.0.1:42537/professor/atividades/lancar [302 FOUND, 819B, 12ms]
   ✓  HTTP 302
 
 ↳ Atividade em turma sem vinculo
-  POST http://127.0.0.1:41109/professor/atividades/lancar [403 FORBIDDEN, 602B, 8ms]
+  POST http://127.0.0.1:42537/professor/atividades/lancar [403 FORBIDDEN, 602B, 10ms]
   ✓  HTTP 403
 
 ↳ Nota invalida: -1
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 597B, 4ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 597B, 6ms]
   ✓  HTTP 400
 
 ↳ Nota invalida: 11
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 597B, 5ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 597B, 5ms]
   ✓  HTTP 400
 
 ↳ Nota invalida: abc
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 582B, 4ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 582B, 5ms]
   ✓  HTTP 400
 
 ↳ Nota invalida: NaN
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 597B, 4ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 597B, 5ms]
   ✓  HTTP 400
 
 ↳ Nota invalida: sNaN
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 597B, 4ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 597B, 5ms]
   ✓  HTTP 400
 
 ↳ Nota invalida: Infinity
-  POST http://127.0.0.1:41109/professor/notas/salvar [400 BAD REQUEST, 597B, 4ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [400 BAD REQUEST, 597B, 5ms]
   ✓  HTTP 400
 
 ↳ Salvar nota com virgula
-  POST http://127.0.0.1:41109/professor/notas/salvar [302 FOUND, 819B, 12ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [302 FOUND, 819B, 12ms]
   ✓  HTTP 302
 
 ↳ Atualizar nota
-  POST http://127.0.0.1:41109/professor/notas/salvar [302 FOUND, 819B, 11ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [302 FOUND, 819B, 10ms]
   ✓  HTTP 302
 
 ↳ Aluno fora da turma
-  POST http://127.0.0.1:41109/professor/notas/salvar [403 FORBIDDEN, 598B, 7ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [403 FORBIDDEN, 598B, 8ms]
   ✓  HTTP 403
 
 ❏ 05 - Aluno, leitura e bloqueios
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 75ms]
+  POST http://127.0.0.1:42537/login [200 OK, 863B, 78ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Painel aluno
-  GET http://127.0.0.1:41109/aluno [200 OK, 12.13kB, 21ms]
+  GET http://127.0.0.1:42537/aluno [200 OK, 12.64kB, 22ms]
   ✓  HTTP 200
 
 ↳ Aluno ve disciplina e atividade
-  GET http://127.0.0.1:41109/aluno/disciplinas/1 [200 OK, 9.19kB, 15ms]
+  GET http://127.0.0.1:42537/aluno/disciplinas/1 [200 OK, 9.7kB, 15ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Atividade API
 
 ↳ Aluno le mensagens e tema
-  GET http://127.0.0.1:41109/mensagens [200 OK, 10.15kB, 6ms]
+  GET http://127.0.0.1:42537/mensagens [200 OK, 10.66kB, 6ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Texto integral para todos &lt;script&gt;
   ✓  Conteudo esperado: #123456
 
 ↳ Aluno nao publica
-  POST http://127.0.0.1:41109/admin/comunicados [403 FORBIDDEN, 7.64kB, 6ms]
+  POST http://127.0.0.1:42537/admin/comunicados [403 FORBIDDEN, 8.15kB, 5ms]
   ✓  HTTP 403
 
 ↳ Aluno nao cria usuarios
-  POST http://127.0.0.1:41109/cadastro/aluno [403 FORBIDDEN, 606B, 4ms]
+  POST http://127.0.0.1:42537/cadastro/aluno [403 FORBIDDEN, 608B, 5ms]
   ✓  HTTP 403
 
 ↳ Aluno nao usa JWT de professor
-  GET http://127.0.0.1:41109/professor/teste [403 FORBIDDEN, 602B, 6ms]
+  GET http://127.0.0.1:42537/professor/teste [403 FORBIDDEN, 604B, 7ms]
   ✓  HTTP 403
 
 ↳ Aluno nao altera nota
-  POST http://127.0.0.1:41109/professor/notas/salvar [403 FORBIDDEN, 7.64kB, 5ms]
+  POST http://127.0.0.1:42537/professor/notas/salvar [403 FORBIDDEN, 8.15kB, 6ms]
   ✓  HTTP 403
 
 ↳ Aluno bloqueado: /super/usuarios
-  GET http://127.0.0.1:41109/super/usuarios [403 FORBIDDEN, 7.64kB, 5ms]
+  GET http://127.0.0.1:42537/super/usuarios [403 FORBIDDEN, 8.15kB, 6ms]
   ✓  HTTP 403
 
 ↳ Aluno bloqueado: /super/layout
-  GET http://127.0.0.1:41109/super/layout [403 FORBIDDEN, 7.64kB, 4ms]
+  GET http://127.0.0.1:42537/super/layout [403 FORBIDDEN, 8.15kB, 5ms]
   ✓  HTTP 403
 
 ↳ Aluno bloqueado: /admin/dashboard
-  GET http://127.0.0.1:41109/admin/dashboard [403 FORBIDDEN, 7.64kB, 4ms]
+  GET http://127.0.0.1:42537/admin/dashboard [403 FORBIDDEN, 8.15kB, 6ms]
   ✓  HTTP 403
 
 ↳ Aluno bloqueado: /professor
-  GET http://127.0.0.1:41109/professor [403 FORBIDDEN, 7.64kB, 4ms]
+  GET http://127.0.0.1:42537/professor [403 FORBIDDEN, 8.15kB, 8ms]
   ✓  HTTP 403
 
 ↳ Login outro_aluno
-  POST http://127.0.0.1:41109/login [200 OK, 873B, 77ms]
+  POST http://127.0.0.1:42537/login [200 OK, 875B, 78ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Outro aluno nao ve disciplina
-  GET http://127.0.0.1:41109/aluno/disciplinas/1 [404 NOT FOUND, 7.67kB, 8ms]
+  GET http://127.0.0.1:42537/aluno/disciplinas/1 [404 NOT FOUND, 8.18kB, 7ms]
   ✓  HTTP 404
 
 ↳ Logout
-  POST http://127.0.0.1:41109/logout [302 FOUND, 609B, 5ms]
+  POST http://127.0.0.1:42537/logout [302 FOUND, 609B, 5ms]
   ✓  HTTP 302
 
 ↳ Mensagens bloqueadas apos logout
-  GET http://127.0.0.1:41109/mensagens [403 FORBIDDEN, 2.47kB, 4ms]
+  GET http://127.0.0.1:42537/mensagens [403 FORBIDDEN, 2.54kB, 4ms]
   ✓  HTTP 403
 
 ❏ 06 - Revogacao de permissoes e restauracao do tema
 ↳ Login superadmin
-  POST http://127.0.0.1:41109/login [200 OK, 895B, 75ms]
+  POST http://127.0.0.1:42537/login [200 OK, 895B, 85ms]
   ✓  HTTP 200
   ✓  Perfil superadmin
 
 ↳ Obter formulario e CSRF
-  GET http://127.0.0.1:41109/super/usuarios [200 OK, 42.79kB, 9ms]
+  GET http://127.0.0.1:42537/super/usuarios [200 OK, 43.6kB, 10ms]
   ✓  HTTP 200
   ✓  CSRF presente
 
 ↳ Professor passa a aluno
-  POST http://127.0.0.1:41109/super/usuarios/3/perfil [302 FOUND, 905B, 9ms]
+  POST http://127.0.0.1:42537/super/usuarios/3/perfil [302 FOUND, 904B, 9ms]
   ✓  HTTP 302
 
 ↳ JWT antigo perde permissao de professor
-  GET http://127.0.0.1:41109/professor/teste [403 FORBIDDEN, 708B, 5ms]
+  GET http://127.0.0.1:42537/professor/teste [403 FORBIDDEN, 707B, 6ms]
   ✓  HTTP 403
 
 ↳ Restaurar professor
-  POST http://127.0.0.1:41109/super/usuarios/3/perfil [302 FOUND, 912B, 6ms]
+  POST http://127.0.0.1:42537/super/usuarios/3/perfil [302 FOUND, 911B, 8ms]
   ✓  HTTP 302
 
 ↳ Restaurar cores padrao
-  POST http://127.0.0.1:41109/super/layout [302 FOUND, 946B, 5ms]
+  POST http://127.0.0.1:42537/super/layout [302 FOUND, 947B, 8ms]
   ✓  HTTP 302
 
 ↳ Conferir cores restauradas
-  GET http://127.0.0.1:41109/super/layout [200 OK, 14.93kB, 5ms]
+  GET http://127.0.0.1:42537/super/layout [200 OK, 15.87kB, 6ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: value="#06385d"
 
 ↳ Encerrar sessao
-  POST http://127.0.0.1:41109/logout [302 FOUND, 609B, 4ms]
+  POST http://127.0.0.1:42537/logout [302 FOUND, 609B, 5ms]
   ✓  HTTP 302
 
 ❏ 07 - LGPD, privacidade e protecoes de sessao
 ↳ Aviso publico de privacidade
-  GET http://127.0.0.1:41109/privacidade [200 OK, 4.19kB, 6ms]
+  GET http://127.0.0.1:42537/privacidade [200 OK, 4.25kB, 7ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: EducaFast
 
 ↳ Visitante sem dados pessoais
-  GET http://127.0.0.1:41109/minha-privacidade [403 FORBIDDEN, 2.28kB, 3ms]
+  GET http://127.0.0.1:42537/minha-privacidade [403 FORBIDDEN, 2.34kB, 4ms]
   ✓  HTTP 403
 
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 862B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 859B, 78ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Solicitacao sem CSRF
-  POST http://127.0.0.1:41109/minha-privacidade [400 BAD REQUEST, 7.66kB, 5ms]
+  POST http://127.0.0.1:42537/minha-privacidade [400 BAD REQUEST, 8.16kB, 5ms]
   ✓  HTTP 400
 
 ↳ Registrar pedido LGPD
-  POST http://127.0.0.1:41109/minha-privacidade [302 FOUND, 910B, 13ms]
+  POST http://127.0.0.1:42537/minha-privacidade [302 FOUND, 908B, 13ms]
   ✓  HTTP 302
 
 ↳ Consultar protocolo proprio
-  GET http://127.0.0.1:41109/minha-privacidade [200 OK, 8.57kB, 12ms]
+  GET http://127.0.0.1:42537/minha-privacidade [200 OK, 9.07kB, 12ms]
   ✓  HTTP 200
   ✓  Protocolo presente
 
 ↳ Exportar dados proprios
-  POST http://127.0.0.1:41109/minha-privacidade/exportar [200 OK, 1.14kB, 18ms]
+  POST http://127.0.0.1:42537/minha-privacidade/exportar [200 OK, 1.15kB, 19ms]
   ✓  HTTP 200
   ✓  Somente a conta titular
   ✓  Senha ausente
   ✓  Sem cache de dados pessoais
 
 ↳ Parametro nao seleciona outra conta
-  POST http://127.0.0.1:41109/minha-privacidade/exportar?usuario_id=1 [200 OK, 1.14kB, 13ms]
+  POST http://127.0.0.1:42537/minha-privacidade/exportar?usuario_id=1 [200 OK, 1.15kB, 14ms]
   ✓  HTTP 200
   ✓  Somente a conta titular
   ✓  Senha ausente
   ✓  Sem cache de dados pessoais
 
 ↳ Aluno sem fila administrativa
-  GET http://127.0.0.1:41109/admin/privacidade [403 FORBIDDEN, 7.64kB, 5ms]
+  GET http://127.0.0.1:42537/admin/privacidade [403 FORBIDDEN, 8.14kB, 6ms]
   ✓  HTTP 403
 
 ↳ Login outro_aluno
-  POST http://127.0.0.1:41109/login [200 OK, 875B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 875B, 80ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Outro aluno nao ve o protocolo
-  GET http://127.0.0.1:41109/minha-privacidade [200 OK, 8.29kB, 6ms]
+  GET http://127.0.0.1:42537/minha-privacidade [200 OK, 8.8kB, 6ms]
   ✓  HTTP 200
   ✓  Pedido de outro titular ausente
 
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 887B, 74ms]
+  POST http://127.0.0.1:42537/login [200 OK, 888B, 79ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Professor sem fila administrativa
-  GET http://127.0.0.1:41109/admin/privacidade [403 FORBIDDEN, 7.8kB, 5ms]
+  GET http://127.0.0.1:42537/admin/privacidade [403 FORBIDDEN, 8.31kB, 6ms]
   ✓  HTTP 403
 
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 78ms]
+  POST http://127.0.0.1:42537/login [200 OK, 863B, 79ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Cookie admin sem CSRF e Bearer falso
-  POST http://127.0.0.1:41109/cadastro/aluno [400 BAD REQUEST, 654B, 5ms]
+  POST http://127.0.0.1:42537/cadastro/aluno [400 BAD REQUEST, 656B, 5ms]
   ✓  HTTP 400
 
 ↳ Fila administrativa de privacidade
-  GET http://127.0.0.1:41109/admin/privacidade [200 OK, 10.81kB, 7ms]
+  GET http://127.0.0.1:42537/admin/privacidade [200 OK, 11.32kB, 7ms]
   ✓  HTTP 200
 
 ↳ Responder pedido do titular
-  POST http://127.0.0.1:41109/admin/privacidade/1 [302 FOUND, 808B, 12ms]
+  POST http://127.0.0.1:42537/admin/privacidade/1 [302 FOUND, 810B, 8ms]
   ✓  HTTP 302
 
 ↳ Pedido encerrado nao reabre
-  POST http://127.0.0.1:41109/admin/privacidade/1 [409 CONFLICT, 703B, 6ms]
+  POST http://127.0.0.1:42537/admin/privacidade/1 [409 CONFLICT, 705B, 5ms]
   ✓  HTTP 409
 
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 858B, 78ms]
+  POST http://127.0.0.1:42537/login [200 OK, 862B, 85ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Titular recebe resposta
-  GET http://127.0.0.1:41109/minha-privacidade [200 OK, 8.54kB, 7ms]
+  GET http://127.0.0.1:42537/minha-privacidade [200 OK, 9.05kB, 7ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Atendimento LGPD
 
 ↳ GET logout apenas confirma
-  GET http://127.0.0.1:41109/logout [200 OK, 6.73kB, 6ms]
+  GET http://127.0.0.1:42537/logout [200 OK, 7.25kB, 7ms]
   ✓  HTTP 200
 
 ↳ Sessao continua apos GET logout
-  GET http://127.0.0.1:41109/minha-privacidade [200 OK, 8.54kB, 7ms]
+  GET http://127.0.0.1:42537/minha-privacidade [200 OK, 9.05kB, 6ms]
   ✓  HTTP 200
 
 ↳ Logout com CSRF
-  POST http://127.0.0.1:41109/logout [302 FOUND, 609B, 4ms]
+  POST http://127.0.0.1:42537/logout [302 FOUND, 609B, 4ms]
   ✓  HTTP 302
 
 ↳ Dados bloqueados apos logout
-  GET http://127.0.0.1:41109/minha-privacidade [403 FORBIDDEN, 2.47kB, 4ms]
+  GET http://127.0.0.1:42537/minha-privacidade [403 FORBIDDEN, 2.54kB, 3ms]
   ✓  HTTP 403
 
 ❏ 10 - Cursos reutilizaveis por turma e ano
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 888B, 89ms]
+  POST http://127.0.0.1:42537/login [200 OK, 889B, 86ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Professor cria curso reutilizavel
-  POST http://127.0.0.1:41109/cursos [201 CREATED, 568B, 15ms]
+  POST http://127.0.0.1:42537/cursos [201 CREATED, 569B, 13ms]
   ✓  HTTP 201
 
 ↳ Professor cria capitulo
-  POST http://127.0.0.1:41109/cursos/1/estrutura [200 OK, 575B, 15ms]
+  POST http://127.0.0.1:42537/cursos/1/estrutura [200 OK, 576B, 11ms]
   ✓  HTTP 200
 
 ↳ Professor cria tema
-  POST http://127.0.0.1:41109/cursos/1/estrutura [200 OK, 575B, 15ms]
+  POST http://127.0.0.1:42537/cursos/1/estrutura [200 OK, 576B, 11ms]
   ✓  HTTP 200
 
 ↳ Video arbitrario recusado
-  POST http://127.0.0.1:41109/cursos/1/estrutura [400 BAD REQUEST, 659B, 8ms]
+  POST http://127.0.0.1:42537/cursos/1/estrutura [400 BAD REQUEST, 660B, 12ms]
   ✓  HTTP 400
 
 ↳ Professor cria videoaula
-  POST http://127.0.0.1:41109/cursos/1/estrutura [200 OK, 575B, 13ms]
+  POST http://127.0.0.1:42537/cursos/1/estrutura [200 OK, 576B, 11ms]
   ✓  HTTP 200
 
 ↳ Professor nao publica
-  POST http://127.0.0.1:41109/cursos/1/estado [403 FORBIDDEN, 671B, 6ms]
+  POST http://127.0.0.1:42537/cursos/1/estado [403 FORBIDDEN, 672B, 5ms]
   ✓  HTTP 403
 
 ↳ Previa do professor
-  GET http://127.0.0.1:41109/cursos/1 [200 OK, 17.62kB, 33ms]
+  GET http://127.0.0.1:42537/cursos/1 [200 OK, 16.19kB, 32ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Videoaula inicial
 
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 79ms]
+  POST http://127.0.0.1:42537/login [200 OK, 859B, 77ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Admin publica
-  POST http://127.0.0.1:41109/cursos/1/estado [200 OK, 558B, 9ms]
+  POST http://127.0.0.1:42537/cursos/1/estado [200 OK, 556B, 9ms]
   ✓  HTTP 200
 
 ↳ Conteudo publicado preservado
-  POST http://127.0.0.1:41109/cursos/1/estrutura [409 CONFLICT, 645B, 6ms]
+  POST http://127.0.0.1:42537/cursos/1/estrutura [409 CONFLICT, 643B, 6ms]
   ✓  HTTP 409
 
 ↳ Atribuicao explicita na turma atual
-  POST http://127.0.0.1:41109/admin/gestao-turmas [200 OK, 558B, 20ms]
+  POST http://127.0.0.1:42537/admin/gestao-turmas [200 OK, 556B, 15ms]
   ✓  HTTP 200
 
 ↳ Liberar na turma atual
-  POST http://127.0.0.1:41109/cursos/1/ofertas [200 OK, 572B, 11ms]
+  POST http://127.0.0.1:42537/cursos/1/ofertas [200 OK, 570B, 11ms]
   ✓  HTTP 200
 
 ↳ Criar turma de outro ano
-  POST http://127.0.0.1:41109/admin/gestao-turmas [200 OK, 558B, 10ms]
+  POST http://127.0.0.1:42537/admin/gestao-turmas [200 OK, 556B, 7ms]
   ✓  HTTP 200
 
 ↳ Atribuir na turma futura
-  POST http://127.0.0.1:41109/admin/gestao-turmas [200 OK, 558B, 16ms]
+  POST http://127.0.0.1:42537/admin/gestao-turmas [200 OK, 556B, 13ms]
   ✓  HTTP 200
 
 ↳ Matricular na turma futura
-  POST http://127.0.0.1:41109/admin/gestao-turmas [200 OK, 558B, 9ms]
+  POST http://127.0.0.1:42537/admin/gestao-turmas [200 OK, 556B, 10ms]
   ✓  HTTP 200
 
 ↳ Mesmo curso em outro ano
-  POST http://127.0.0.1:41109/cursos/1/ofertas [200 OK, 572B, 9ms]
+  POST http://127.0.0.1:42537/cursos/1/ofertas [200 OK, 570B, 10ms]
   ✓  HTTP 200
 
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 862B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 861B, 79ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Biblioteca do aluno
-  GET http://127.0.0.1:41109/cursos [200 OK, 9.33kB, 25ms]
+  GET http://127.0.0.1:42537/cursos [200 OK, 7.89kB, 23ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Curso reutilizavel
 
 ↳ Aluno acessa videoaula
-  GET http://127.0.0.1:41109/aprender/1 [200 OK, 9.83kB, 20ms]
+  GET http://127.0.0.1:42537/aprender/1 [200 OK, 8.39kB, 18ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: Videoaula inicial
 
 ↳ Confirmar conclusao
-  POST http://127.0.0.1:41109/aprender/1/aulas/1/concluir [200 OK, 560B, 10ms]
+  POST http://127.0.0.1:42537/aprender/1/aulas/1/concluir [200 OK, 559B, 13ms]
   ✓  HTTP 200
 
 ↳ Conclusao idempotente
-  POST http://127.0.0.1:41109/aprender/1/aulas/1/concluir [200 OK, 560B, 9ms]
+  POST http://127.0.0.1:42537/aprender/1/aulas/1/concluir [200 OK, 559B, 10ms]
   ✓  HTTP 200
 
 ↳ Progresso concluido
-  GET http://127.0.0.1:41109/aprender/1 [200 OK, 9.88kB, 12ms]
+  GET http://127.0.0.1:42537/aprender/1 [200 OK, 8.44kB, 12ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: 100%
 
 ↳ Novo ano tem progresso independente
-  GET http://127.0.0.1:41109/aprender/2 [200 OK, 9.83kB, 11ms]
+  GET http://127.0.0.1:42537/aprender/2 [200 OK, 8.39kB, 12ms]
   ✓  HTTP 200
   ✓  Conteudo esperado: 0%
   ✓  Conteudo esperado: 0 de 1 aulas
 
 ↳ Aluno sem autoria
-  GET http://127.0.0.1:41109/cursos/1 [403 FORBIDDEN, 7.7kB, 6ms]
+  GET http://127.0.0.1:42537/cursos/1 [403 FORBIDDEN, 8.21kB, 6ms]
   ✓  HTTP 403
 
 ↳ Login outro_aluno
-  POST http://127.0.0.1:41109/login [200 OK, 875B, 74ms]
+  POST http://127.0.0.1:42537/login [200 OK, 875B, 79ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Outra matricula bloqueada
-  GET http://127.0.0.1:41109/aprender/1 [404 NOT FOUND, 7.68kB, 8ms]
+  GET http://127.0.0.1:42537/aprender/1 [404 NOT FOUND, 8.18kB, 9ms]
   ✓  HTTP 404
 
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 889B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 888B, 77ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Duplicar sem alterar original
-  POST http://127.0.0.1:41109/cursos/1/duplicar [201 CREATED, 569B, 10ms]
+  POST http://127.0.0.1:42537/cursos/1/duplicar [201 CREATED, 568B, 12ms]
   ✓  HTTP 201
 
 ↳ Editar nova edicao
-  POST http://127.0.0.1:41109/cursos/2/estrutura [200 OK, 564B, 8ms]
+  POST http://127.0.0.1:42537/cursos/2/estrutura [200 OK, 563B, 9ms]
   ✓  HTTP 200
 
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 862B, 78ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Suspender oferta
-  POST http://127.0.0.1:41109/cursos/ofertas/1/revogar [200 OK, 558B, 6ms]
+  POST http://127.0.0.1:42537/cursos/ofertas/1/revogar [200 OK, 559B, 7ms]
   ✓  HTTP 200
 
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 863B, 75ms]
+  POST http://127.0.0.1:42537/login [200 OK, 862B, 80ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Revogacao imediata
-  GET http://127.0.0.1:41109/aprender/1 [404 NOT FOUND, 7.66kB, 8ms]
+  GET http://127.0.0.1:42537/aprender/1 [404 NOT FOUND, 8.16kB, 8ms]
   ✓  HTTP 404
 
 ❏ 11 - Reconciliacao e diario por periodo
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 862B, 73ms]
+  POST http://127.0.0.1:42537/login [200 OK, 859B, 82ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Previa das atribuicoes sem alterar dados
-  GET http://127.0.0.1:41109/academico/reconciliar/1?formato=json [200 OK, 741B, 9ms]
+  GET http://127.0.0.1:42537/academico/reconciliar/1?formato=json [200 OK, 738B, 10ms]
   ✓  HTTP 200
   ✓  Candidatos para revisao
 
 ↳ Confirmar somente a atribuicao revisada
-  POST http://127.0.0.1:41109/academico/reconciliar/1 [200 OK, 559B, 19ms]
+  POST http://127.0.0.1:42537/academico/reconciliar/1 [200 OK, 556B, 16ms]
   ✓  HTTP 200
 
 ↳ Criar periodo atual
-  POST http://127.0.0.1:41109/academico/periodos [201 CREATED, 566B, 10ms]
+  POST http://127.0.0.1:42537/academico/periodos [201 CREATED, 563B, 14ms]
   ✓  HTTP 201
 
 ↳ Criar periodo futuro
-  POST http://127.0.0.1:41109/academico/periodos [201 CREATED, 566B, 8ms]
+  POST http://127.0.0.1:42537/academico/periodos [201 CREATED, 563B, 9ms]
   ✓  HTTP 201
 
 ↳ Consultar ofertas academicas
-  GET http://127.0.0.1:41109/academico?formato=json [200 OK, 853B, 8ms]
+  GET http://127.0.0.1:42537/academico?formato=json [200 OK, 850B, 9ms]
   ✓  HTTP 200
 
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 889B, 74ms]
+  POST http://127.0.0.1:42537/login [200 OK, 888B, 79ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Criar avaliacao atual
-  POST http://127.0.0.1:41109/academico/avaliacoes [201 CREATED, 573B, 13ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes [201 CREATED, 572B, 14ms]
   ✓  HTTP 201
 
 ↳ Criar avaliacao futuro
-  POST http://127.0.0.1:41109/academico/avaliacoes [201 CREATED, 573B, 10ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes [201 CREATED, 572B, 14ms]
   ✓  HTTP 201
 
 ↳ Lancar nota no ano atual
-  POST http://127.0.0.1:41109/academico/avaliacoes/1/alunos/1 [200 OK, 579B, 15ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/1/alunos/1 [200 OK, 578B, 20ms]
   ✓  HTTP 200
 
 ↳ Impedir sobrescrita por formulario antigo
-  POST http://127.0.0.1:41109/academico/avaliacoes/1/alunos/1 [409 CONFLICT, 646B, 10ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/1/alunos/1 [409 CONFLICT, 645B, 11ms]
   ✓  HTTP 409
 
 ↳ Lancar nota independente no ano futuro
-  POST http://127.0.0.1:41109/academico/avaliacoes/2/alunos/1 [200 OK, 579B, 13ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/2/alunos/1 [200 OK, 578B, 14ms]
   ✓  HTTP 200
 
 ↳ Bloquear aluno fora da turma
-  POST http://127.0.0.1:41109/academico/avaliacoes/1/alunos/2 [403 FORBIDDEN, 672B, 10ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/1/alunos/2 [403 FORBIDDEN, 671B, 10ms]
   ✓  HTTP 403
 
 ↳ Publicar notas atual
-  POST http://127.0.0.1:41109/academico/avaliacoes/1/publicar [200 OK, 568B, 10ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/1/publicar [200 OK, 567B, 10ms]
   ✓  HTTP 200
 
 ↳ Publicar notas futuro
-  POST http://127.0.0.1:41109/academico/avaliacoes/2/publicar [200 OK, 568B, 9ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/2/publicar [200 OK, 567B, 11ms]
   ✓  HTTP 200
 
 ↳ Login aluno
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 75ms]
+  POST http://127.0.0.1:42537/login [200 OK, 861B, 84ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Boletim preserva dois anos
-  GET http://127.0.0.1:41109/boletim?formato=json [200 OK, 1.23kB, 14ms]
+  GET http://127.0.0.1:42537/boletim?formato=json [200 OK, 1.33kB, 18ms]
   ✓  HTTP 200
   ✓  Medias separadas por ano
 
 ↳ Aluno nao acessa diario do professor
-  GET http://127.0.0.1:41109/academico/avaliacoes/1 [403 FORBIDDEN, 7.64kB, 8ms]
+  GET http://127.0.0.1:42537/academico/avaliacoes/1 [403 FORBIDDEN, 8.15kB, 10ms]
   ✓  HTTP 403
 
 ↳ Login outro_aluno
-  POST http://127.0.0.1:41109/login [200 OK, 872B, 79ms]
+  POST http://127.0.0.1:42537/login [200 OK, 875B, 85ms]
   ✓  HTTP 200
   ✓  Perfil aluno
 
 ↳ Boletim nao revela notas de outro aluno
-  GET http://127.0.0.1:41109/boletim?formato=json [200 OK, 590B, 9ms]
+  GET http://127.0.0.1:42537/boletim?formato=json [200 OK, 605B, 11ms]
   ✓  HTTP 200
   ✓  Sem notas de outro titular
 
 ↳ Login admin
-  POST http://127.0.0.1:41109/login [200 OK, 861B, 75ms]
+  POST http://127.0.0.1:42537/login [200 OK, 861B, 83ms]
   ✓  HTTP 200
   ✓  Perfil admin
 
 ↳ Fechar periodo com motivo
-  POST http://127.0.0.1:41109/academico/periodos/1/estado [200 OK, 545B, 8ms]
+  POST http://127.0.0.1:42537/academico/periodos/1/estado [200 OK, 545B, 9ms]
   ✓  HTTP 200
 
 ↳ Login professor
-  POST http://127.0.0.1:41109/login [200 OK, 888B, 76ms]
+  POST http://127.0.0.1:42537/login [200 OK, 888B, 83ms]
   ✓  HTTP 200
   ✓  Perfil professor
 
 ↳ Periodo fechado bloqueia correcao
-  POST http://127.0.0.1:41109/academico/avaliacoes/1/alunos/1 [409 CONFLICT, 658B, 6ms]
+  POST http://127.0.0.1:42537/academico/avaliacoes/1/alunos/1 [409 CONFLICT, 658B, 7ms]
   ✓  HTTP 409
 
-┌─────────────────────────┬──────────────────┬──────────────────┐
-│                         │         executed │           failed │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│              iterations │                1 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│                requests │              182 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│            test-scripts │              182 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│      prerequest-scripts │                0 │                0 │
-├─────────────────────────┼──────────────────┼──────────────────┤
-│              assertions │              243 │                0 │
-├─────────────────────────┴──────────────────┴──────────────────┤
-│ total run duration: 5.8s                                      │
-├───────────────────────────────────────────────────────────────┤
-│ total data received: 728.51kB (approx)                        │
-├───────────────────────────────────────────────────────────────┤
-│ average response time: 20ms [min: 3ms, max: 89ms, s.d.: 26ms] │
-└───────────────────────────────────────────────────────────────┘
+❏ 12 - Configuracao institucional do superadmin
+↳ Login admin
+  POST http://127.0.0.1:42537/login [200 OK, 859B, 83ms]
+  ✓  HTTP 200
+  ✓  Perfil admin
+
+↳ Admin nao altera regras institucionais
+  GET http://127.0.0.1:42537/super/escola [403 FORBIDDEN, 11.21kB, 6ms]
+  ✓  HTTP 403
+
+↳ Login superadmin
+  POST http://127.0.0.1:42537/login [200 OK, 897B, 86ms]
+  ✓  HTTP 200
+  ✓  Perfil superadmin
+
+↳ Configuracao institucional
+  GET http://127.0.0.1:42537/super/escola [200 OK, 23.79kB, 77ms]
+  ✓  HTTP 200
+
+↳ Identidade personalizada com tokens
+  POST http://127.0.0.1:42537/super/escola/identidade [200 OK, 564B, 14ms]
+  ✓  HTTP 200
+
+↳ Marca aparece nos paineis
+  GET http://127.0.0.1:42537/mensagens [200 OK, 15.39kB, 8ms]
+  ✓  HTTP 200
+  ✓  Conteudo esperado: Escola API
+  ✓  Conteudo esperado: school-theme
+
+↳ CSS arbitrario recusado
+  POST http://127.0.0.1:42537/super/escola/identidade [400 BAD REQUEST, 662B, 11ms]
+  ✓  HTTP 400
+
+↳ Criar calendario institucional
+  POST http://127.0.0.1:42537/super/escola/calendarios [201 CREATED, 576B, 10ms]
+  ✓  HTTP 201
+
+↳ Recesso informado pela escola
+  POST http://127.0.0.1:42537/super/escola/calendarios/1/eventos [201 CREATED, 569B, 11ms]
+  ✓  HTTP 201
+
+↳ Calendario desatualizado nao sobrescreve
+  POST http://127.0.0.1:42537/super/escola/calendarios/1/eventos [409 CONFLICT, 621B, 7ms]
+  ✓  HTTP 409
+
+↳ Criar regra de semestres com pesos diferentes
+  POST http://127.0.0.1:42537/super/escola/politicas [201 CREATED, 574B, 9ms]
+  ✓  HTTP 201
+
+↳ Criar turma do ano da regra
+  POST http://127.0.0.1:42537/admin/gestao-turmas [200 OK, 566B, 10ms]
+  ✓  HTTP 200
+
+↳ Aplicar regras e criar periodos
+  POST http://127.0.0.1:42537/super/escola/politicas/1/aplicar [200 OK, 553B, 18ms]
+  ✓  HTTP 200
+
+↳ Aplicacao repetida preserva historico
+  POST http://127.0.0.1:42537/super/escola/politicas/1/aplicar [409 CONFLICT, 720B, 12ms]
+  ✓  HTTP 409
+
+↳ Login admin
+  POST http://127.0.0.1:42537/login [200 OK, 862B, 93ms]
+  ✓  HTTP 200
+  ✓  Perfil admin
+
+↳ Admin nao muda a divisao institucional
+  POST http://127.0.0.1:42537/academico/periodos [403 FORBIDDEN, 667B, 8ms]
+  ✓  HTTP 403
+
+↳ Login aluno
+  POST http://127.0.0.1:42537/login [200 OK, 861B, 89ms]
+  ✓  HTTP 200
+  ✓  Perfil aluno
+
+↳ Calendario visivel a comunidade
+  GET http://127.0.0.1:42537/calendario-escolar [200 OK, 8.15kB, 12ms]
+  ✓  HTTP 200
+  ✓  Conteudo esperado: Recesso de demonstracao
+
+↳ Aluno sem acesso a configuracao
+  GET http://127.0.0.1:42537/super/escola [403 FORBIDDEN, 8.49kB, 6ms]
+  ✓  HTTP 403
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │               201 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │               201 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 0 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │               269 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 6.8s                                       │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 818.05kB (approx)                         │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 22ms [min: 3ms, max: 111ms, s.d.: 28ms] │
+└────────────────────────────────────────────────────────────────┘

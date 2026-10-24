@@ -1,13 +1,13 @@
 {
-  "data_sao_paulo": "2026-10-23T23:23:32.447870-03:00",
+  "data_sao_paulo": "2026-10-24T18:17:31.785416-03:00",
   "python": "3.12.15",
   "flask": "3.1.0",
   "sqlalchemy": "2.0.44",
   "banco": "MySQL 8.4 isolado no Docker",
-  "testes": 70,
+  "testes": 81,
   "falhas": 0,
   "erros": 0,
   "ignorados": 0,
-  "duracao_segundos": 58.947,
+  "duracao_segundos": 68.414,
   "aprovado": true
 }

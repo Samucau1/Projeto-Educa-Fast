@@ -1,12 +1,12 @@
 {
-  "data_sao_paulo": "2026-10-23T23:21:07.956502-03:00",
+  "data_sao_paulo": "2026-10-24T18:17:42.561114-03:00",
   "newman": "6.2.1",
   "banco": "MySQL 8.4 isolado no Docker",
-  "requisicoes": 182,
-  "verificacoes": 243,
+  "requisicoes": 201,
+  "verificacoes": 269,
   "falhas": 0,
   "erros": 0,
-  "duracao_segundos": 6.378,
+  "duracao_segundos": 8.004,
   "exit_code": 0,
   "aprovado": true
 }

@@ -29,6 +29,17 @@ test_reorder_edit_delete_and_empty_publish_block (test_cursos.CursosTest.test_re
 test_reuse_two_years_with_separate_progress (test_cursos.CursosTest.test_reuse_two_years_with_separate_progress) ... ok
 test_revoked_offer_and_enrollment_remove_access (test_cursos.CursosTest.test_revoked_offer_and_enrollment_remove_access) ... ok
 test_student_isolation_and_no_forged_progress_owner (test_cursos.CursosTest.test_student_isolation_and_no_forged_progress_owner) ... ok
+test_annual_weighted_average_uses_superadmin_policy_and_closed_periods (test_escola.EscolaTest.test_annual_weighted_average_uses_superadmin_policy_and_closed_periods) ... ok
+test_applied_rules_preserve_history_and_own_the_period_structure (test_escola.EscolaTest.test_applied_rules_preserve_history_and_own_the_period_structure) ... ok
+test_branding_is_global_escaped_and_versioned (test_escola.EscolaTest.test_branding_is_global_escaped_and_versioned) ... ok
+test_calendar_conflicts_invalid_ranges_and_atomic_event_batch (test_escola.EscolaTest.test_calendar_conflicts_invalid_ranges_and_atomic_event_batch) ... ok
+test_calendar_weekdays_holidays_and_makeup_days (test_escola.EscolaTest.test_calendar_weekdays_holidays_and_makeup_days) ... ok
+test_division_choices_and_policy_validation (test_escola.EscolaTest.test_division_choices_and_policy_validation) ... ok
+test_invalid_theme_values_and_low_contrast_rejected (test_escola.EscolaTest.test_invalid_theme_values_and_low_contrast_rejected) ... ok
+test_light_palette_and_legacy_color_editor_keep_versions_in_sync (test_escola.EscolaTest.test_light_palette_and_legacy_color_editor_keep_versions_in_sync) ... ok
+test_migration_v2_to_v3_preserves_earlier_schema (test_escola.EscolaTest.test_migration_v2_to_v3_preserves_earlier_schema) ... ok
+test_only_superadmin_can_configure_and_csrf_is_required (test_escola.EscolaTest.test_only_superadmin_can_configure_and_csrf_is_required) ... ok
+test_rounding_and_protocol_gate (test_escola.EscolaTest.test_rounding_and_protocol_gate) ... ok
 test_bootstrap_command (test_gestao.GestaoTest.test_bootstrap_command) ... ok
 test_broadcast_and_read_permissions (test_gestao.GestaoTest.test_broadcast_and_read_permissions) ... ok
 test_layout_persistence_validation_and_csrf (test_gestao.GestaoTest.test_layout_persistence_validation_and_csrf) ... ok
@@ -70,6 +81,6 @@ test_role_normalization (test_unitarios.UnitariosTest.test_role_normalization) .
 test_upload_stream_encryption_size_and_quota_cleanup (test_unitarios.UnitariosTest.test_upload_stream_encryption_size_and_quota_cleanup) ... ok
 
 ----------------------------------------------------------------------
-Ran 70 tests in 58.947s
+Ran 81 tests in 68.414s
 
 OK

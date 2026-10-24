@@ -78,7 +78,8 @@ try {
             Write-Host 'Preparando a aplicação e o MySQL de testes...' -ForegroundColor Cyan
             Invoke-ManualDocker -Arguments ($composeArguments + @('up', '-d', '--build', '--wait', '--wait-timeout', '180', 'manual'))
             $response = Invoke-WebRequest -Uri $manualUrl -UseBasicParsing -TimeoutSec 15
-            if ($response.StatusCode -ne 200 -or $response.Content -notmatch 'Educa Fast') {
+            # A marca e o nome da escola são personalizáveis; valide o formulário de acesso.
+            if ($response.StatusCode -ne 200 -or $response.Content -notmatch '<form\b[^>]*\bid=["'']login-form["'']') {
                 throw "Os containers iniciaram, mas não consegui confirmar a aplicação em $manualUrl."
             }
 

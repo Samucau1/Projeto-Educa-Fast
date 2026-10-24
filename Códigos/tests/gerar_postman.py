@@ -266,6 +266,28 @@ def build():
     request(items, "Periodo fechado bloqueia correcao", "/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}", 409, "POST", json_body={"valor": "9", "versao": 1})
 
 
+    items = folder("12 - Configuracao institucional do superadmin")
+    login(items, "admin")
+    request(items, "Admin nao altera regras institucionais", "/super/escola", 403)
+    login(items, "superadmin")
+    request(items, "Configuracao institucional", "/super/escola")
+    request(items, "Identidade personalizada com tokens", "/super/escola/identidade", 200, "POST", json_body={"versao": 0, "nome": "Escola API", "sigla": "API", "subtitulo": "APRENDER JUNTOS", "modo": "claro", "fundo": "#f3f6fb", "destaque": "#1d4ed8", "superficie": "#ffffff", "texto": "#18283b", "muted": "#475569", "raio": "12", "densidade": "confortavel", "fonte": "dm-sans"})
+    request(items, "Marca aparece nos paineis", "/mensagens", scripts=[contains("Escola API"), contains("school-theme")])
+    request(items, "CSS arbitrario recusado", "/super/escola/identidade", 400, "POST", json_body={"versao": 1, "nome": "Escola API", "sigla": "API", "subtitulo": "Escola", "fundo": "red;}", "destaque": "#1d4ed8", "superficie": "#ffffff", "texto": "#18283b", "muted": "#475569"})
+    request(items, "Criar calendario institucional", "/super/escola/calendarios", 201, "POST", json_body={"ano": 2028, "nome": "Calendario 2028", "inicio": "2028-01-01", "fim": "2028-12-31", "dias_semana": [0, 1, 2, 3, 4], "meta_letivos": 200}, scripts=['if (pm.response.code === 201) pm.collectionVariables.set("calendario_escola", pm.response.json().calendario_id);'])
+    request(items, "Recesso informado pela escola", "/super/escola/calendarios/{{calendario_escola}}/eventos", 201, "POST", json_body={"versao": 1, "titulo": "Recesso de demonstracao", "tipo": "recesso", "inicio": "2028-02-10"})
+    request(items, "Calendario desatualizado nao sobrescreve", "/super/escola/calendarios/{{calendario_escola}}/eventos", 409, "POST", json_body={"versao": 1, "titulo": "Desatualizado", "tipo": "recesso", "inicio": "2028-02-11"})
+    request(items, "Criar regra de semestres com pesos diferentes", "/super/escola/politicas", 201, "POST", json_body={"nome": "Regra 2028", "calendario_id": "{{calendario_escola}}", "divisao": "semestres", "media_referencia": "7", "casas": "1", "arredondamento": "truncar", "periodos": [{"nome": "1o semestre", "peso": "1", "inicio": "2028-01-01", "fim": "2028-06-30"}, {"nome": "2o semestre", "peso": "3", "inicio": "2028-07-01", "fim": "2028-12-31"}]}, scripts=['if (pm.response.code === 201) pm.collectionVariables.set("politica_escola", pm.response.json().politica_id);'])
+    request(items, "Criar turma do ano da regra", "/admin/gestao-turmas", 200, "POST", json_body={"acao": "criar", "nome": "Turma institucional", "codigo": "ESC-{{run_id}}", "ano_letivo": 2028}, scripts=['if (pm.response.code === 200) pm.collectionVariables.set("turma_escola", pm.response.json().turma_id);'])
+    request(items, "Aplicar regras e criar periodos", "/super/escola/politicas/{{politica_escola}}/aplicar", 200, "POST", json_body={"turma_id": "{{turma_escola}}"})
+    request(items, "Aplicacao repetida preserva historico", "/super/escola/politicas/{{politica_escola}}/aplicar", 409, "POST", json_body={"turma_id": "{{turma_escola}}"})
+    login(items, "admin")
+    request(items, "Admin nao muda a divisao institucional", "/academico/periodos", 403, "POST", json_body={"turma_id": "{{turma_escola}}", "nome": "Extra", "ordem": 3})
+    login(items, "aluno")
+    request(items, "Calendario visivel a comunidade", "/calendario-escolar", scripts=[contains("Recesso de demonstracao")])
+    request(items, "Aluno sem acesso a configuracao", "/super/escola", 403)
+
+
     collection = {
         "info": {"name": "Educa Fast - API e regressao", "description": "Executar integralmente em banco descartavel criado por tests/executar_postman.py --serve. Usa cookies de sessao, JWT e CSRF reais. Ha requisicoes que criam dados e alteram permissoes. Desative o redirecionamento automatico. Reinicie o servidor descartavel antes de cada execucao.", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
         "item": folders,

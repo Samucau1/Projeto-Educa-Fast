@@ -2,6 +2,7 @@
 {% from 'partials/gestao_icons.html' import icon %}
 {% set page_title = 'Aparência' %}
 {% block content %}
+<div class="notice notice-success"><a href="{{ url_for('escola.configurar') }}">Configurar marca, regras acadêmicas e calendário da escola →</a></div>
 <section class="page-heading"><div><span class="eyebrow">A IDENTIDADE DA SUA ESCOLA</span><h1>Seu espaço, suas cores<span>.</span></h1><p>Personalize o ambiente que conecta toda a comunidade escolar.</p></div><span class="access-label">{{ icon('palette') }} Aparência do sistema</span></section>
 <div class="theme-layout">
     <form method="post" class="panel settings-card" id="theme-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">

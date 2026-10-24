@@ -6,7 +6,8 @@ venv
 **/*.pyc
 **/.env
 **/.env.*
-Documentos
+Documentos/*
+!Documentos/PROTOCOLO_DESIGN.md
 Protótipo
 **/uploads
 **/certs

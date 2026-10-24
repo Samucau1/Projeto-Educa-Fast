@@ -10,5 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY Códigos/app ./app
 COPY Códigos/app.py Códigos/config.py ./
 COPY Códigos/tests ./tests
+COPY AGENTS.md /workspace/AGENTS.md
+COPY Documentos/PROTOCOLO_DESIGN.md /workspace/Documentos/PROTOCOLO_DESIGN.md
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 NEWMAN_PATH=/opt/newman/node_modules/newman/bin/newman.js
 CMD ["python", "tests/executar_regressao.py"]

@@ -68,10 +68,16 @@ def criar_periodo():
     user_id, _ = identidade(admin=True)
     data = dados()
     with get_session() as db:
+        from app.models.escola_model import PoliticaEscolaModel
+        if db.query(PoliticaEscolaModel).first() and session.get('user_role') != 'superadmin':
+            abort(403, 'A divisão letiva é controlada pelo superadministrador nas regras da escola.')
         turma_id = cursos.inteiro(data, 'turma_id')
         turma = db.query(TurmaModel).filter_by(id=turma_id).with_for_update().first()
         if not turma:
             abort(404)
+        from app.models.escola_model import RegraTurmaEscolaModel
+        if db.get(RegraTurmaEscolaModel, turma_id):
+            abort(409, 'Os períodos desta turma são definidos pela política institucional aplicada.')
         if not cursos.turma_ativa(db, turma_id):
             abort(409, 'Turma arquivada.')
         nome = cursos.titulo(data.get('nome'))

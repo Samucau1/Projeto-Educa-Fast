@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title|default('Gestão') }} | Educa Fast</title>
+    <title>{{ page_title|default('Gestão') }} | {{ escola.nome|default('Educa Fast') }}</title>
     {% include 'partials/workspace_head.html' %}
 </head>
 <body class="app-page native-page {% block page_class %}{% endblock %}">

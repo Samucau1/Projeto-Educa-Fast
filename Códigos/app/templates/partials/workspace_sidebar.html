@@ -6,7 +6,7 @@
 <a href="{{ url_for(endpoint) }}" {% if active %}class="active" aria-current="page"{% endif %}>{{ icon(symbol) }} {{ text }}{% if active %}<span class="active-dot"></span>{% endif %}</a>
 {% endmacro %}
 <aside class="workspace-sidebar">
-    <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">ef<span>↗</span></span><span>educa<span class="brand-light">fast</span><small>GESTÃO ESCOLAR</small></span></a>
+    <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">{{ escola.sigla|default('ef') }}<span>↗</span></span><span>{% if escola.nome|default('EducaFast') == 'EducaFast' %}educa<span class="brand-light">fast</span>{% else %}{{ escola.nome }}{% endif %}<small>{{ escola.subtitulo|default('GESTÃO ESCOLAR') }}</small></span></a>
     <div class="workspace-label">ESPAÇO DE TRABALHO <span>ESCOLA</span></div>
     <nav class="sidebar-nav" aria-label="Navegação principal">
         {% if role in ['admin','superadmin'] %}
@@ -60,8 +60,10 @@
         {{ nav_link('privacidade.meus_pedidos', 'Meus dados e direitos', 'shield') }}
         {% if role in ['admin','superadmin'] %}{{ nav_link('privacidade.administrar', 'Atendimento LGPD', 'shield') }}{% endif %}
         <span class="nav-section">COMUNIDADE</span>
+        {{ nav_link('escola.calendario_publicado', 'Calendário escolar', 'grid') }}
         {{ nav_link('gestao.mensagens', 'Mensagens', 'mail') }}
         {% if role == 'superadmin' %}{{ nav_link('gestao.layout', 'Aparência', 'palette') }}{% endif %}
+        {% if role == 'superadmin' %}{{ nav_link('escola.configurar', 'Regras e identidade da escola', 'shield') }}{% endif %}
     </nav>
     <div class="sidebar-bottom">
         <div class="security-note">{{ icon('shield') }}<div><strong>Sua escola, mais conectada</strong><p>Pessoas, aprendizado e comunicação no mesmo lugar.</p></div></div>

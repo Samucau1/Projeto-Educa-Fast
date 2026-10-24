@@ -1,8 +1,8 @@
-"""Migração aditiva v1 dos cursos. Não deduz atribuições dos pares legados."""
+"""Migrações aditivas v1-v3; não deduzem vínculos ou notas históricas."""
 from sqlalchemy import inspect, select
 
-VERSION = 2
-PREFIXES = ('cursos', 'curso_', 'atribuicoes_docentes', 'turma_estados', 'academico_')
+VERSION = 3
+PREFIXES = ('cursos', 'curso_', 'atribuicoes_docentes', 'turma_estados', 'academico_', 'escola_')
 
 
 def tabelas_cursos(metadata):
@@ -21,7 +21,8 @@ def migrar_cursos(engine, metadata):
                 continue
             # DDL do MySQL não é transacional: checkfirst permite retomar uma execução interrompida.
             for table in tabelas_cursos(metadata):
-                if table.name.startswith('academico_') == (version == 2):
+                table_version = 3 if table.name.startswith('escola_') else 2 if table.name.startswith('academico_') else 1
+                if table_version == version:
                     table.create(connection, checkfirst=True)
             connection.execute(versions.insert().values(versao=version))
     missing = {table.name for table in tabelas_cursos(metadata)} - set(inspect(engine).get_table_names())

@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Entrar | Educa Fast</title>
+    <title>Entrar | {{ escola.nome|default('Educa Fast') }}</title>
     {% include 'partials/workspace_head.html' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css', v='20261022b') }}">
     <script src="{{ url_for('static', filename='js/paginas/login.js', v='20261022b') }}" defer></script>
 </head>
 <body class="login-page">
     <main class="login-layout">
-        <section class="login-story" aria-label="Educa Fast, gestão escolar">
-            <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">ef<span>↗</span></span><span>educa<span class="brand-light">fast</span><small>GESTÃO ESCOLAR</small></span></a>
+        <section class="login-story" aria-label="{{ escola.nome|default('Educa Fast') }}, gestão escolar">
+            <a class="brand" href="{{ url_for('home.home') }}"><span class="brand-mark">{{ escola.sigla|default('ef') }}<span>↗</span></span><span>{% if escola.nome|default('EducaFast') == 'EducaFast' %}educa<span class="brand-light">fast</span>{% else %}{{ escola.nome }}{% endif %}<small>{{ escola.subtitulo|default('GESTÃO ESCOLAR') }}</small></span></a>
             <div class="login-intro"><span class="eyebrow">MAIS CONEXÃO. MAIS POSSIBILIDADES.</span><h1>Sua escola.<br>Mais <span>conectada.</span></h1><p>Menos distância entre a gestão, os professores e quem está aqui para aprender.</p></div>
-            <div class="school-illustration" aria-hidden="true"><div class="school-orbit orbit-one"></div><div class="school-orbit orbit-two"></div><div class="school-center">ef<span>↗</span></div><span class="school-node node-users">{{ icon('users') }}</span><span class="school-node node-book">{{ icon('book') }}</span><span class="school-node node-mail">{{ icon('mail') }}</span><span class="school-node node-cap">{{ icon('cap') }}</span><span class="school-caption">Um lugar para toda a escola</span></div>
+            <div class="school-illustration" aria-hidden="true"><div class="school-orbit orbit-one"></div><div class="school-orbit orbit-two"></div><div class="school-center">{{ escola.sigla|default('ef') }}<span>↗</span></div><span class="school-node node-users">{{ icon('users') }}</span><span class="school-node node-book">{{ icon('book') }}</span><span class="school-node node-mail">{{ icon('mail') }}</span><span class="school-node node-cap">{{ icon('cap') }}</span><span class="school-caption">Um lugar para toda a escola</span></div>
             <div class="login-features"><span>{{ icon('grid') }} Gestão integrada</span><span>{{ icon('book') }} Aprendizado</span><span>{{ icon('mail') }} Comunicação</span></div>
             <p class="login-story-footer">Pessoas e conhecimento, sempre mais próximos.</p>
         </section>
@@ -28,7 +28,7 @@
                 </form>
                 <p class="login-help">Seu acesso é fornecido pela administração da escola.<br>Se precisar de ajuda, entre em contato com a secretaria.</p>
             </div>
-            <div class="login-access-footer"><span>{{ icon('shield') }} Um acesso para cada responsabilidade</span><small>Educa Fast · Gestão escolar</small></div>
+            <div class="login-access-footer"><span>{{ icon('shield') }} Um acesso para cada responsabilidade</span><small>{{ escola.nome|default('Educa Fast') }} · {{ escola.subtitulo|default('Gestão escolar') }}</small></div>
         </section>
     </main>
 <p style="text-align:center"><a href="{{ url_for('privacidade.aviso') }}">Privacidade e protecao de dados</a></p>

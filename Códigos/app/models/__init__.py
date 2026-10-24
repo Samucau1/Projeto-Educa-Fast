@@ -1,4 +1,6 @@
 """Models da aplicacao."""
+from .escola_model import (IdentidadeEscolaModel, CalendarioEscolaModel, EventoCalendarioModel,
+                          PoliticaEscolaModel, RegraTurmaEscolaModel, RegraPeriodoEscolaModel)
 from .academico_model import PeriodoLetivoModel, AvaliacaoModel, LancamentoNotaModel, AuditoriaAcademicaModel
 from .curso_model import (CursoModel, CapituloModel, TemaModel, AulaModel, OfertaCursoModel,
     ProgressoAulaModel, AtribuicaoDocenteModel, EstadoTurmaModel, AuditoriaCursoModel)

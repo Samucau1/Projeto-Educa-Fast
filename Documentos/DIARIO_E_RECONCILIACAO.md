@@ -1,3 +1,5 @@
+> Atualização de 24/10/2026: o superadmin já pode definir divisões, pesos e arredondamento por política institucional. Consulte [a configuração da escola](CONFIGURACAO_INSTITUCIONAL.md). As instruções de criação manual de períodos abaixo se aplicam às turmas ainda sem políticas institucionais.
+
 # Diário, boletim e reconciliação acadêmica
 
 Entrega de 23/10/2026. Complementa os cursos reutilizáveis com avaliações por turma/ano/período e revisão explícita dos vínculos antigos.

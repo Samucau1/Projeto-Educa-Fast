@@ -31,6 +31,8 @@ def create_app():
     app.register_blueprint(cursos_bp)
     from .routes.academico_routes import academico_bp
     app.register_blueprint(academico_bp)
+    from .routes.escola_routes import escola_bp
+    app.register_blueprint(escola_bp)
     from .routes.gestao_routes import init_gestao
     init_gestao(app)
     from .routes.privacidade_routes import privacidade_bp

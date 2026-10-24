@@ -6394,6 +6394,679 @@
           ]
         }
       ]
+    },
+    {
+      "name": "12 - Configuracao institucional do superadmin",
+      "item": [
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin nao altera regras institucionais",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/escola"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login superadmin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"superadmin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil superadmin\", function () { pm.expect(pm.response.json().role).to.eql(\"superadmin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Configuracao institucional",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/escola"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Identidade personalizada com tokens",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/identidade",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"versao\": 0, \"nome\": \"Escola API\", \"sigla\": \"API\", \"subtitulo\": \"APRENDER JUNTOS\", \"modo\": \"claro\", \"fundo\": \"#f3f6fb\", \"destaque\": \"#1d4ed8\", \"superficie\": \"#ffffff\", \"texto\": \"#18283b\", \"muted\": \"#475569\", \"raio\": \"12\", \"densidade\": \"confortavel\", \"fonte\": \"dm-sans\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Marca aparece nos paineis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/mensagens"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Escola API\", function () { pm.expect(pm.response.text()).to.include(\"Escola API\"); });",
+                  "pm.test(\"Conteudo esperado: school-theme\", function () { pm.expect(pm.response.text()).to.include(\"school-theme\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "CSS arbitrario recusado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/identidade",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"versao\": 1, \"nome\": \"Escola API\", \"sigla\": \"API\", \"subtitulo\": \"Escola\", \"fundo\": \"red;}\", \"destaque\": \"#1d4ed8\", \"superficie\": \"#ffffff\", \"texto\": \"#18283b\", \"muted\": \"#475569\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar calendario institucional",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/calendarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ano\": 2028, \"nome\": \"Calendario 2028\", \"inicio\": \"2028-01-01\", \"fim\": \"2028-12-31\", \"dias_semana\": [0, 1, 2, 3, 4], \"meta_letivos\": 200}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"calendario_escola\", pm.response.json().calendario_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recesso informado pela escola",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/calendarios/{{calendario_escola}}/eventos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"versao\": 1, \"titulo\": \"Recesso de demonstracao\", \"tipo\": \"recesso\", \"inicio\": \"2028-02-10\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Calendario desatualizado nao sobrescreve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/calendarios/{{calendario_escola}}/eventos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"versao\": 1, \"titulo\": \"Desatualizado\", \"tipo\": \"recesso\", \"inicio\": \"2028-02-11\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar regra de semestres com pesos diferentes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/politicas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Regra 2028\", \"calendario_id\": \"{{calendario_escola}}\", \"divisao\": \"semestres\", \"media_referencia\": \"7\", \"casas\": \"1\", \"arredondamento\": \"truncar\", \"periodos\": [{\"nome\": \"1o semestre\", \"peso\": \"1\", \"inicio\": \"2028-01-01\", \"fim\": \"2028-06-30\"}, {\"nome\": \"2o semestre\", \"peso\": \"3\", \"inicio\": \"2028-07-01\", \"fim\": \"2028-12-31\"}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"politica_escola\", pm.response.json().politica_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar turma do ano da regra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/admin/gestao-turmas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"acao\": \"criar\", \"nome\": \"Turma institucional\", \"codigo\": \"ESC-{{run_id}}\", \"ano_letivo\": 2028}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"turma_escola\", pm.response.json().turma_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aplicar regras e criar periodos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/politicas/{{politica_escola}}/aplicar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_id\": \"{{turma_escola}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aplicacao repetida preserva historico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/super/escola/politicas/{{politica_escola}}/aplicar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_id\": \"{{turma_escola}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin nao muda a divisao institucional",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/periodos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_id\": \"{{turma_escola}}\", \"nome\": \"Extra\", \"ordem\": 3}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Calendario visivel a comunidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/calendario-escolar"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Recesso de demonstracao\", function () { pm.expect(pm.response.text()).to.include(\"Recesso de demonstracao\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno sem acesso a configuracao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/super/escola"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [

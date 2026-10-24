@@ -2,5 +2,10 @@
 <meta name="color-scheme" content="dark">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/design_system.css', v='20261022b') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css', v='20261022b') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/escola.css', v='20261024') }}">
 <style>:root { --theme-background: {{ tema.cor_fundo|default('#06385d') }}; --accent: {{ tema.cor_destaque|default('#22d3ee') }}; }</style>
+{% if escola.versao|default(0) > 0 %}
+<meta name="school-theme" content="{{ escola.modo }}">
+<style>:root{--surface:{{ escola.superficie }};--text:{{ escola.texto }};--muted:{{ escola.muted }};--school-radius:{{ escola.raio }}px;--school-space:{{ '16' if escola.densidade == 'compacta' else '24' }}px;--school-font:{{ "'DM Sans', sans-serif" if escola.fonte == 'dm-sans' else 'system-ui, sans-serif' }};--school-button-text:{{ escola.texto_botao }};--surface-hover:color-mix(in srgb,{{ escola.superficie }} 92%,{{ escola.texto }});--line:color-mix(in srgb,{{ escola.texto }} 18%,transparent);{% if escola.modo == 'claro' %}--page:{{ escola.fundo }};--school-sidebar:{{ escola.superficie }};{% endif %}}</style>
+{% endif %}
 <script src="{{ url_for('static', filename='js/compartilhado/app.js', v='20261022b') }}" defer></script>

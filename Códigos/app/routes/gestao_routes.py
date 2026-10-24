@@ -99,6 +99,15 @@ def layout():
             error = "Informe cores no formato #RRGGBB."
         else:
             with get_session() as db:
+                from app.models.escola_model import IdentidadeEscolaModel
+                identidade = db.query(IdentidadeEscolaModel).filter_by(id=1).with_for_update().first()
+                if identidade:
+                    import json
+                    from app.services.escola import validar_identidade
+                    values = {**json.loads(identidade.dados), 'fundo': fundo, 'destaque': destaque}
+                    values = validar_identidade(values)
+                    identidade.dados = json.dumps(values)
+                    identidade.versao += 1
                 config = db.get(ConfiguracaoModel, 1)
                 if config is None:
                     config = ConfiguracaoModel(id=1)
@@ -136,6 +145,8 @@ def init_gestao(app):
             config = db.get(ConfiguracaoModel, 1)
             if config:
                 g.tema = {"cor_fundo": config.cor_fundo, "cor_destaque": config.cor_destaque}
+            from app.services.escola import identidade_atual
+            g.escola = identidade_atual(db)
         session.setdefault("csrf_token", secrets.token_hex(32))
         if request.method == "POST" and (request.blueprint == "gestao" or request.endpoint == "home.admin_comunicados"):
             token = request.headers.get("X-CSRF-Token") or request.form.get("csrf_token", "")
@@ -144,7 +155,7 @@ def init_gestao(app):
 
     @app.context_processor
     def tema_context():
-        return {"tema": getattr(g, "tema", {}), "csrf_token": session.get("csrf_token", "")}
+        return {"tema": getattr(g, "tema", {}), "escola": getattr(g, "escola", {}), "csrf_token": session.get("csrf_token", "")}
 
     @app.cli.command("criar-superusuario")
     @click.option("--email", prompt=True)

@@ -169,10 +169,12 @@ def boletim(db, aluno_id):
         notas = {n.avaliacao_id: n for n in db.query(LancamentoNotaModel).filter(
             LancamentoNotaModel.aluno_id == aluno_id, LancamentoNotaModel.avaliacao_id.in_([a.id for a in publicadas]))}
         completa = bool(avals) and all(a.publicada and a.id in notas for a in avals)
-        media = (sum(notas[a.id].valor * a.peso for a in avals) / sum(a.peso for a in avals)).quantize(
-                    Decimal('.01'), rounding=ROUND_HALF_UP) if completa else None
+        from app.services.escola import regra_periodo, arredondar
+        regra = regra_periodo(db, periodo)
+        media = arredondar(sum(notas[a.id].valor * a.peso for a in avals) / sum(a.peso for a in avals), regra) if completa else None
         resultado.append({'turma': turma.nome, 'turma_id': turma.id, 'ano': turma.ano_letivo,
-            'periodo': periodo.nome, 'disciplina': disciplina.nome, 'fechado': periodo.fechado,
+            'periodo': periodo.nome, 'disciplina': disciplina.nome, 'disciplina_id': disciplina.id, 'fechado': periodo.fechado,
+            'ordem': periodo.ordem, 'peso_periodo': regra['item']['peso'] if regra else '1',
             'media': str(media) if media is not None else None, 'media_referencia': str(periodo.media_referencia),
             'situacao': ('Média atingida' if media >= periodo.media_referencia else 'Abaixo da média') if media is not None else 'Pendente',
             'avaliacoes': [{'id': a.id, 'titulo': a.titulo, 'peso': str(a.peso),
@@ -182,4 +184,5 @@ def boletim(db, aluno_id):
     legadas = [{'id': n.id, 'disciplina': d.nome, 'nota': str(n.nota), 'observacao': n.observacao or ''}
         for n, d in db.query(NotaModel, DisciplinaModel).join(DisciplinaModel, NotaModel.disciplina_id == DisciplinaModel.id).filter(
             NotaModel.aluno_id == aluno_id, ~NotaModel.id.in_(migradas)).all()]
-    return {'periodos': resultado, 'legadas': legadas}
+    from app.services.escola import resumo_anual
+    return {'periodos': resultado, 'legadas': legadas, 'anuais': resumo_anual(db, resultado)}

@@ -19,7 +19,10 @@ def get_session():
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    from .migrations_cursos import migrar_cursos, tabelas_cursos
+    novas = set(tabelas_cursos(Base.metadata))
+    Base.metadata.create_all(bind=engine, tables=[t for t in Base.metadata.sorted_tables if t not in novas])
+    migrar_cursos(engine, Base.metadata)
     _ensure_schema_updates()
     _protect_legacy_fields()
 

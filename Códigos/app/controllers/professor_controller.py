@@ -90,6 +90,13 @@ def get_teacher_area_data(user_id):
             .order_by(TurmaModel.nome.asc())
             .all()
         )
+        from app.services.cursos import turma_ativa, autoriza_docencia
+        from app.models.curso_model import EstadoTurmaModel, AtribuicaoDocenteModel
+        turma_rows = [t for t in turma_rows if turma_ativa(db, t.id) and (
+            not db.get(EstadoTurmaModel, t.id) or db.query(AtribuicaoDocenteModel).join(
+            TurmaDisciplinaModel, AtribuicaoDocenteModel.turma_disciplina_id == TurmaDisciplinaModel.id).filter(
+            AtribuicaoDocenteModel.professor_id == professor.id, AtribuicaoDocenteModel.ativo.is_(True),
+            TurmaDisciplinaModel.turma_id == t.id).first())]
         turma_ids = [turma.id for turma in turma_rows]
 
         disciplinas_por_turma = {turma.id: [] for turma in turma_rows}
@@ -111,6 +118,8 @@ def get_teacher_area_data(user_id):
                 .all()
             )
             for turma_id, disciplina in disciplina_rows:
+                if not autoriza_docencia(db, professor.id, turma_id, disciplina.id):
+                    continue
                 disciplinas_por_turma.setdefault(turma_id, []).append(
                     {
                         "id": disciplina.id,
@@ -307,6 +316,9 @@ def launch_activity(user_id, data, files=None):
             .first()
         )
 
+        from app.services.cursos import autoriza_docencia
+        if not autoriza_docencia(db, professor.id, turma_id, disciplina_id):
+            return {"erro": "Atribuicao docente ausente, revogada ou turma arquivada"}, 403
         if not professor_na_turma:
             return {"erro": "Professor nao pertence a esta turma"}, 403
         if not professor_disciplina or not turma_disciplina:
@@ -472,6 +484,9 @@ def save_student_grade(user_id, data):
 
         if not aluno_na_turma:
             return {"erro": "Aluno nao pertence a esta turma"}, 403
+        from app.services.cursos import autoriza_docencia
+        if not autoriza_docencia(db, professor.id, turma_id, disciplina_id):
+            return {"erro": "Atribuicao docente ausente, revogada ou turma arquivada"}, 403
         if not professor_na_turma:
             return {"erro": "Professor nao pertence a esta turma"}, 403
         if not professor_disciplina or not turma_disciplina:

@@ -1,4 +1,6 @@
 """Models da aplicacao."""
+from .curso_model import (CursoModel, CapituloModel, TemaModel, AulaModel, OfertaCursoModel,
+    ProgressoAulaModel, AtribuicaoDocenteModel, EstadoTurmaModel, AuditoriaCursoModel)
 
 from .aluno_model import AlunoModel
 from .aluno_disciplina_model import AlunoDisciplinaModel

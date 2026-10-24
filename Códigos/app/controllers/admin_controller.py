@@ -518,6 +518,9 @@ def associar_aluno_turma(data):
         if not db.get(TurmaModel, turma_id):
             return {"erro": "Turma nao encontrada"}, 404
 
+        from app.services.cursos import turma_ativa
+        if not turma_ativa(db, turma_id):
+            return {"erro": "Turma arquivada"}, 409
         db.add(AlunoTurmaModel(aluno_id=aluno_id, turma_id=turma_id))
         db.commit()
         return {"mensagem": "Aluno associado a turma"}, 201
@@ -543,6 +546,9 @@ def associar_professor_turma(data):
         if not db.get(TurmaModel, turma_id):
             return {"erro": "Turma nao encontrada"}, 404
 
+        from app.models.curso_model import EstadoTurmaModel
+        if db.get(EstadoTurmaModel, turma_id):
+            return {"erro": "Use a gestao academica para atribuir professor, turma e disciplina explicitamente"}, 409
         disciplinas_professor = (
             db.query(ProfessorDisciplinaModel)
             .filter(ProfessorDisciplinaModel.professor_id == professor_id)

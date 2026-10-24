@@ -1,3 +1,5 @@
+> Para os novos cursos reutilizáveis e a gestão acadêmica, consulte [o roteiro atualizado](RELATORIO_CURSOS.md#roteiro-manual-complementar).
+
 # Teste manual no navegador
 
 ## Iniciar o ambiente em segundo plano

@@ -18,6 +18,12 @@ Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, co
 - [Validação e limites atuais](#validação-e-limites-atuais)
 - [Documentação e licença](#documentação-e-licença)
 
+## Cursos reutilizáveis
+
+Professores organizam cursos em capítulos, temas e videoaulas. A administração publica o conteúdo e libera o mesmo curso para várias turmas e anos, com progresso separado por oferta. Cursos publicados são preservados; novas edições podem ser duplicadas em rascunho. A tela **Gestão acadêmica** permite atribuir professor, turma e disciplina explicitamente.
+
+Consulte [arquitetura e uso](Documentos/CURSOS_REUTILIZAVEIS.md) e [validação dos cursos](Documentos/testes/RELATORIO_CURSOS.md).
+
 ## Funcionalidades
 
 | Perfil | Recursos implementados |

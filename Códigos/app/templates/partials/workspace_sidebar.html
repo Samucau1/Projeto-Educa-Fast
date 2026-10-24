@@ -43,6 +43,9 @@
             <a href="{{ url_for('professor.dashboard') }}#documentos">{{ icon('users') }} Documentos</a>
             {% endif %}
         {% endif %}
+        <span class="nav-section">APRENDIZAGEM</span>
+        {{ nav_link('cursos.biblioteca', 'Meus cursos' if role == 'aluno' else 'Biblioteca de cursos', 'book', ['cursos.editor','cursos.aprender']) }}
+        {% if role in ['admin','superadmin'] %}{{ nav_link('cursos.gestao_turmas', 'Gestão acadêmica', 'grid') }}{% endif %}
         <span class="nav-section">PRIVACIDADE</span>
         {{ nav_link('privacidade.meus_pedidos', 'Meus dados e direitos', 'shield') }}
         {% if role in ['admin','superadmin'] %}{{ nav_link('privacidade.administrar', 'Atendimento LGPD', 'shield') }}{% endif %}

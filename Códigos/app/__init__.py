@@ -27,6 +27,8 @@ def create_app():
     init_db()
 
     register_routes(app)
+    from .routes.curso_routes import cursos_bp
+    app.register_blueprint(cursos_bp)
     from .routes.gestao_routes import init_gestao
     init_gestao(app)
     from .routes.privacidade_routes import privacidade_bp

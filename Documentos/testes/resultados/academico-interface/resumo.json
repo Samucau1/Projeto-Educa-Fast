@@ -1,0 +1,15 @@
+{
+  "aprovado": true,
+  "data": "2026-10-24T02:23:51.455Z",
+  "cenarios": [
+    "curso reutilizado 2026/2027",
+    "reconciliação explícita de turma antiga",
+    "criação de período e avaliação",
+    "lançamento e publicação",
+    "médias independentes entre anos",
+    "fechamento bloqueia alteração"
+  ],
+  "desktop": "1440x1000",
+  "mobile": "390x844",
+  "erros_javascript": []
+}

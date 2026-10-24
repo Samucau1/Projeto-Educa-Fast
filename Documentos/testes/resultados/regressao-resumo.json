@@ -1,13 +1,13 @@
 {
-  "data_sao_paulo": "2026-10-23T22:48:17.701598-03:00",
+  "data_sao_paulo": "2026-10-23T23:23:01.233183-03:00",
   "python": "3.14.3",
   "flask": "3.1.0",
   "sqlalchemy": "2.0.44",
   "banco": "SQLite em memória com foreign_keys=ON",
-  "testes": 56,
+  "testes": 70,
   "falhas": 0,
   "erros": 0,
-  "ignorados": 3,
-  "duracao_segundos": 31.675,
+  "ignorados": 4,
+  "duracao_segundos": 43.035,
   "aprovado": true
 }

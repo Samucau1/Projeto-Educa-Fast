@@ -1,3 +1,17 @@
+test_assignment_revocation_blocks_diary_and_old_grade_route (test_academico.AcademicoTest.test_assignment_revocation_blocks_diary_and_old_grade_route) ... ok
+test_closed_period_blocks_and_admin_can_reopen_with_reason (test_academico.AcademicoTest.test_closed_period_blocks_and_admin_can_reopen_with_reason) ... ok
+test_concurrent_correction_has_one_winner (test_academico.AcademicoTest.test_concurrent_correction_has_one_winner) ... ok
+test_demo_seeds_two_years_and_rejects_existing_data (test_academico.AcademicoTest.test_demo_seeds_two_years_and_rejects_existing_data) ... ok
+test_grade_validation_version_conflict_and_audit (test_academico.AcademicoTest.test_grade_validation_version_conflict_and_audit) ... ok
+test_history_survives_unenrollment_and_privacy_export (test_academico.AcademicoTest.test_history_survives_unenrollment_and_privacy_export) ... ok
+test_legacy_note_requires_confirmation_and_preserves_source (test_academico.AcademicoTest.test_legacy_note_requires_confirmation_and_preserves_source) ... ok
+test_missing_is_pending_and_draft_is_not_disclosed (test_academico.AcademicoTest.test_missing_is_pending_and_draft_is_not_disclosed) ... ok
+test_period_and_weight_validation (test_academico.AcademicoTest.test_period_and_weight_validation) ... ok
+test_reconciliation_is_explicit_and_no_automatic_cartesian_grant (test_academico.AcademicoTest.test_reconciliation_is_explicit_and_no_automatic_cartesian_grant) ... ok
+test_roles_csrf_and_student_isolation (test_academico.AcademicoTest.test_roles_csrf_and_student_isolation) ... ok
+test_stale_and_invalid_reconciliation_rejected_without_partial_writes (test_academico.AcademicoTest.test_stale_and_invalid_reconciliation_rejected_without_partial_writes) ... ok
+test_two_year_course_reconciliation_and_grades_end_to_end (test_academico.AcademicoTest.test_two_year_course_reconciliation_and_grades_end_to_end) ... ok
+test_weighted_grades_are_independent_across_years (test_academico.AcademicoTest.test_weighted_grades_are_independent_across_years) ... ok
 test_simultaneous_document_fulfillment_has_one_winner (test_concorrencia.ConcorrenciaTest.test_simultaneous_document_fulfillment_has_one_winner) ... ok
 test_stale_admin_cannot_reopen_concurrently_closed_request (test_concorrencia.ConcorrenciaTest.test_stale_admin_cannot_reopen_concurrently_closed_request) ... ok
 test_archived_class_blocks_access_and_teaching (test_cursos.CursosTest.test_archived_class_blocks_access_and_teaching) ... ok
@@ -56,6 +70,6 @@ test_role_normalization (test_unitarios.UnitariosTest.test_role_normalization) .
 test_upload_stream_encryption_size_and_quota_cleanup (test_unitarios.UnitariosTest.test_upload_stream_encryption_size_and_quota_cleanup) ... ok
 
 ----------------------------------------------------------------------
-Ran 56 tests in 38.253s
+Ran 70 tests in 58.947s
 
 OK

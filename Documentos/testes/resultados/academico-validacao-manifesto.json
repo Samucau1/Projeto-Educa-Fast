@@ -1,0 +1,99 @@
+{
+  "commit_codigo_validado": "c1b6c9089989c12c3f94d25953edd08c1feb2bb7",
+  "arvore_codigo": "11ca85a34ffc063147d876e892b13b5d1104492c",
+  "evidencias": {
+    "regressao-resumo.json": {
+      "sha256": "4433e31873ecb968e21cef1fb9dc559891e4210f7b78ab08ad3dc41185bd11da",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T23:23:01.233183-03:00",
+        "python": "3.14.3",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "SQLite em memória com foreign_keys=ON",
+        "testes": 70,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 4,
+        "duracao_segundos": 43.035,
+        "aprovado": true
+      }
+    },
+    "mysql/regressao-resumo.json": {
+      "sha256": "8b8b5057596aaf4c1673fed21936e84ad3223b85ad830d20e013150e119bae4a",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T23:23:32.447870-03:00",
+        "python": "3.12.15",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "testes": 70,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 0,
+        "duracao_segundos": 58.947,
+        "aprovado": true
+      }
+    },
+    "postman-resumo.json": {
+      "sha256": "795b7f8cf38bb9a2bfb661b830467616eb351809fca12ace5731169f723c7961",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T23:20:50.938215-03:00",
+        "newman": "6.2.1",
+        "banco": "SQLite descartável com foreign_keys=ON",
+        "requisicoes": 182,
+        "verificacoes": 243,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 20.329,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "mysql/postman-resumo.json": {
+      "sha256": "f21ad6daab71643f6a89d973195144848bc39a94d7693c4b6baffd0430b893f0",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T23:21:07.956502-03:00",
+        "newman": "6.2.1",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "requisicoes": 182,
+        "verificacoes": 243,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 6.378,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "academico-interface/resumo.json": {
+      "sha256": "9e6301f920b4ac293612205be95e88fb2b40dba925cfe5e18e3a4170ef1cb1cf",
+      "resultado": {
+        "aprovado": true,
+        "data": "2026-10-24T02:23:51.455Z",
+        "cenarios": [
+          "curso reutilizado 2026/2027",
+          "reconciliação explícita de turma antiga",
+          "criação de período e avaliação",
+          "lançamento e publicação",
+          "médias independentes entre anos",
+          "fechamento bloqueia alteração"
+        ],
+        "desktop": "1440x1000",
+        "mobile": "390x844",
+        "erros_javascript": []
+      }
+    },
+    "cursos-interface/resumo.json": {
+      "sha256": "871b77318a43b5e3c413a5e4ceb25d061882fa12583371995dfc5f4ea8bdacd7",
+      "resultado": {
+        "aprovado": true,
+        "fluxo": "admin → professor → aluno",
+        "desktop": "1440x1000",
+        "mobile": "390x844",
+        "erros_javascript": [],
+        "limite": "Player e endereço verificados; reprodução externa do YouTube não homologada.",
+        "data": "2026-10-24T02:23:48.866Z"
+      }
+    }
+  },
+  "escopo": "Homologação sintética; nenhum vínculo ou nota de banco real convertido por inferência."
+}

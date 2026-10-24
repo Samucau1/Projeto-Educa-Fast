@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from ambiente_teste import configurar_banco_testes
+from csrf_client import FormClient
 configurar_banco_testes()
 
 from app import create_app
@@ -18,6 +19,7 @@ class RegressaoTest(unittest.TestCase):
     def setUpClass(cls):
         exigir_banco_em_memoria()
         cls.app = create_app()
+        cls.app.test_client_class = FormClient
         cls.app.config.update(TESTING=True, SECRET_KEY="regressao-local")
 
     def setUp(self):
@@ -54,12 +56,12 @@ class RegressaoTest(unittest.TestCase):
         self.assertEqual(self.client.get("/").status_code, 200)
         self.assertEqual(self.client.post("/login", json={}).status_code, 400)
         self.assertEqual(self.client.post("/login", json={"email": "admin@teste.local", "senha": "errada"}).status_code, 401)
-        self.assertEqual(self.client.post("/login", json={"email": "inexistente@teste.local", "senha": SENHA}).status_code, 404)
+        self.assertEqual(self.client.post("/login", json={"email": "inexistente@teste.local", "senha": SENHA}).status_code, 401)
         for role, path in (("admin", "/admin/dashboard"), ("professor", "/professor"), ("aluno", "/aluno")):
             self.login(role)
             self.assertEqual(self.client.get(path).status_code, 200)
             self.assertEqual(self.client.get("/").status_code, 302)
-            self.client.get("/logout")
+            self.client.post("/logout")
             self.assertEqual(self.client.get(path).status_code, 403)
 
     def test_login_rejects_non_object_json(self):
@@ -175,7 +177,7 @@ class RegressaoTest(unittest.TestCase):
         token = self.csrf()
         self.client.post("/admin/comunicados", data={"titulo": "Mensagem persistida", "mensagem": "Texto integral\nLinha 2", "csrf_token": token})
         self.client.post("/admin/comunicados", data={"titulo": "Excesso", "mensagem": "x" * 10001, "csrf_token": token})
-        self.client.get("/logout")
+        self.client.post("/logout")
         self.assertEqual(self.client.get("/mensagens").status_code, 403)
         self.login("aluno")
         self.assertIn(b"Texto integral\nLinha 2", self.client.get("/mensagens").data)

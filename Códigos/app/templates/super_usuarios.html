@@ -59,7 +59,7 @@
         </main>
     </div>
     <dialog class="user-dialog" id="create-dialog" {% if error %}data-open-on-load{% endif %} aria-labelledby="create-title">
-        <form method="post" action="{{ url_for('gestao.usuarios') }}" id="create-form" class="user-form" data-user-form="create">
+        <form method="post" action="{{ url_for('gestao.usuarios') }}" id="create-form" class="user-form" data-user-form="create"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <header class="dialog-heading"><div><span class="eyebrow">UM NOVO ACESSO À ESCOLA</span><h2 id="create-title">Criar usuário</h2><p>Escolha o perfil e preencha os dados de acesso.</p></div><button type="button" class="icon-button" data-close-dialog aria-label="Fechar cadastro">{{ icon('close') }}</button></header>
             <div class="dialog-content">
@@ -81,7 +81,7 @@
         </form>
     </dialog>
     <dialog class="user-dialog" id="permission-dialog" aria-labelledby="permission-title" data-open-user="{{ edit_user_id or '' }}" {% if permission_error %}data-submitted="{{ request.form.to_dict()|tojson|forceescape }}"{% endif %}>
-        <form method="post" id="permission-form" class="user-form" data-user-form="permission" data-action-template="{{ url_for('gestao.perfil', user_id=0) }}">
+        <form method="post" id="permission-form" class="user-form" data-user-form="permission" data-action-template="{{ url_for('gestao.perfil', user_id=0) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <header class="dialog-heading"><div><span class="eyebrow">CONTROLE DE ACESSO</span><h2 id="permission-title">Gerenciar permissões</h2><p>Defina o que este usuário pode acessar.</p></div><button type="button" class="icon-button" data-close-dialog aria-label="Fechar permissões">{{ icon('close') }}</button></header>
             <div class="dialog-content">

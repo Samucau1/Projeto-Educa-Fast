@@ -1,5 +1,45 @@
 # Teste manual no navegador
 
+## Iniciar o ambiente em segundo plano
+
+No **PowerShell**, aberto na pasta do projeto, execute:
+
+```powershell
+.\iniciar-educafast.ps1
+```
+
+O script abre o Docker Desktop se necessário, constrói a aplicação, sobe o MySQL, cria o esquema e os exemplos no primeiro uso, aguarda os serviços saudáveis e abre **http://127.0.0.1:5050**. Ao terminar o comando, os containers continuam rodando em segundo plano; você pode fechar o terminal.
+
+No **CMD**, use o iniciador equivalente, pois arquivos `.ps1` são executados pelo PowerShell:
+
+```cmd
+.\iniciar-educafast.cmd
+```
+
+Ou chame o PowerShell explicitamente:
+
+```cmd
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\iniciar-educafast.ps1
+```
+
+Opções pelo PowerShell:
+
+```powershell
+.\iniciar-educafast.ps1 -SemNavegador
+.\iniciar-educafast.ps1 -Acao Status
+.\iniciar-educafast.ps1 -Acao Parar
+```
+
+`-Acao Parar` remove os containers e **descarta os dados de demonstração**. Os mesmos parâmetros funcionam com `iniciar-educafast.cmd`. O Docker deve continuar aberto para manter os serviços funcionando.
+
+## Iniciar com um clique
+
+Na raiz do repositório, dê dois cliques em **`iniciar-teste-manual.cmd`** (atalho compatível com o iniciador acima). Não exige Python nem a senha do MySQL instalado; é necessário ter Docker Desktop instalado e configurado para containers Linux. Na primeira execução, o Docker pode baixar as imagens.
+
+Iniciar novamente atualiza a aplicação e preserva os dados do MySQL manual que ainda estiver ativo. O script trabalha somente com o projeto Docker `educafast-manual` e a porta local 5050.
+
+## Acessar o sistema
+
 Abra **http://127.0.0.1:5050**. A aplicação e o MySQL rodam no Docker, no projeto separado `educafast-manual`.
 
 Todos os usuários abaixo usam a senha **`Teste-local-2026!`**:
@@ -59,3 +99,16 @@ Use o projeto `educafast-validacao` para as suítes automáticas e `educafast-ma
 ## Registrar o resultado
 
 Para cada problema, anote: perfil, caminho da tela, ação realizada, resultado esperado e resultado observado. Inclua uma captura da tela quando houver problema visual. Este roteiro ainda precisa ser executado por uma pessoa; a preparação e a verificação HTTP do ambiente não substituem essa conferência.
+
+## Seguranca e privacidade (LGPD)
+
+1. Reinicie o ambiente com `.\iniciar-educafast.ps1` para reconstruir a imagem atual. Use somente dados sinteticos.
+2. Na tela de login, abra o aviso de privacidade: controlador EducaFast.
+3. Entre como aluno e abra **Meus dados e direitos**. Registre um pedido de correcao e baixe a copia JSON.
+4. Entre como outro aluno: o protocolo anterior nao deve aparecer.
+5. Entre como administrador e abra **Atendimento LGPD**. Registre resposta fundamentada e conclua o pedido.
+6. Volte ao aluno e confirme a resposta. Alunos/professores nao podem acessar a fila administrativa.
+7. Tente enviar arquivo maior que 10 MiB, repetir uma solicitacao atendida e anexar documento por professor sem vinculo: o backend deve recusar.
+8. Fotos e documentos privados exigem autenticacao. Sair agora mostra confirmacao e encerra a sessao por POST com CSRF.
+
+O ambiente manual usa HTTP em loopback e chaves sinteticas. Producao exige chaves proprias, HTTPS, TLS no banco e contato de privacidade; consulte [Seguranca e LGPD](../SEGURANCA_E_LGPD.md).

@@ -30,7 +30,7 @@
         </header>
 
         <div class="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-8">
-            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8">
+            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="create">
                 <h2 class="text-xl font-bold">Nova Turma</h2>
                 <p class="mt-1 text-sm text-gray-400">Informe os dados principais da turma.</p>
@@ -106,7 +106,7 @@
         </div>
 
         <section class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8">
-            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8">
+            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="associate_student">
                 <h2 class="text-xl font-bold">Associar Aluno</h2>
                 <p class="mt-1 text-sm text-gray-400">Vincule um aluno a uma turma cadastrada.</p>
@@ -134,7 +134,7 @@
                 <button class="turma-submit">Associar Aluno</button>
             </form>
 
-            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8">
+            <form action="{{ url_for('home.admin_turmas') }}" method="post" class="glass-card turma-card rounded-[32px] p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="associate_teacher">
                 <h2 class="text-xl font-bold">Associar Professor</h2>
                 <p class="mt-1 text-sm text-gray-400">As disciplinas do professor serão vinculadas à turma automaticamente.</p>

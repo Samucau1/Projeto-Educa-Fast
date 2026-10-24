@@ -72,7 +72,7 @@
                         <p>Publique uma atividade para esta turma.</p>
                     </div>
                     {% if turma.disciplinas %}
-                    <form action="{{ url_for('professor.lancar_atividade') }}" method="post" enctype="multipart/form-data" class="professor-activity-form">
+                    <form action="{{ url_for('professor.lancar_atividade') }}" method="post" enctype="multipart/form-data" class="professor-activity-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="turma_id" value="{{ turma.id }}">
                         <select name="disciplina_id" required>
                             {% for disciplina in turma.disciplinas %}
@@ -128,7 +128,7 @@
                                 </td>
                                 <td class="py-4" colspan="4">
                                     {% if turma.disciplinas %}
-                                    <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form">
+                                    <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                         <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                         <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
                                         <select name="disciplina_id" required>
@@ -196,7 +196,7 @@
                                             <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
                                         </td>
                                         <td class="py-4">
-                                            <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form">
+                                            <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                                 <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                                 <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
                                                 <select name="disciplina_id" required>
@@ -282,7 +282,7 @@
                         <strong class="professor-request-status professor-request-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</strong>
                     </div>
                     {% if solicitacao.status != "enviado" %}
-                    <form action="{{ url_for('professor.upload_documento_professor') }}" method="post" enctype="multipart/form-data" class="professor-doc-form mt-4">
+                    <form action="{{ url_for('professor.upload_documento_professor') }}" method="post" enctype="multipart/form-data" class="professor-doc-form mt-4"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="solicitacao_id" value="{{ solicitacao.id }}">
                         <label>
                             <span>Arquivo</span>

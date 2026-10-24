@@ -125,6 +125,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -365,7 +369,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });"
                 ]
               }
             }
@@ -457,7 +461,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil superadmin\", function () { pm.expect(pm.response.json().role).to.eql(\"superadmin\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
                 ]
               }
             }
@@ -493,6 +497,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -531,6 +539,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -566,6 +578,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -603,6 +619,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -638,6 +658,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -675,6 +699,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -711,6 +739,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -745,7 +777,12 @@
           "name": "Superperfil nao pode ser rebaixado",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/{{superadmin_id}}/perfil",
             "body": {
               "mode": "urlencoded",
@@ -782,7 +819,12 @@
           "name": "Usuario inexistente",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/999999/perfil",
             "body": {
               "mode": "urlencoded",
@@ -819,7 +861,12 @@
           "name": "Atribuir professor sem dados obrigatorios",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/{{novo_admin_id}}/perfil",
             "body": {
               "mode": "urlencoded",
@@ -856,7 +903,12 @@
           "name": "Atribuir professor",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/{{novo_admin_id}}/perfil",
             "body": {
               "mode": "urlencoded",
@@ -965,7 +1017,12 @@
           "name": "Salvar cores",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/layout",
             "body": {
               "mode": "urlencoded",
@@ -1031,7 +1088,12 @@
           "name": "Cor invalida rejeitada",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/layout",
             "body": {
               "mode": "urlencoded",
@@ -1097,7 +1159,12 @@
           "name": "Comunicado do superperfil",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -1172,7 +1239,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
                 ]
               }
             }
@@ -1316,6 +1383,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -1394,7 +1465,12 @@
           "name": "Criar disciplina",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/disciplinas",
             "body": {
               "mode": "urlencoded",
@@ -1436,7 +1512,12 @@
           "name": "Criar turma",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/turmas",
             "body": {
               "mode": "urlencoded",
@@ -1478,7 +1559,12 @@
           "name": "Vincular professor a disciplina",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/disciplinas",
             "body": {
               "mode": "urlencoded",
@@ -1520,7 +1606,12 @@
           "name": "Vincular professor a turma",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/turmas",
             "body": {
               "mode": "urlencoded",
@@ -1562,7 +1653,12 @@
           "name": "Vincular aluno a turma",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/turmas",
             "body": {
               "mode": "urlencoded",
@@ -1666,7 +1762,12 @@
           "name": "Comunicado vazio",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -1709,7 +1810,12 @@
           "name": "Comunicado com titulo acima do limite",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -1752,7 +1858,12 @@
           "name": "Publicar mensagem geral",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -1818,7 +1929,12 @@
           "name": "Upload sem arquivo",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/arquivos/upload",
             "body": {
               "mode": "urlencoded",
@@ -1883,7 +1999,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil professor\", function () { pm.expect(pm.response.json().role).to.eql(\"professor\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
                 ]
               }
             }
@@ -2020,7 +2136,12 @@
           "name": "Professor nao publica",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -2063,6 +2184,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -2120,7 +2245,12 @@
           "name": "Lancar atividade",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/atividades/lancar",
             "body": {
               "mode": "urlencoded",
@@ -2167,7 +2297,12 @@
           "name": "Atividade em turma sem vinculo",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/atividades/lancar",
             "body": {
               "mode": "urlencoded",
@@ -2209,7 +2344,12 @@
           "name": "Nota invalida: -1",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2256,7 +2396,12 @@
           "name": "Nota invalida: 11",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2303,7 +2448,12 @@
           "name": "Nota invalida: abc",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2350,7 +2500,12 @@
           "name": "Nota invalida: NaN",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2397,7 +2552,12 @@
           "name": "Nota invalida: sNaN",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2444,7 +2604,12 @@
           "name": "Nota invalida: Infinity",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2491,7 +2656,12 @@
           "name": "Salvar nota com virgula",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2538,7 +2708,12 @@
           "name": "Atualizar nota",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2585,7 +2760,12 @@
           "name": "Aluno fora da turma",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -2665,7 +2845,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
                 ]
               }
             }
@@ -2744,7 +2924,12 @@
           "name": "Aluno nao publica",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -2787,6 +2972,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -2849,7 +3038,12 @@
           "name": "Aluno nao altera nota",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/professor/notas/salvar",
             "body": {
               "mode": "urlencoded",
@@ -3012,7 +3206,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_outro_aluno\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_outro_aluno\", pm.response.json().token);"
                 ]
               }
             }
@@ -3043,8 +3237,13 @@
         {
           "name": "Logout",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/logout"
           },
           "protocolProfileBehavior": {
@@ -3121,7 +3320,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Perfil superadmin\", function () { pm.expect(pm.response.json().role).to.eql(\"superadmin\"); });",
-                  "if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_superadmin\", pm.response.json().token);"
                 ]
               }
             }
@@ -3156,7 +3355,12 @@
           "name": "Professor passa a aluno",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/{{professor_user_id}}/perfil",
             "body": {
               "mode": "urlencoded",
@@ -3230,7 +3434,12 @@
           "name": "Restaurar professor",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios/{{professor_user_id}}/perfil",
             "body": {
               "mode": "urlencoded",
@@ -3267,7 +3476,12 @@
           "name": "Restaurar cores padrao",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
             "url": "{{base_url}}/super/layout",
             "body": {
               "mode": "urlencoded",
@@ -3331,6 +3545,668 @@
         {
           "name": "Encerrar sessao",
           "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/logout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - LGPD, privacidade e protecoes de sessao",
+      "item": [
+        {
+          "name": "Aviso publico de privacidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: EducaFast\", function () { pm.expect(pm.response.text()).to.include(\"EducaFast\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Visitante sem dados pessoais",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Solicitacao sem CSRF",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "acesso",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar pedido LGPD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/minha-privacidade",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "tipo",
+                  "value": "correcao",
+                  "type": "text"
+                },
+                {
+                  "key": "detalhe",
+                  "value": "Pedido LGPD {{run_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar protocolo proprio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const protocol = pm.response.text().match(/Protocolo (\\d+)/);",
+                  "pm.test(\"Protocolo presente\", function () { pm.expect(protocol).not.to.eql(null); });",
+                  "if (protocol) pm.collectionVariables.set(\"pedido_lgpd_id\", protocol[1]);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Exportar dados proprios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/minha-privacidade/exportar"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Somente a conta titular\", function () { pm.expect(pm.response.json().conta.email).to.eql(\"aluno@teste.local\"); });",
+                  "pm.test(\"Senha ausente\", function () { pm.expect(pm.response.json().conta).not.to.have.property(\"senha\"); });",
+                  "pm.test(\"Sem cache de dados pessoais\", function () { pm.expect(pm.response.headers.get(\"Cache-Control\")).to.eql(\"no-store\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Parametro nao seleciona outra conta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/minha-privacidade/exportar?usuario_id={{superadmin_id}}"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Somente a conta titular\", function () { pm.expect(pm.response.json().conta.email).to.eql(\"aluno@teste.local\"); });",
+                  "pm.test(\"Senha ausente\", function () { pm.expect(pm.response.json().conta).not.to.have.property(\"senha\"); });",
+                  "pm.test(\"Sem cache de dados pessoais\", function () { pm.expect(pm.response.headers.get(\"Cache-Control\")).to.eql(\"no-store\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno sem fila administrativa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login outro_aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"outro_aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_outro_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Outro aluno nao ve o protocolo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Pedido de outro titular ausente\", function () { pm.expect(pm.response.text()).not.to.include(\"Pedido LGPD \" + pm.collectionVariables.get(\"run_id\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"professor@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil professor\", function () { pm.expect(pm.response.json().role).to.eql(\"professor\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Professor sem fila administrativa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cookie admin sem CSRF e Bearer falso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer token.falso.assinatura"
+              }
+            ],
+            "url": "{{base_url}}/cadastro/aluno",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nome\": \"Bloqueado\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fila administrativa de privacidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/admin/privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Responder pedido do titular",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/admin/privacidade/{{pedido_lgpd_id}}",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "status",
+                  "value": "concluido",
+                  "type": "text"
+                },
+                {
+                  "key": "resposta",
+                  "value": "Atendimento LGPD {{run_id}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pedido encerrado nao reabre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/admin/privacidade/{{pedido_lgpd_id}}",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "status",
+                  "value": "em_analise",
+                  "type": "text"
+                },
+                {
+                  "key": "resposta",
+                  "value": "Alteracao bloqueada",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Titular recebe resposta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Conteudo esperado: Atendimento LGPD\", function () { pm.expect(pm.response.text()).to.include(\"Atendimento LGPD\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET logout apenas confirma",
+          "request": {
             "method": "GET",
             "header": [],
             "url": "{{base_url}}/logout"
@@ -3344,7 +4220,78 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sessao continua apos GET logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout com CSRF",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              }
+            ],
+            "url": "{{base_url}}/logout"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
                   "pm.test(\"HTTP 302\", function () { pm.response.to.have.status(302); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dados bloqueados apos logout",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/minha-privacidade"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
                 ]
               }
             }

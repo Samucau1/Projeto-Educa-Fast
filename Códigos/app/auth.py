@@ -38,7 +38,6 @@ def generate_token(user):
     header = {"alg": "HS256", "typ": "JWT"}
     payload = {
         "sub": str(user.id),
-        "email": user.email,
         "role": role,
         "tipo": role,
         "exp": int(expires_at.timestamp()),
@@ -64,7 +63,7 @@ def decode_token_from_request():
 
         header = json.loads(_b64url_decode(header_part))
         payload = json.loads(_b64url_decode(payload_part))
-    except (ValueError, json.JSONDecodeError, UnicodeDecodeError, binascii.Error):
+    except (ValueError, json.JSONDecodeError, UnicodeError, binascii.Error):
         return None, (jsonify({"erro": "Token JWT invalido"}), 401)
 
     if not isinstance(header, dict) or not isinstance(payload, dict):

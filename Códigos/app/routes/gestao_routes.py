@@ -138,7 +138,7 @@ def init_gestao(app):
                 g.tema = {"cor_fundo": config.cor_fundo, "cor_destaque": config.cor_destaque}
         session.setdefault("csrf_token", secrets.token_hex(32))
         if request.method == "POST" and (request.blueprint == "gestao" or request.endpoint == "home.admin_comunicados"):
-            token = request.form.get("csrf_token", "")
+            token = request.headers.get("X-CSRF-Token") or request.form.get("csrf_token", "")
             if not secrets.compare_digest(token, session["csrf_token"]):
                 abort(400, "Formulário expirado. Recarregue a página.")
 

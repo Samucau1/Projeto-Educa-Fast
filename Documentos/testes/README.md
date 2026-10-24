@@ -1,4 +1,6 @@
-# Testes de API e regressão — Educa Fast
+# Testes de API, carga e regressão — Educa Fast
+
+Resultado atual: [validação final](RELATORIO_VALIDACAO_FINAL.md). A coleção tem 124 requisições e 163 verificações; a regressão completa tem 41 cenários, incluindo 8 unitários e duas corridas transacionais exclusivas do MySQL.
 
 Para testar pelo navegador, use o [roteiro de teste manual com usuários e comandos Docker](TESTE_MANUAL.md).
 
@@ -11,6 +13,10 @@ Com Docker Desktop iniciado, execute na raiz do repositório, em sequência:
 ```powershell
 docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml build testes
 docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml up -d --wait mysql_test
+
+docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml run --rm testes python tests/executar_estresse.py --confirmar-banco-descartavel
+
+docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml run --rm testes python tests/executar_regressao.py --somente-unitarios
 docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml run --rm testes python tests/executar_regressao.py
 docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml run --rm testes python tests/executar_postman.py
 docker compose -p educafast-validacao -f Códigos/docker-compose.test.yml down
@@ -63,7 +69,7 @@ Use o Desktop Agent se executar pela interface web do Postman. Se a porta estive
 
 As credenciais sintéticas do ambiente são `superadmin@teste.local`, `admin@teste.local`, `professor@teste.local`, `aluno@teste.local` e `outro_aluno@teste.local`, todas com senha `Teste-local-2026!`. Elas existem apenas no servidor descartável. Os identificadores do ambiente dependem dessas fixtures; não aponte esta coleção para o banco da instalação.
 
-A coleção tem 100 requisições e 124 verificações. Algumas rotas são formulários HTML, não APIs JSON: nesses casos, a coleção verifica o status HTTP, os textos de validação e o conteúdo publicado. A troca de perfis e as cores são exercitadas e restauradas ao final.
+A coleção tem 124 requisições e 163 verificações, incluindo LGPD e proteções de sessão. Algumas rotas são formulários HTML, não APIs JSON: nesses casos, a coleção verifica o status HTTP, os textos de validação e o conteúdo publicado. A troca de perfis e as cores são exercitadas e restauradas ao final.
 
 ## Cobertura
 
@@ -82,12 +88,12 @@ Os testes de documentos com arquivos e a comprovação direta da persistência n
 
 ## Evidências e situação antes do GitHub
 
-Consulte [`RELATORIO_REGRESSAO.md`](RELATORIO_REGRESSAO.md). Os resultados detalhados estão em:
+Consulte [`RELATORIO_VALIDACAO_FINAL.md`](RELATORIO_VALIDACAO_FINAL.md). O relatório anterior fica preservado como histórico em [`RELATORIO_REGRESSAO.md`](RELATORIO_REGRESSAO.md). Os resultados detalhados estão em:
 
 - [`regressao-unittest.txt`](resultados/regressao-unittest.txt) e [`regressao-resumo.json`](resultados/regressao-resumo.json).
 - [`postman-newman.txt`](resultados/postman-newman.txt), [`postman-junit.xml`](resultados/postman-junit.xml) e [`postman-resumo.json`](resultados/postman-resumo.json).
 - [Resultados de regressão e Postman com MySQL no Docker](resultados/mysql/).
 
-Os testes passaram com SQLite local e MySQL no Docker. A revisão visual no navegador continua pendente. Esta etapa não realiza commit, push ou publicação no GitHub.
+Os resultados atuais de carga, unitários, Postman e regressão passaram. SQLite ignora as duas corridas específicas de MySQL; elas passam na execução MySQL. O executor de carga usa HTTP real com até 8 clientes nos fluxos completos e 32 nas leituras, mede p50/p95/máximo e confere persistência. Não aponte esses executores para dados reais nem execute suítes simultaneamente contra o mesmo banco.
 
 Para alterar os cenários da coleção, edite `Códigos/tests/gerar_postman.py` e execute-o; os JSONs são gerados novamente. O executor do Postman também os regenera antes de iniciar.

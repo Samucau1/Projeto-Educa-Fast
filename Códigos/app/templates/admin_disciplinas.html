@@ -30,7 +30,7 @@
         </header>
 
         <div class="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-8">
-            <form action="{{ url_for('home.admin_disciplinas') }}" method="post" class="glass-card discipline-card rounded-[32px] p-8">
+            <form action="{{ url_for('home.admin_disciplinas') }}" method="post" class="glass-card discipline-card rounded-[32px] p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="create">
                 <h2 class="text-xl font-bold">Nova Disciplina</h2>
                 <p class="mt-1 text-sm text-gray-400">Informe os dados principais da disciplina.</p>
@@ -93,7 +93,7 @@
         </div>
 
         <section class="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-8 mt-8">
-            <form action="{{ url_for('home.admin_disciplinas') }}" method="post" class="glass-card discipline-card rounded-[32px] p-8">
+            <form action="{{ url_for('home.admin_disciplinas') }}" method="post" class="glass-card discipline-card rounded-[32px] p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="action" value="associate_teacher">
                 <h2 class="text-xl font-bold">Associar Professor</h2>
                 <p class="mt-1 text-sm text-gray-400">Vincule um professor responsável à disciplina.</p>

@@ -1,11 +1,15 @@
 import os
+from datetime import datetime
 from uuid import uuid4
 
 from flask import current_app
 from werkzeug.utils import secure_filename
 
 from app.database import get_session
-from app.models import AlunoModel, DisciplinaModel, DocumentoModel, ProfessorModel
+from app.models import (AlunoModel, DisciplinaModel, DocumentoModel, ProfessorModel,
+                        AlunoTurmaModel, ProfessorTurmaModel, ProfessorDisciplinaModel,
+                        TurmaDisciplinaModel, SolicitacaoDocumentoModel)
+from app.security import save_upload
 
 
 def get_upload_folder():
@@ -38,7 +42,7 @@ def _get_or_create_disciplina(session_db, disciplina_id=None):
     return disciplina, None
 
 
-def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_override=None):
+def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_override=None, solicitacao_id=None):
     if "arquivo" not in files:
         return {"erro": "Arquivo nao enviado"}, 400
 
@@ -56,6 +60,15 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
     saved_path = None
 
     try:
+        solicitacao = None
+        if solicitacao_id:
+            # Conditional update claims the request atomically, including across workers.
+            claimed = session_db.query(SolicitacaoDocumentoModel).filter_by(
+                id=solicitacao_id, aluno_id=aluno_id, status="pendente"
+            ).update({"status": "processando"}, synchronize_session=False)
+            if not claimed:
+                return {"erro": "Solicitacao ja atendida ou indisponivel"}, 409
+            solicitacao = session_db.get(SolicitacaoDocumentoModel, solicitacao_id)
         aluno = session_db.get(AlunoModel, aluno_id)
         if not aluno:
             return {"erro": "Aluno nao encontrado"}, 404
@@ -70,6 +83,18 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
             if not professor:
                 return {"erro": "Professor nao encontrado para o usuario autenticado"}, 403
 
+            disciplina_id = form.get("disciplina_id", type=int)
+            vinculo = (session_db.query(AlunoTurmaModel)
+                       .join(ProfessorTurmaModel, ProfessorTurmaModel.turma_id == AlunoTurmaModel.turma_id)
+                       .join(TurmaDisciplinaModel, TurmaDisciplinaModel.turma_id == AlunoTurmaModel.turma_id)
+                       .join(ProfessorDisciplinaModel, ProfessorDisciplinaModel.disciplina_id == TurmaDisciplinaModel.disciplina_id)
+                       .filter(AlunoTurmaModel.aluno_id == aluno_id,
+                               ProfessorTurmaModel.professor_id == professor.id,
+                               ProfessorDisciplinaModel.professor_id == professor.id,
+                               TurmaDisciplinaModel.disciplina_id == disciplina_id).first())
+            if not vinculo:
+                return {"erro": "Aluno ou disciplina fora das turmas do professor"}, 403
+
         disciplina, error = _get_or_create_disciplina(
             session_db,
             form.get("disciplina_id", type=int),
@@ -83,7 +108,7 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
 
         filename = f"{uuid4().hex}_{original_filename}"
         saved_path = os.path.join(upload_folder, filename)
-        arquivo.save(saved_path)
+        save_upload(arquivo, saved_path)
 
         documento = DocumentoModel(
             aluno_id=aluno.id,
@@ -93,6 +118,11 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
             caminho_arquivo=filename,
         )
         session_db.add(documento)
+        if solicitacao:
+            session_db.flush()
+            solicitacao.documento_id = documento.id
+            solicitacao.status = "enviado"
+            solicitacao.completed_at = datetime.now()
         session_db.commit()
 
         return {

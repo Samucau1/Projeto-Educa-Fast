@@ -17,6 +17,9 @@ def validar_mysql(url):
 
 
 def configurar_banco_testes():
+    # Somente o ambiente de testes recebe esta chave sintetica.
+    os.environ["SECRET_KEY"] = "testes-isolados-chave-sintetica-2026-educafast"
+    os.environ["DATA_ENCRYPTION_KEY"] = "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
     if mysql_de_testes():
         validar_mysql(os.environ.get("DB_URL", ""))
     else:

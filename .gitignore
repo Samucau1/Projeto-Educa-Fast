@@ -22,3 +22,6 @@ env/
 # OS/editor cache
 .DS_Store
 Thumbs.db
+# Private TLS material must never enter Git.
+**/certs/
+*.key

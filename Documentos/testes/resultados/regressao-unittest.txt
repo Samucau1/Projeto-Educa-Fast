@@ -1,3 +1,5 @@
+test_simultaneous_document_fulfillment_has_one_winner (test_concorrencia.ConcorrenciaTest.test_simultaneous_document_fulfillment_has_one_winner) ... skipped 'Corridas transacionais exigem MySQL isolado'
+test_stale_admin_cannot_reopen_concurrently_closed_request (test_concorrencia.ConcorrenciaTest.test_stale_admin_cannot_reopen_concurrently_closed_request) ... skipped 'Corridas transacionais exigem MySQL isolado'
 test_bootstrap_command (test_gestao.GestaoTest.test_bootstrap_command) ... ok
 test_broadcast_and_read_permissions (test_gestao.GestaoTest.test_broadcast_and_read_permissions) ... ok
 test_layout_persistence_validation_and_csrf (test_gestao.GestaoTest.test_layout_persistence_validation_and_csrf) ... ok
@@ -15,8 +17,30 @@ test_login_rejects_non_object_json (test_regressao.RegressaoTest.test_login_reje
 test_registration_validation_duplicates_and_panels (test_regressao.RegressaoTest.test_registration_validation_duplicates_and_panels) ... ok
 test_requested_document_end_to_end (test_regressao.RegressaoTest.test_requested_document_end_to_end) ... ok
 test_revoked_teacher_jwt_cannot_upload (test_regressao.RegressaoTest.test_revoked_teacher_jwt_cannot_upload) ... ok
+test_csrf_all_mutations_and_bearer_cannot_bypass_admin_cookie (test_seguranca_lgpd.SegurancaLGPDTest.test_csrf_all_mutations_and_bearer_cannot_bypass_admin_cookie) ... ok
+test_duplicate_legacy_cpfs_are_rejected_before_migration (test_seguranca_lgpd.SegurancaLGPDTest.test_duplicate_legacy_cpfs_are_rejected_before_migration) ... ok
+test_fields_encrypted_and_cpf_uniqueness (test_seguranca_lgpd.SegurancaLGPDTest.test_fields_encrypted_and_cpf_uniqueness) ... ok
+test_legacy_fields_and_files_migration (test_seguranca_lgpd.SegurancaLGPDTest.test_legacy_fields_and_files_migration) ... ok
+test_login_limit_shared_and_no_account_enumeration (test_seguranca_lgpd.SegurancaLGPDTest.test_login_limit_shared_and_no_account_enumeration) ... ok
+test_login_origin_and_cookie_headers (test_seguranca_lgpd.SegurancaLGPDTest.test_login_origin_and_cookie_headers) ... ok
+test_photos_require_owner_or_admin (test_seguranca_lgpd.SegurancaLGPDTest.test_photos_require_owner_or_admin) ... ok
+test_privacy_request_export_ownership_and_admin_workflow (test_seguranca_lgpd.SegurancaLGPDTest.test_privacy_request_export_ownership_and_admin_workflow) ... ok
+test_redirect_variants_rejected_before_file_save (test_seguranca_lgpd.SegurancaLGPDTest.test_redirect_variants_rejected_before_file_save) ... ok
+test_sibling_upload_writers_enforce_size_and_rollback_claim (test_seguranca_lgpd.SegurancaLGPDTest.test_sibling_upload_writers_enforce_size_and_rollback_claim) ... ok
+test_size_quota_and_encrypted_file_roundtrip (test_seguranca_lgpd.SegurancaLGPDTest.test_size_quota_and_encrypted_file_roundtrip) ... ok
+test_startup_requires_keys_and_production_configuration (test_seguranca_lgpd.SegurancaLGPDTest.test_startup_requires_keys_and_production_configuration) ... ok
+test_student_and_teacher_requests_cannot_be_reused (test_seguranca_lgpd.SegurancaLGPDTest.test_student_and_teacher_requests_cannot_be_reused) ... ok
+test_teacher_upload_assignment_and_privacy_search (test_seguranca_lgpd.SegurancaLGPDTest.test_teacher_upload_assignment_and_privacy_search) ... ok
+test_concurrent_photo_removal_during_quota_scan (test_unitarios.UnitariosTest.test_concurrent_photo_removal_during_quota_scan) ... ok
+test_cpf_index_normalizes_format_without_exposing_digits (test_unitarios.UnitariosTest.test_cpf_index_normalizes_format_without_exposing_digits) ... ok
+test_date_storage_roundtrip_and_null (test_unitarios.UnitariosTest.test_date_storage_roundtrip_and_null) ... ok
+test_encryption_randomized_roundtrip_and_tampering (test_unitarios.UnitariosTest.test_encryption_randomized_roundtrip_and_tampering) ... ok
+test_external_and_malformed_redirects_rejected (test_unitarios.UnitariosTest.test_external_and_malformed_redirects_rejected) ... ok
+test_local_redirects_preserve_query (test_unitarios.UnitariosTest.test_local_redirects_preserve_query) ... ok
+test_role_normalization (test_unitarios.UnitariosTest.test_role_normalization) ... ok
+test_upload_stream_encryption_size_and_quota_cleanup (test_unitarios.UnitariosTest.test_upload_stream_encryption_size_and_quota_cleanup) ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 15.184s
+Ran 41 tests in 27.772s
 
-OK
+OK (skipped=2)

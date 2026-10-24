@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 
 from app.controllers.admin_controller import format_created_at
 from app.controllers.document_controller import get_upload_folder
+from app.security import save_upload
 from app.database import get_session
 from app.models import (
     AlunoModel,
@@ -321,7 +322,7 @@ def launch_activity(user_id, data, files=None):
             caminho_arquivo=filename,
         )
         if saved_path:
-            arquivo.save(saved_path)
+            save_upload(arquivo, saved_path)
         db.add(atividade)
         db.commit()
         return {"mensagem": "Atividade lancada"}, 201
@@ -376,8 +377,14 @@ def upload_requested_document(user_id, form, files):
         if not solicitacao:
             return {"erro": "Solicitacao de documento nao encontrada"}, 404
 
+        claimed = db.query(SolicitacaoDocumentoModel).filter_by(
+            id=solicitacao.id, professor_id=professor.id, status="pendente"
+        ).update({"status": "processando"}, synchronize_session=False)
+        if not claimed:
+            return {"erro": "Solicitacao ja atendida"}, 409
+
         disciplina = _get_or_create_disciplina_geral(db)
-        arquivo.save(saved_path)
+        save_upload(arquivo, saved_path)
         documento = DocumentoModel(
             aluno_id=None,
             professor_id=professor.id,

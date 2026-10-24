@@ -43,7 +43,7 @@
                 <p class="text-gray-400 text-sm mt-1">{{ professor.regime }}</p>
                 <p class="text-gray-500 text-xs mt-1">{{ professor.email }}</p>
 
-                <form action="{{ url_for('home.admin_editar_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="aluno-edit-form">
+                <form action="{{ url_for('home.admin_editar_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="aluno-edit-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <h3>Editar Dados</h3>
                     <label>
                         <span>Foto de Perfil</span>
@@ -175,7 +175,7 @@
                 </div>
 
                 <div data-documento-panel="solicitacoes">
-                    <form action="{{ url_for('home.admin_solicitar_documento_professor', professor_id=professor.id) }}" method="post" class="documento-request-form">
+                    <form action="{{ url_for('home.admin_solicitar_documento_professor', professor_id=professor.id) }}" method="post" class="documento-request-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <label>
                             <span>Documento solicitado</span>
                             <input name="titulo" type="text" placeholder="Ex: Certificado atualizado" required>
@@ -187,7 +187,7 @@
                         <button>Disparar solicitação</button>
                     </form>
 
-                    <form action="{{ url_for('document.upload_arquivo_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="documento-request-form mt-8">
+                    <form action="{{ url_for('document.upload_arquivo_professor', professor_id=professor.id) }}" method="post" enctype="multipart/form-data" class="documento-request-form mt-8"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="redirect_to" value="{{ url_for('home.admin_detalhes_professor', professor_id=professor.id) }}">
                         <label>
                             <span>Documentos do professor</span>

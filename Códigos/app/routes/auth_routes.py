@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, redirect, request, session, url_for
+import secrets
+from flask import Blueprint, g, jsonify, redirect, request, session, url_for, render_template
 
 from app.auth import professor_required
 from app.controllers.auth_controller import buscar_alunos, cadastrar_usuario, login_usuario
@@ -23,15 +24,20 @@ def login():
     data = request.json
     response, status = login_usuario(data)
     if status == 200:
+        session.clear()
+        session["csrf_token"] = secrets.token_hex(32)
         session["user_id"] = response["id"]
         session["user_email"] = response["email"]
         session["user_role"] = response["role"]
+        response["csrf_token"] = session["csrf_token"]
 
     return jsonify(response), status
 
 
-@auth_bp.route('/logout', methods=['GET'])
+@auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
+    if request.method == "GET":
+        return render_template("logout.html")
     session.clear()
     return redirect(url_for("home.home"))
 
@@ -85,5 +91,5 @@ def teste_professor():
 @professor_required
 def alunos_busca():
     termo = request.args.get("termo") or request.args.get("q") or request.args.get("cpf")
-    response, status = buscar_alunos(termo)
+    response, status = buscar_alunos(termo, int(g.current_user["sub"]))
     return jsonify(response), status

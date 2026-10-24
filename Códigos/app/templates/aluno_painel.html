@@ -120,7 +120,7 @@
                         </div>
                         <strong class="aluno-request-status aluno-request-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</strong>
                         {% if solicitacao.status != "enviado" %}
-                        <form action="{{ url_for('aluno.upload_documento_aluno') }}" method="post" enctype="multipart/form-data" class="aluno-request-upload">
+                        <form action="{{ url_for('aluno.upload_documento_aluno') }}" method="post" enctype="multipart/form-data" class="aluno-request-upload"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <input type="hidden" name="solicitacao_id" value="{{ solicitacao.id }}">
                             <input name="arquivo" type="file" required class="aluno-file">
                             <button class="aluno-submit compact">Enviar</button>

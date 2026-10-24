@@ -37,6 +37,8 @@ def main():
             validar_mysql(os.environ.get("DB_URL", ""))
         else:
             os.environ["DB_URL"] = "sqlite:///" + (Path(temp) / "teste.sqlite").as_posix()
+        os.environ["SECRET_KEY"] = "testes-isolados-chave-sintetica-2026-educafast"
+        os.environ["DATA_ENCRYPTION_KEY"] = "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
         from app import create_app
         from app.database import engine, Base
         from sqlalchemy import event

@@ -58,14 +58,10 @@ def upload_documento_aluno():
         request.files,
         is_admin=True,
         aluno_id_override=aluno["id"],
+        solicitacao_id=solicitacao_id,
     )
 
     if 200 <= status < 300:
-        marcar_documento_aluno_enviado(
-            solicitacao_id,
-            aluno["id"],
-            response["documento"]["id"],
-        )
         return redirect(url_for("aluno.dashboard"))
 
     return jsonify(response), status

@@ -3,6 +3,7 @@ import os
 import unittest
 
 from ambiente_teste import configurar_banco_testes
+from csrf_client import FormClient
 configurar_banco_testes()
 
 from app import create_app
@@ -18,6 +19,7 @@ class GestaoTest(unittest.TestCase):
     def setUpClass(cls):
         exigir_banco_em_memoria()
         cls.app = create_app()
+        cls.app.test_client_class = FormClient
         cls.app.config.update(TESTING=True, SECRET_KEY="test-secret")
 
     def setUp(self):

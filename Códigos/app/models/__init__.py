@@ -16,6 +16,7 @@ from .turma_model import TurmaModel
 from .turma_disciplina_model import TurmaDisciplinaModel
 from .usuario_model import UsuarioModel
 from .configuracao_model import ConfiguracaoModel
+from .privacidade_model import PedidoPrivacidadeModel, AuditoriaPrivacidadeModel, LimiteLoginModel
 
 __all__ = [
     "UsuarioModel",

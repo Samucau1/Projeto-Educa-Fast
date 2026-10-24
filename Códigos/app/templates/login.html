@@ -20,7 +20,7 @@
         </section>
         <section class="login-access">
             <div class="login-card"><span class="login-card-icon">{{ icon('shield') }}</span><span class="eyebrow">BOM TER VOCÊ POR AQUI</span><h2>Bem-vindo de volta<span>.</span></h2><p>Entre para acessar seu espaço na escola.</p>
-                <form id="login-form" class="login-form">
+                <form id="login-form" class="login-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <label class="login-field" for="email">E-mail institucional<span class="login-input-wrap">{{ icon('mail') }}<input name="email" id="email" type="email" placeholder="seu.nome@escola.com.br" autocomplete="username" required autofocus></span></label>
                     <label class="login-field" for="senha">Senha<span class="login-input-wrap">{{ icon('lock') }}<input name="senha" id="senha" type="password" placeholder="Digite sua senha" autocomplete="current-password" required><button type="button" class="icon-button" data-toggle-password aria-label="Mostrar senha" aria-pressed="false">{{ icon('eye') }}</button></span></label>
                     <p id="login-error" class="login-error" role="alert" hidden></p>
@@ -31,5 +31,6 @@
             <div class="login-access-footer"><span>{{ icon('shield') }} Um acesso para cada responsabilidade</span><small>Educa Fast · Gestão escolar</small></div>
         </section>
     </main>
+<p style="text-align:center"><a href="{{ url_for('privacidade.aviso') }}">Privacidade e protecao de dados</a></p>
 </body>
 </html>

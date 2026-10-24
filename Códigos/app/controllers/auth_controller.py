@@ -12,10 +12,12 @@ from werkzeug.utils import secure_filename
 from app.auth import generate_token, normalize_role
 from app.database import get_session
 from app.models import AlunoModel, ProfessorModel, UsuarioModel
+from app.security import save_upload
 
 
 PROFILE_PHOTO_EXTENSIONS = {"jpg", "jpeg", "png"}
 MAX_PROFILE_PHOTO_BYTES = 2 * 1024 * 1024
+DUMMY_PASSWORD_HASH = generate_password_hash("dummy-comparison-not-an-account")
 
 
 def login_usuario(data):
@@ -25,7 +27,7 @@ def login_usuario(data):
     email = data.get("email")
     senha = data.get("senha")
 
-    if not isinstance(email, str) or not isinstance(senha, str) or not email or not senha:
+    if not isinstance(email, str) or not isinstance(senha, str) or not email or not senha or len(email) > 120 or len(senha) > 1024:
         return {"erro": "E-mail e senha sao obrigatorios"}, 400
 
     session = get_session()
@@ -34,11 +36,12 @@ def login_usuario(data):
     finally:
         session.close()
 
-    if not user:
-        return {"erro": "Usuario nao encontrado"}, 404
-
-    if not check_password_hash(user.senha, senha):
-        return {"erro": "Senha invalida"}, 401
+    try:
+        password_ok = check_password_hash(user.senha if user else DUMMY_PASSWORD_HASH, senha)
+    except (ValueError, UnicodeError):
+        password_ok = False
+    if not user or not password_ok:
+        return {"erro": "Credenciais invalidas"}, 401
 
     role = normalize_role(user.tipo)
 
@@ -86,7 +89,7 @@ def _save_profile_photo(files):
 
     filename = f"perfil_{uuid4().hex}_{original_filename}"
     saved_path = os.path.join(upload_folder, filename)
-    foto.save(saved_path)
+    save_upload(foto, saved_path)
     return filename, None
 
 
@@ -113,6 +116,8 @@ def cadastrar_usuario(data, files=None):
 
     if not email or not senha or not nome:
         return {"erro": "E-mail, senha e nome sao obrigatorios"}, 400
+    if not all(isinstance(v, str) for v in (email, senha, nome)) or len(senha) < 8 or len(senha) > 1024 or len(email) > 120:
+        return {"erro": "Informe e-mail valido e senha de 8 a 1024 caracteres"}, 400
 
     foto_perfil, upload_error = _save_profile_photo(files)
     if upload_error:
@@ -199,7 +204,8 @@ def cadastrar_usuario(data, files=None):
         session.close()
 
 
-def buscar_alunos(termo):
+def buscar_alunos(termo, professor_user_id):
+    from app.models import AlunoTurmaModel, ProfessorTurmaModel
     termo = (termo or "").strip()
     if not termo:
         return {"erro": "Informe um termo de busca"}, 400
@@ -208,8 +214,12 @@ def buscar_alunos(termo):
     try:
         alunos = (
             session.query(AlunoModel)
-            # Busca por nome parcial ou CPF exato/parcial para apoiar a tela do professor.
-            .filter(or_(AlunoModel.nome.ilike(f"%{termo}%"), AlunoModel.cpf.ilike(f"%{termo}%")))
+            .join(AlunoTurmaModel, AlunoTurmaModel.aluno_id == AlunoModel.id)
+            .join(ProfessorTurmaModel, ProfessorTurmaModel.turma_id == AlunoTurmaModel.turma_id)
+            .join(ProfessorModel, ProfessorModel.id == ProfessorTurmaModel.professor_id)
+            .filter(ProfessorModel.usuario_id == professor_user_id)
+            .filter(AlunoModel.nome.icontains(termo, autoescape=True))
+            .distinct()
             .limit(20)
             .all()
         )
@@ -218,15 +228,8 @@ def buscar_alunos(termo):
             "alunos": [
                 {
                     "id": aluno.id,
-                    "usuario_id": aluno.usuario_id,
                     "nome": aluno.nome,
-                    "cpf": aluno.cpf,
                     "matricula": aluno.matricula,
-                    "data_nascimento": (
-                        aluno.data_nascimento.isoformat()
-                        if aluno.data_nascimento
-                        else None
-                    ),
                 }
                 for aluno in alunos
             ]

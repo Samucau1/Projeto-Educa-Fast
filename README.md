@@ -201,7 +201,7 @@ Projeto-Educa-Fast/
 
 ## Executar com Docker Compose
 
-Requisitos: Git, Docker e Docker Compose (comando `docker compose`). As portas `5000` e `3306` precisam estar disponíveis.
+Requisitos: Git, Docker e Docker Compose (comando `docker compose`). A porta local `5000` precisa estar disponível; o MySQL permanece na rede interna, sem porta publicada.
 
 ### 1. Obter o projeto
 
@@ -225,7 +225,7 @@ No Linux/macOS:
 cp .env.example .env
 ```
 
-Edite `.env` e substitua `SECRET_KEY`, `DB_PASSWORD` e `MYSQL_ROOT_PASSWORD` por valores próprios. Não publique credenciais reais.
+Edite `.env` e configure `SECRET_KEY`, `DATA_ENCRYPTION_KEY`, `DB_PASSWORD` e `MYSQL_ROOT_PASSWORD` com valores próprios. A chave Fernet deve ser gerada e guardada conforme [Segurança e LGPD](Documentos/SEGURANCA_E_LGPD.md). Não publique credenciais reais.
 
 ### 3. Iniciar os serviços
 
@@ -286,9 +286,11 @@ No Linux/macOS, ative o ambiente com `source .venv/bin/activate`. Depois que a a
 
 | Variável | Uso e comportamento |
 | --- | --- |
-| `SECRET_KEY` | Assina sessões e JWTs; obrigatória no Compose. Use uma chave longa e aleatória. |
+| `SECRET_KEY` | Assina sessões e JWTs; obrigatória em todas as inicializações, com pelo menos 32 caracteres aleatórios. |
+| `DATA_ENCRYPTION_KEY` | Chave Fernet independente, obrigatória para campos pessoais e arquivos. Preserve-a separadamente dos dados. |
+| `LGPD_CONTROLADOR` / `LGPD_CONTATO` | Controlador (EducaFast) e contato de privacidade; contato obrigatório em produção. |
 | `DB_HOST` | Host MySQL; padrão local `localhost`. O Compose define `db`. |
-| `DB_PORT` | Porta de conexão ao MySQL; padrão `3306`. O Compose mantém a publicação fixa `3306:3306`. |
+| `DB_PORT` | Porta de conexão ao MySQL; padrão `3306`. O Compose não publica o banco no host. |
 | `DB_USER` | Usuário do banco; padrão local `root`, padrão do Compose `app_user`. |
 | `DB_PASSWORD` | Senha do usuário do banco; obrigatória no Compose. |
 | `DB_NAME` | Nome do banco; padrão `app_web`. |
@@ -315,7 +317,7 @@ As variáveis de criação de banco e credenciais do container MySQL são aplica
 | --- | --- | --- |
 | GET | `/` | Login ou redirecionamento ao painel do perfil autenticado. |
 | POST | `/login` | Recebe JSON com `email` e `senha`; retorna JWT e cria sessão. |
-| GET | `/logout` | Encerra a sessão Flask. |
+| GET / POST | `/logout` | GET confirma; POST com CSRF encerra a sessão Flask. |
 | GET | `/admin/dashboard` | Painel da secretaria. |
 | GET/POST | `/admin/turmas` | Cadastro de turmas e associações. |
 | GET/POST | `/admin/disciplinas` | Disciplinas e vínculo com professores. |
@@ -353,14 +355,16 @@ Se a aplicação não iniciar, confira os logs, as credenciais e o estado de `db
 
 ## Validação e limites atuais
 
-O repositório não inclui uma suíte de testes automatizados. Para verificar o fluxo manualmente, use um banco de desenvolvimento: entre com cada perfil, configure os vínculos de turma/disciplina, lance uma atividade e uma nota, confira a visualização pelo aluno e percorra a solicitação, o envio e o download de um documento.
+O repositório inclui regressão automatizada, cenários de segurança/LGPD e coleção Postman. Consulte [Testes](Documentos/testes/README.md). Para o fluxo manual, entre com cada perfil, configure os vínculos de turma/disciplina e confira os controles de acesso e privacidade em banco descartável.
 
-O comando atual executa o servidor de desenvolvimento Flask com `debug=True`. Uma implantação em produção exige configuração de servidor apropriada, desativação do debug e revisão das credenciais e dos controles de acesso.
+O Compose local usa Gunicorn, sem depuração, e publica a aplicação somente em loopback. Para produção com HTTPS e TLS verificado no MySQL, use o arquivo independente `Códigos/docker-compose.production.yml`, após preparar chaves e certificados conforme [Segurança e LGPD](Documentos/SEGURANCA_E_LGPD.md). Não publique o servidor de desenvolvimento.
 
 ## Documentação e licença
 
 - [Documentação completa do sistema](Documentos/DOCUMENTACAO_DO_SISTEMA.md)
+- [Segurança, criptografia e LGPD — configuração e responsabilidades](Documentos/SEGURANCA_E_LGPD.md)
 - [Testes de API/Postman e regressão](Documentos/testes/README.md)
+- [Iniciar o ambiente manual](Documentos/testes/TESTE_MANUAL.md#iniciar-o-ambiente-em-segundo-plano): execute `.\iniciar-educafast.ps1` no PowerShell ou `.\iniciar-educafast.cmd` no CMD, na raiz do projeto.
 - [Especificação de casos de uso](Documentos/Especificação%20de%20Casos%20de%20Uso.md)
 - [Documentos do projeto](Documentos/)
 - [Referência do protótipo](Protótipo/)

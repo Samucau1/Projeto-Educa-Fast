@@ -14,6 +14,8 @@ def folder(name):
 
 def request(items, name, path, status=200, method="GET", data=None, json_body=None, scripts=(), bearer=None):
     headers = []
+    if method == "POST" and path != "/login" and not ("sem CSRF" in name):
+        headers.append({"key": "X-CSRF-Token", "value": "{{csrf_token}}"})
     req = {"method": method, "header": headers, "url": "{{base_url}}" + path}
     if data is not None:
         req["body"] = {"mode": "urlencoded", "urlencoded": [{"key": k, "value": str(v), "type": "text"} for k, v in data.items()]}
@@ -36,7 +38,7 @@ def login(items, role):
     expected_role = "aluno" if role == "outro_aluno" else role
     request(items, f"Login {role}", "/login", method="POST", json_body={"email": f"{role}@teste.local", "senha": "{{senha_teste}}"}, scripts=[
         f'pm.test("Perfil {expected_role}", function () {{ pm.expect(pm.response.json().role).to.eql("{expected_role}"); }});',
-        f'if (pm.response.code === 200) pm.collectionVariables.set("token_{role}", pm.response.json().token);',
+        f'if (pm.response.code === 200) pm.collectionVariables.set("csrf_token", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set("token_{role}", pm.response.json().token);',
     ])
 
 
@@ -59,7 +61,7 @@ def build():
         ("Login vazio", {}, 400), ("Login array", [1], 400), ("Login numero", 123, 400),
         ("Login email invalido por tipo", {"email": ["admin@teste.local"], "senha": "x"}, 400),
         ("Senha errada", {"email": "admin@teste.local", "senha": "errada"}, 401),
-        ("Usuario inexistente", {"email": "inexistente@teste.local", "senha": "x"}, 404),
+        ("Usuario inexistente", {"email": "inexistente@teste.local", "senha": "x"}, 401),
     ):
         request(items, name, "/login", expected, "POST", json_body=payload)
     request(items, "JWT ausente", "/professor/teste", 401)
@@ -140,7 +142,7 @@ def build():
         request(items, f"Aluno bloqueado: {path}", path, 403)
     login(items, "outro_aluno")
     request(items, "Outro aluno nao ve disciplina", "/aluno/disciplinas/{{disciplina_id}}", 404)
-    request(items, "Logout", "/logout", 302)
+    request(items, "Logout", "/logout", 302, "POST")
     request(items, "Mensagens bloqueadas apos logout", "/mensagens", 403)
 
     items = folder("06 - Revogacao de permissoes e restauracao do tema")
@@ -151,7 +153,44 @@ def build():
     request(items, "Restaurar professor", "/super/usuarios/{{professor_user_id}}/perfil", 302, "POST", data={"tipo": "professor", "csrf_token": "{{csrf_token}}"})
     request(items, "Restaurar cores padrao", "/super/layout", 302, "POST", data={"cor_fundo": "#06385d", "cor_destaque": "#22d3ee", "csrf_token": "{{csrf_token}}"})
     request(items, "Conferir cores restauradas", "/super/layout", scripts=[contains('value="#06385d"')])
-    request(items, "Encerrar sessao", "/logout", 302)
+    request(items, "Encerrar sessao", "/logout", 302, "POST")
+
+    items = folder("07 - LGPD, privacidade e protecoes de sessao")
+    request(items, "Aviso publico de privacidade", "/privacidade", scripts=[contains("EducaFast")])
+    request(items, "Visitante sem dados pessoais", "/minha-privacidade", 403)
+    login(items, "aluno")
+    request(items, "Solicitacao sem CSRF", "/minha-privacidade", 400, "POST", data={"tipo": "acesso"})
+    request(items, "Registrar pedido LGPD", "/minha-privacidade", 302, "POST", data={"tipo": "correcao", "detalhe": "Pedido LGPD {{run_id}}"})
+    request(items, "Consultar protocolo proprio", "/minha-privacidade", scripts=[
+        'const protocol = pm.response.text().match(/Protocolo (\\d+)/);',
+        'pm.test("Protocolo presente", function () { pm.expect(protocol).not.to.eql(null); });',
+        'if (protocol) pm.collectionVariables.set("pedido_lgpd_id", protocol[1]);',
+    ])
+    export_checks = [
+        'pm.test("Somente a conta titular", function () { pm.expect(pm.response.json().conta.email).to.eql("aluno@teste.local"); });',
+        'pm.test("Senha ausente", function () { pm.expect(pm.response.json().conta).not.to.have.property("senha"); });',
+        'pm.test("Sem cache de dados pessoais", function () { pm.expect(pm.response.headers.get("Cache-Control")).to.eql("no-store"); });',
+    ]
+    request(items, "Exportar dados proprios", "/minha-privacidade/exportar", method="POST", scripts=export_checks)
+    request(items, "Parametro nao seleciona outra conta", "/minha-privacidade/exportar?usuario_id={{superadmin_id}}", method="POST", scripts=export_checks)
+    request(items, "Aluno sem fila administrativa", "/admin/privacidade", 403)
+    login(items, "outro_aluno")
+    request(items, "Outro aluno nao ve o protocolo", "/minha-privacidade", scripts=[
+        'pm.test("Pedido de outro titular ausente", function () { pm.expect(pm.response.text()).not.to.include("Pedido LGPD " + pm.collectionVariables.get("run_id")); });',
+    ])
+    login(items, "professor")
+    request(items, "Professor sem fila administrativa", "/admin/privacidade", 403)
+    login(items, "admin")
+    request(items, "Cookie admin sem CSRF e Bearer falso", "/cadastro/aluno", 400, "POST", json_body={"nome": "Bloqueado"}, bearer="token.falso.assinatura")
+    request(items, "Fila administrativa de privacidade", "/admin/privacidade")
+    request(items, "Responder pedido do titular", "/admin/privacidade/{{pedido_lgpd_id}}", 302, "POST", data={"status": "concluido", "resposta": "Atendimento LGPD {{run_id}}"})
+    request(items, "Pedido encerrado nao reabre", "/admin/privacidade/{{pedido_lgpd_id}}", 409, "POST", data={"status": "em_analise", "resposta": "Alteracao bloqueada"})
+    login(items, "aluno")
+    request(items, "Titular recebe resposta", "/minha-privacidade", scripts=[contains("Atendimento LGPD")])
+    request(items, "GET logout apenas confirma", "/logout")
+    request(items, "Sessao continua apos GET logout", "/minha-privacidade")
+    request(items, "Logout com CSRF", "/logout", 302, "POST")
+    request(items, "Dados bloqueados apos logout", "/minha-privacidade", 403)
 
     collection = {
         "info": {"name": "Educa Fast - API e regressao", "description": "Executar integralmente em banco descartavel criado por tests/executar_postman.py --serve. Usa cookies de sessao, JWT e CSRF reais. Ha requisicoes que criam dados e alteram permissoes. Desative o redirecionamento automatico. Reinicie o servidor descartavel antes de cada execucao.", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},

@@ -38,6 +38,7 @@
 
             fetch(config.endpoint, {
                 method: "POST",
+                headers: {"X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content},
                 body: new FormData(formulario)
             })
                 .then(function (response) {

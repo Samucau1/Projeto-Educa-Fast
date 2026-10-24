@@ -23,6 +23,7 @@ services:
       EDUCAFAST_TEST_MYSQL: "1"
       DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
       SECRET_KEY: chave-exclusiva-do-container-de-testes
+      DATA_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
     volumes:
       - ../Documentos/testes/resultados:/workspace/Documentos/testes/resultados
     depends_on:
@@ -39,6 +40,7 @@ services:
       EDUCAFAST_TEST_MYSQL: "1"
       DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
       SECRET_KEY: chave-exclusiva-do-ambiente-manual
+      DATA_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
       UPLOAD_FOLDER: /tmp/educafast-uploads
     ports:
       - "127.0.0.1:5050:5000"

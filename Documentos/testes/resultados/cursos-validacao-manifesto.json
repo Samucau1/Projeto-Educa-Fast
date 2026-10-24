@@ -1,0 +1,118 @@
+{
+  "commit_codigo_validado": "7d6625d96209d26801f2176db8f2adcbeb5fc4a4",
+  "arvore_codigo": "3f8c0e46fd5a5054439b2ce95ebe358f6869f1fb",
+  "observacao": "Executores validaram o conteúdo deste commit em bancos sintéticos; os JSONs mantêm os horários reais de cada execução.",
+  "evidencias": {
+    "regressao-resumo.json": {
+      "sha256": "6a7f76cdac35be4fe3e99460ba764b6bc53ab98181515d5c00b84d2d7f6f3baf",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T22:48:17.701598-03:00",
+        "python": "3.14.3",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "SQLite em memória com foreign_keys=ON",
+        "testes": 56,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 3,
+        "duracao_segundos": 31.675,
+        "aprovado": true
+      }
+    },
+    "postman-resumo.json": {
+      "sha256": "2c992032fb26552be02138bb448f5eaecad0ed98fdd16eaa480b638daeddac40",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T22:49:22.837781-03:00",
+        "newman": "6.2.1",
+        "banco": "SQLite descartável com foreign_keys=ON",
+        "requisicoes": 158,
+        "verificacoes": 210,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 18.353,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "mysql/regressao-resumo.json": {
+      "sha256": "9a238e2584bf8df5c9ba151c3f9c845a6e9a015c00a650f229b4c510828947b7",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T22:47:25.762356-03:00",
+        "python": "3.12.15",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "testes": 56,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 0,
+        "duracao_segundos": 38.254,
+        "aprovado": true
+      }
+    },
+    "mysql/postman-resumo.json": {
+      "sha256": "6ab578b168ad37bbd456ced8f6a02cc4a8df3eb760b2ffac2aa78fc10696fab1",
+      "resultado": {
+        "data_sao_paulo": "2026-10-23T22:47:33.992036-03:00",
+        "newman": "6.2.1",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "requisicoes": 158,
+        "verificacoes": 210,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 5.813,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "mysql/cursos-carga-resumo.json": {
+      "sha256": "b879006e15f26f4689bc228c2e6f78da83aae84cfc2ac272c9ed0c2474680020",
+      "resultado": {
+        "aprovado": true,
+        "data": "2026-10-24T01:49:14.118348+00:00",
+        "banco": "MySQL 8.4 descartável",
+        "etapas": [
+          {
+            "clientes": 1,
+            "requisicoes": 21,
+            "p95_ms": 43.395,
+            "http_inesperados": 0
+          },
+          {
+            "clientes": 4,
+            "requisicoes": 84,
+            "p95_ms": 83.573,
+            "http_inesperados": 0
+          },
+          {
+            "clientes": 8,
+            "requisicoes": 168,
+            "p95_ms": 140.451,
+            "http_inesperados": 0
+          },
+          {
+            "clientes": 16,
+            "requisicoes": 336,
+            "p95_ms": 278.361,
+            "http_inesperados": 0
+          }
+        ],
+        "requisicoes": 609,
+        "progressos_persistidos": 1,
+        "limites": "Rajadas locais curtas; não estabelece capacidade ou SLA de produção."
+      }
+    },
+    "cursos-interface/resumo.json": {
+      "sha256": "34e64fe7742fd13eeae04918dcef560ff77e1500a9cbf567313458f803b4e43e",
+      "resultado": {
+        "aprovado": true,
+        "fluxo": "admin → professor → aluno",
+        "desktop": "1440x1000",
+        "mobile": "390x844",
+        "erros_javascript": [],
+        "limite": "Player e endereço verificados; reprodução externa do YouTube não homologada.",
+        "data": "2026-10-24T01:48:45.813Z"
+      }
+    }
+  }
+}

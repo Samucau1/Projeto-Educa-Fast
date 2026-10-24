@@ -1,5 +1,20 @@
 test_simultaneous_document_fulfillment_has_one_winner (test_concorrencia.ConcorrenciaTest.test_simultaneous_document_fulfillment_has_one_winner) ... ok
 test_stale_admin_cannot_reopen_concurrently_closed_request (test_concorrencia.ConcorrenciaTest.test_stale_admin_cannot_reopen_concurrently_closed_request) ... ok
+test_archived_class_blocks_access_and_teaching (test_cursos.CursosTest.test_archived_class_blocks_access_and_teaching) ... ok
+test_assignment_applies_to_existing_grade_and_activity_endpoints (test_cursos.CursosTest.test_assignment_applies_to_existing_grade_and_activity_endpoints) ... ok
+test_class_management_roles_csrf_and_duplicate (test_cursos.CursosTest.test_class_management_roles_csrf_and_duplicate) ... ok
+test_concurrent_completion_is_idempotent (test_cursos.CursosTest.test_concurrent_completion_is_idempotent) ... ok
+test_cross_course_parent_rejected_and_html_escaped (test_cursos.CursosTest.test_cross_course_parent_rejected_and_html_escaped) ... ok
+test_draft_private_and_publication_admin_only (test_cursos.CursosTest.test_draft_private_and_publication_admin_only) ... ok
+test_duplicate_preserves_original_without_offers_or_progress (test_cursos.CursosTest.test_duplicate_preserves_original_without_offers_or_progress) ... ok
+test_invalid_video_and_valid_youtube_links (test_cursos.CursosTest.test_invalid_video_and_valid_youtube_links) ... ok
+test_migration_repeatable_and_legacy_rows_preserved (test_cursos.CursosTest.test_migration_repeatable_and_legacy_rows_preserved) ... ok
+test_owner_authorization_and_role_refresh (test_cursos.CursosTest.test_owner_authorization_and_role_refresh) ... ok
+test_precise_teacher_assignment_and_immediate_revocation (test_cursos.CursosTest.test_precise_teacher_assignment_and_immediate_revocation) ... ok
+test_reorder_edit_delete_and_empty_publish_block (test_cursos.CursosTest.test_reorder_edit_delete_and_empty_publish_block) ... ok
+test_reuse_two_years_with_separate_progress (test_cursos.CursosTest.test_reuse_two_years_with_separate_progress) ... ok
+test_revoked_offer_and_enrollment_remove_access (test_cursos.CursosTest.test_revoked_offer_and_enrollment_remove_access) ... ok
+test_student_isolation_and_no_forged_progress_owner (test_cursos.CursosTest.test_student_isolation_and_no_forged_progress_owner) ... ok
 test_bootstrap_command (test_gestao.GestaoTest.test_bootstrap_command) ... ok
 test_broadcast_and_read_permissions (test_gestao.GestaoTest.test_broadcast_and_read_permissions) ... ok
 test_layout_persistence_validation_and_csrf (test_gestao.GestaoTest.test_layout_persistence_validation_and_csrf) ... ok
@@ -41,6 +56,6 @@ test_role_normalization (test_unitarios.UnitariosTest.test_role_normalization) .
 test_upload_stream_encryption_size_and_quota_cleanup (test_unitarios.UnitariosTest.test_upload_stream_encryption_size_and_quota_cleanup) ... ok
 
 ----------------------------------------------------------------------
-Ran 41 tests in 23.209s
+Ran 56 tests in 38.253s
 
 OK

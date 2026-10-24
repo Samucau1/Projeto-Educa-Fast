@@ -214,6 +214,7 @@ def get_teacher_area_data(user_id):
                     "nome": turma.nome,
                     "codigo": turma.codigo,
                     "ano_letivo": turma.ano_letivo,
+                    "gerida": db.get(EstadoTurmaModel, turma.id) is not None,
                     "turno": turma.turno or "Nao informado",
                     "disciplinas": disciplinas_por_turma.get(turma.id, []),
                     "alunos": alunos_por_turma.get(turma.id, []),
@@ -492,6 +493,9 @@ def save_student_grade(user_id, data):
         if not professor_disciplina or not turma_disciplina:
             return {"erro": "Disciplina nao disponivel para este professor nesta turma"}, 403
 
+        from app.models.curso_model import EstadoTurmaModel
+        if db.get(EstadoTurmaModel, turma_id):
+            return {"erro": "Use o diario por periodo para preservar turma e ano do lancamento"}, 409
         nota = (
             db.query(NotaModel)
             .filter(

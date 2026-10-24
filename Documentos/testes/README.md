@@ -1,6 +1,6 @@
 # Testes de API, carga e regressão — Educa Fast
 
-Resultado atual: [cursos e gestão acadêmica](RELATORIO_CURSOS.md). A coleção tem 158 requisições e 210 verificações; a regressão completa tem 56 cenários, incluindo 8 unitários e três corridas transacionais exclusivas do MySQL. A [validação anterior](RELATORIO_VALIDACAO_FINAL.md) permanece como histórico de segurança/LGPD.
+Resultado atual: [diário, boletim e reconciliação](RELATORIO_ACADEMICO.md). A coleção tem 182 requisições e 243 verificações; a regressão completa tem 70 cenários, incluindo 8 unitários e quatro corridas transacionais exclusivas do MySQL. A [validação anterior](RELATORIO_VALIDACAO_FINAL.md) permanece como histórico de segurança/LGPD.
 
 Para testar pelo navegador, use o [roteiro de teste manual com usuários e comandos Docker](TESTE_MANUAL.md).
 
@@ -69,7 +69,7 @@ Use o Desktop Agent se executar pela interface web do Postman. Se a porta estive
 
 As credenciais sintéticas do ambiente são `superadmin@teste.local`, `admin@teste.local`, `professor@teste.local`, `aluno@teste.local` e `outro_aluno@teste.local`, todas com senha `Teste-local-2026!`. Elas existem apenas no servidor descartável. Os identificadores do ambiente dependem dessas fixtures; não aponte esta coleção para o banco da instalação.
 
-A coleção tem 158 requisições e 210 verificações, incluindo cursos, LGPD e proteções de sessão. Algumas rotas são formulários HTML, não APIs JSON: nesses casos, a coleção verifica o status HTTP, os textos de validação e o conteúdo publicado. A troca de perfis e as cores são exercitadas e restauradas ao final.
+A coleção tem 182 requisições e 243 verificações, incluindo cursos, LGPD e proteções de sessão. Algumas rotas são formulários HTML, não APIs JSON: nesses casos, a coleção verifica o status HTTP, os textos de validação e o conteúdo publicado. A troca de perfis e as cores são exercitadas e restauradas ao final.
 
 ## Cobertura
 
@@ -94,6 +94,6 @@ Consulte [`RELATORIO_VALIDACAO_FINAL.md`](RELATORIO_VALIDACAO_FINAL.md). O relat
 - [`postman-newman.txt`](resultados/postman-newman.txt), [`postman-junit.xml`](resultados/postman-junit.xml) e [`postman-resumo.json`](resultados/postman-resumo.json).
 - [Resultados de regressão e Postman com MySQL no Docker](resultados/mysql/).
 
-Os resultados atuais de carga, unitários, Postman e regressão passaram. SQLite ignora as três corridas específicas de MySQL; elas passam na execução MySQL. O executor de carga usa HTTP real com até 8 clientes nos fluxos completos e 32 nas leituras, mede p50/p95/máximo e confere persistência. Não aponte esses executores para dados reais nem execute suítes simultaneamente contra o mesmo banco.
+Os resultados atuais de carga, unitários, Postman e regressão passaram. SQLite ignora as quatro corridas específicas de MySQL; elas passam na execução MySQL. O executor de carga usa HTTP real com até 8 clientes nos fluxos completos e 32 nas leituras, mede p50/p95/máximo e confere persistência. Não aponte esses executores para dados reais nem execute suítes simultaneamente contra o mesmo banco.
 
 Para alterar os cenários da coleção, edite `Códigos/tests/gerar_postman.py` e execute-o; os JSONs são gerados novamente. O executor do Postman também os regenera antes de iniciar.

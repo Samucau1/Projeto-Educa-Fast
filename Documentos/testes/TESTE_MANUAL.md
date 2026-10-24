@@ -1,3 +1,5 @@
+> Para notas por período, revisão das turmas antigas e demonstração em dois anos, consulte [o guia acadêmico](../DIARIO_E_RECONCILIACAO.md).
+
 > Para os novos cursos reutilizáveis e a gestão acadêmica, consulte [o roteiro atualizado](RELATORIO_CURSOS.md#roteiro-manual-complementar).
 
 # Teste manual no navegador

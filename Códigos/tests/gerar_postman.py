@@ -229,6 +229,43 @@ def build():
     request(items, "Revogacao imediata", "/aprender/{{oferta_id}}", 404)
 
 
+    items = folder("11 - Reconciliacao e diario por periodo")
+    login(items, "admin")
+    request(items, "Previa das atribuicoes sem alterar dados", "/academico/reconciliar/{{turma_id}}?formato=json", scripts=[
+        'pm.collectionVariables.set("revisao_turma", pm.response.json().revisao);',
+        'pm.test("Candidatos para revisao", function () { pm.expect(pm.response.json().candidatos).to.be.an("array"); });',
+    ])
+    request(items, "Confirmar somente a atribuicao revisada", "/academico/reconciliar/{{turma_id}}", 200, "POST", json_body={"revisao": "{{revisao_turma}}", "confirmadas": ["{{professor_id}}:{{disciplina_id}}"]})
+    for suffix, turma in (("atual", "{{turma_id}}"), ("futuro", "{{turma_futura_id}}")):
+        request(items, "Criar periodo " + suffix, "/academico/periodos", 201, "POST", json_body={"turma_id": turma, "nome": "1o bimestre", "ordem": 1, "media_referencia": "6"}, scripts=[f'if (pm.response.code === 201) pm.collectionVariables.set("periodo_{suffix}", pm.response.json().periodo_id);'])
+    request(items, "Consultar ofertas academicas", "/academico?formato=json", scripts=[
+        'const rows = pm.response.json().vinculos;',
+        'pm.collectionVariables.set("vinculo_atual", rows.find(v => String(v.turma_id) === pm.environment.get("turma_id") && String(v.disciplina_id) === pm.environment.get("disciplina_id")).id);',
+        'pm.collectionVariables.set("vinculo_futuro", rows.find(v => String(v.turma_id) === String(pm.collectionVariables.get("turma_futura_id"))).id);',
+    ])
+    login(items, "professor")
+    for suffix in ("atual", "futuro"):
+        request(items, "Criar avaliacao " + suffix, "/academico/avaliacoes", 201, "POST", json_body={"turma_disciplina_id": "{{vinculo_" + suffix + "}}", "periodo_id": "{{periodo_" + suffix + "}}", "titulo": "Prova " + suffix, "peso": "1"}, scripts=[f'if (pm.response.code === 201) pm.collectionVariables.set("avaliacao_{suffix}", pm.response.json().avaliacao_id);'])
+    request(items, "Lancar nota no ano atual", "/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}", 200, "POST", json_body={"valor": "8,5", "versao": 0})
+    request(items, "Impedir sobrescrita por formulario antigo", "/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}", 409, "POST", json_body={"valor": "1", "versao": 0})
+    request(items, "Lancar nota independente no ano futuro", "/academico/avaliacoes/{{avaliacao_futuro}}/alunos/{{aluno_id}}", 200, "POST", json_body={"valor": "5", "versao": 0})
+    request(items, "Bloquear aluno fora da turma", "/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{outro_aluno_id}}", 403, "POST", json_body={"valor": "8", "versao": 0})
+    for suffix in ("atual", "futuro"):
+        request(items, "Publicar notas " + suffix, "/academico/avaliacoes/{{avaliacao_" + suffix + "}}/publicar", 200, "POST", json_body={})
+    login(items, "aluno")
+    request(items, "Boletim preserva dois anos", "/boletim?formato=json", scripts=[
+        'const rows = pm.response.json().periodos;',
+        'pm.test("Medias separadas por ano", function () { pm.expect(rows.find(r => r.ano === 2026).media).to.eql("8.50"); pm.expect(rows.find(r => r.ano === 2027).media).to.eql("5.00"); });',
+    ])
+    request(items, "Aluno nao acessa diario do professor", "/academico/avaliacoes/{{avaliacao_atual}}", 403)
+    login(items, "outro_aluno")
+    request(items, "Boletim nao revela notas de outro aluno", "/boletim?formato=json", scripts=['pm.test("Sem notas de outro titular", function () { pm.expect(pm.response.json().periodos).to.eql([]); });'])
+    login(items, "admin")
+    request(items, "Fechar periodo com motivo", "/academico/periodos/{{periodo_atual}}/estado", 200, "POST", json_body={"estado": "fechado", "motivo": "Encerramento conferido pela secretaria"})
+    login(items, "professor")
+    request(items, "Periodo fechado bloqueia correcao", "/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}", 409, "POST", json_body={"valor": "9", "versao": 1})
+
+
     collection = {
         "info": {"name": "Educa Fast - API e regressao", "description": "Executar integralmente em banco descartavel criado por tests/executar_postman.py --serve. Usa cookies de sessao, JWT e CSRF reais. Ha requisicoes que criam dados e alteram permissoes. Desative o redirecionamento automatico. Reinicie o servidor descartavel antes de cada execucao.", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
         "item": folders,

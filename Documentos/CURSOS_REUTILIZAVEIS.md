@@ -1,3 +1,5 @@
+> Atualização: o diário por turma/ano/período e a revisão dos vínculos antigos já estão implementados. Consulte [o guia atualizado](DIARIO_E_RECONCILIACAO.md). As limitações de notas descritas abaixo correspondem à entrega inicial dos cursos.
+
 # Cursos reutilizáveis e gestão acadêmica
 
 Implementação de 23/10/2026. Este documento atualiza as decisões do planejamento inicial em PLANEJAMENTO_EVOLUCAO_CURSOS.md.

@@ -1,4 +1,4 @@
-﻿# Educa Fast — Secretaria Escolar DF
+# Educa Fast — Secretaria Escolar DF
 
 Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, comunicados, notas, atividades e documentos. A aplicação possui áreas para a secretaria (administrador), professores e alunos.
 
@@ -17,6 +17,10 @@ Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, co
 - [Comandos úteis](#comandos-úteis)
 - [Validação e limites atuais](#validação-e-limites-atuais)
 - [Documentação e licença](#documentação-e-licença)
+
+## Diário e boletim por período
+
+O sistema inclui revisão explícita das atribuições antigas, avaliações com pesos e notas separadas por turma, ano e período. Professores lançam e publicam notas; a secretaria gerencia períodos e o vínculo das notas anteriores. Consulte [uso e arquitetura](Documentos/DIARIO_E_RECONCILIACAO.md) e [homologação](Documentos/testes/RELATORIO_ACADEMICO.md).
 
 ## Cursos reutilizáveis
 

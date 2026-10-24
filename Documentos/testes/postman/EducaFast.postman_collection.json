@@ -5519,6 +5519,881 @@
           ]
         }
       ]
+    },
+    {
+      "name": "11 - Reconciliacao e diario por periodo",
+      "item": [
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Previa das atribuicoes sem alterar dados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/academico/reconciliar/{{turma_id}}?formato=json"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set(\"revisao_turma\", pm.response.json().revisao);",
+                  "pm.test(\"Candidatos para revisao\", function () { pm.expect(pm.response.json().candidatos).to.be.an(\"array\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar somente a atribuicao revisada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/reconciliar/{{turma_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"revisao\": \"{{revisao_turma}}\", \"confirmadas\": [\"{{professor_id}}:{{disciplina_id}}\"]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar periodo atual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/periodos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_id\": \"{{turma_id}}\", \"nome\": \"1o bimestre\", \"ordem\": 1, \"media_referencia\": \"6\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"periodo_atual\", pm.response.json().periodo_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar periodo futuro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/periodos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_id\": \"{{turma_futura_id}}\", \"nome\": \"1o bimestre\", \"ordem\": 1, \"media_referencia\": \"6\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"periodo_futuro\", pm.response.json().periodo_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar ofertas academicas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/academico?formato=json"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const rows = pm.response.json().vinculos;",
+                  "pm.collectionVariables.set(\"vinculo_atual\", rows.find(v => String(v.turma_id) === pm.environment.get(\"turma_id\") && String(v.disciplina_id) === pm.environment.get(\"disciplina_id\")).id);",
+                  "pm.collectionVariables.set(\"vinculo_futuro\", rows.find(v => String(v.turma_id) === String(pm.collectionVariables.get(\"turma_futura_id\"))).id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"professor@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil professor\", function () { pm.expect(pm.response.json().role).to.eql(\"professor\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar avaliacao atual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_disciplina_id\": \"{{vinculo_atual}}\", \"periodo_id\": \"{{periodo_atual}}\", \"titulo\": \"Prova atual\", \"peso\": \"1\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"avaliacao_atual\", pm.response.json().avaliacao_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Criar avaliacao futuro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turma_disciplina_id\": \"{{vinculo_futuro}}\", \"periodo_id\": \"{{periodo_futuro}}\", \"titulo\": \"Prova futuro\", \"peso\": \"1\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"avaliacao_futuro\", pm.response.json().avaliacao_id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lancar nota no ano atual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valor\": \"8,5\", \"versao\": 0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Impedir sobrescrita por formulario antigo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valor\": \"1\", \"versao\": 0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lancar nota independente no ano futuro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_futuro}}/alunos/{{aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valor\": \"5\", \"versao\": 0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bloquear aluno fora da turma",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{outro_aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valor\": \"8\", \"versao\": 0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publicar notas atual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}/publicar",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publicar notas futuro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_futuro}}/publicar",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Boletim preserva dois anos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/boletim?formato=json"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const rows = pm.response.json().periodos;",
+                  "pm.test(\"Medias separadas por ano\", function () { pm.expect(rows.find(r => r.ano === 2026).media).to.eql(\"8.50\"); pm.expect(rows.find(r => r.ano === 2027).media).to.eql(\"5.00\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Aluno nao acessa diario do professor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login outro_aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"outro_aluno@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil aluno\", function () { pm.expect(pm.response.json().role).to.eql(\"aluno\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_outro_aluno\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Boletim nao revela notas de outro aluno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/boletim?formato=json"
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Sem notas de outro titular\", function () { pm.expect(pm.response.json().periodos).to.eql([]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"admin@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil admin\", function () { pm.expect(pm.response.json().role).to.eql(\"admin\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_admin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fechar periodo com motivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/periodos/{{periodo_atual}}/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"estado\": \"fechado\", \"motivo\": \"Encerramento conferido pela secretaria\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"professor@teste.local\", \"senha\": \"{{senha_teste}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Perfil professor\", function () { pm.expect(pm.response.json().role).to.eql(\"professor\"); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.set(\"csrf_token\", pm.response.json().csrf_token); if (pm.response.code === 200) pm.collectionVariables.set(\"token_professor\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Periodo fechado bloqueia correcao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-Token",
+                "value": "{{csrf_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}/alunos/{{aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"valor\": \"9\", \"versao\": 1}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [

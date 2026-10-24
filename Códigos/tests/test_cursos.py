@@ -230,7 +230,16 @@ class CursosTest(unittest.TestCase):
         with get_session() as db:
             self.assertEqual(db.get(TurmaModel, self.t).nome, 'Turma 2026')
             self.assertEqual(db.query(AtribuicaoDocenteModel).count(), 0)
-            self.assertEqual(db.execute(text('SELECT COUNT(*) FROM educafast_migracoes')).scalar(), 1)
+            self.assertEqual(db.execute(text('SELECT COUNT(*) FROM educafast_migracoes')).scalar(), 2)
+        # Atualização efetiva de um banco v1 para v2, preservando as tabelas de cursos.
+        for table in reversed(tabelas_cursos(Base.metadata)):
+            if table.name.startswith('academico_'):
+                table.drop(engine)
+        with engine.begin() as connection:
+            connection.execute(text('DELETE FROM educafast_migracoes WHERE versao = 2'))
+        migrar_cursos(engine, Base.metadata)
+        with get_session() as db:
+            self.assertEqual(db.execute(text('SELECT COUNT(*) FROM educafast_migracoes')).scalar(), 2)
 
     def test_assignment_applies_to_existing_grade_and_activity_endpoints(self):
         self.preparar()

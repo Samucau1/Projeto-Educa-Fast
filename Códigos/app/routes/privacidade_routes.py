@@ -71,6 +71,8 @@ def exportar():
         data = {"conta": {"email": user.email, "perfil": user.tipo}, "aluno": serialize_profile(aluno),
                 "professor": serialize_profile(professor), "notas": [], "documentos": [], "pedidos": []}
         if aluno:
+            from app.services.academico import boletim
+            data['boletim_por_periodo'] = boletim(db, aluno.id)
             data["notas"] = [{"disciplina_id": n.disciplina_id, "nota": str(n.nota), "observacao": n.observacao}
                              for n in db.query(NotaModel).filter_by(aluno_id=aluno.id)]
         documents = db.query(DocumentoModel)

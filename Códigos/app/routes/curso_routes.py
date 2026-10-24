@@ -327,6 +327,9 @@ def gestao_turmas():
                     ano = service.inteiro(data, 'ano_letivo')
                     if not 1900 <= ano <= 2200:
                         abort(400)
+                    from app.models.academico_model import PeriodoLetivoModel
+                    if ano != turma.ano_letivo and db.query(PeriodoLetivoModel).filter_by(turma_id=turma_id).first():
+                        abort(409, 'A turma já possui períodos acadêmicos. Crie outra turma para o novo ano.')
                     if ano != turma.ano_letivo and db.query(OfertaCursoModel).join(TurmaDisciplinaModel,
                             OfertaCursoModel.turma_disciplina_id == TurmaDisciplinaModel.id).filter(
                             TurmaDisciplinaModel.turma_id == turma_id).first():

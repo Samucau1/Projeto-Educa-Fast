@@ -46,6 +46,16 @@
         <span class="nav-section">APRENDIZAGEM</span>
         {{ nav_link('cursos.biblioteca', 'Meus cursos' if role == 'aluno' else 'Biblioteca de cursos', 'book', ['cursos.editor','cursos.aprender']) }}
         {% if role in ['admin','superadmin'] %}{{ nav_link('cursos.gestao_turmas', 'Gestão acadêmica', 'grid') }}{% endif %}
+        <span class="nav-section">VIDA ACADÊMICA</span>
+        {% if role == 'aluno' %}
+        {{ nav_link('academico.meu_boletim', 'Boletim por período', 'cap') }}
+        {% else %}
+        {{ nav_link('academico.painel', 'Diário e avaliações', 'cap', ['academico.diario']) }}
+        {% if role in ['admin','superadmin'] %}
+        {{ nav_link('academico.lista_reconciliacao', 'Revisar atribuições', 'users', ['academico.reconciliar']) }}
+        {{ nav_link('academico.notas_antigas', 'Histórico de notas', 'book') }}
+        {% endif %}
+        {% endif %}
         <span class="nav-section">PRIVACIDADE</span>
         {{ nav_link('privacidade.meus_pedidos', 'Meus dados e direitos', 'shield') }}
         {% if role in ['admin','superadmin'] %}{{ nav_link('privacidade.administrar', 'Atendimento LGPD', 'shield') }}{% endif %}

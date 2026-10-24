@@ -1,4 +1,5 @@
 """Models da aplicacao."""
+from .academico_model import PeriodoLetivoModel, AvaliacaoModel, LancamentoNotaModel, AuditoriaAcademicaModel
 from .curso_model import (CursoModel, CapituloModel, TemaModel, AulaModel, OfertaCursoModel,
     ProgressoAulaModel, AtribuicaoDocenteModel, EstadoTurmaModel, AuditoriaCursoModel)
 

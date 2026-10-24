@@ -127,7 +127,9 @@
                                     <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
                                 </td>
                                 <td class="py-4" colspan="4">
-                                    {% if turma.disciplinas %}
+                                    {% if turma.gerida %}
+                                    <a class="button button-primary" href="{{ url_for('academico.painel') }}">Abrir diário por período</a>
+                                    {% elif turma.disciplinas %}
                                     <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                         <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                         <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
@@ -165,6 +167,7 @@
             <div class="glass-card professor-card rounded-[32px] p-8 mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Lançar Notas</h2>
+                    <a class="button button-primary" href="{{ url_for('academico.painel') }}">Diário por turma, ano e período</a>
                     <span class="text-sm text-gray-400">Por turma, aluno e disciplina</span>
                 </div>
 
@@ -196,6 +199,7 @@
                                             <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
                                         </td>
                                         <td class="py-4">
+                                            {% if turma.gerida %}<a class="button button-primary" href="{{ url_for('academico.painel') }}">Abrir diário por período</a>{% else %}
                                             <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                                 <input type="hidden" name="turma_id" value="{{ turma.id }}">
                                                 <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
@@ -208,6 +212,7 @@
                                                 <input name="observacao" type="text" placeholder="Observação">
                                                 <button>Salvar nota</button>
                                             </form>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}

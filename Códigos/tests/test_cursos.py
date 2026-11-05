@@ -99,6 +99,42 @@ class CursosTest(unittest.TestCase):
         with get_session() as db:
             self.assertEqual(db.query(ProgressoAulaModel).one().aluno_id, self.ids['aluno_id'])
 
+    def test_completion_rejects_lesson_from_another_course(self):
+        self.preparar()
+        self.login('professor')
+        outro_curso = self.post(f'/cursos/{self.c}/duplicar', {}, 201)['curso_id']
+        with get_session() as db:
+            outra_aula = db.query(AulaModel).join(TemaModel,
+                AulaModel.tema_id == TemaModel.id).join(CapituloModel,
+                TemaModel.capitulo_id == CapituloModel.id).filter(
+                CapituloModel.curso_id == outro_curso).one().id
+        self.assertNotEqual(outra_aula, self.aula)
+        self.login('admin')
+        self.post(f'/cursos/{outro_curso}/estado', {'estado': 'publicado'})
+        outra_oferta = self.post(f'/cursos/{outro_curso}/ofertas',
+                                {'turma_id': self.t})['oferta_id']
+
+        self.login('aluno')
+        self.assertEqual(self.client.get(f'/aprender/{self.o}').status_code, 200)
+        self.assertEqual(self.client.get(f'/aprender/{outra_oferta}').status_code, 200)
+        self.post(f'/aprender/{self.o}/aulas/{outra_aula}/concluir', {}, 404)
+        self.assertEqual(self.progresso_registrado(), [])
+
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        progresso = self.progresso_registrado()
+        self.assertEqual(len(progresso), 1)
+        self.post(f'/aprender/{self.o}/aulas/{outra_aula}/concluir', {}, 404)
+        self.assertEqual(self.progresso_registrado(), progresso)
+        self.assertIn(b'0%', self.client.get(f'/aprender/{outra_oferta}').data)
+
+        # A aula é válida: sua conclusão só deve funcionar na oferta correta.
+        self.post(f'/aprender/{outra_oferta}/aulas/{outra_aula}/concluir', {})
+        with get_session() as db:
+            self.assertEqual(db.query(ProgressoAulaModel).count(), 2)
+            self.assertEqual(db.query(ProgressoAulaModel).filter_by(
+                aluno_id=self.ids['aluno_id'], oferta_id=outra_oferta,
+                aula_id=outra_aula).count(), 1)
+
     def test_draft_private_and_publication_admin_only(self):
         self.preparar(False)
         self.post(f'/cursos/{self.c}/estado', {'estado': 'publicado'}, 403)
@@ -135,12 +171,77 @@ class CursosTest(unittest.TestCase):
         self.login('aluno')
         self.post(f'/aprender/{self.o2}/aulas/{self.aula}/concluir', {}, 404)
 
+    def progresso_registrado(self):
+        with get_session() as db:
+            return [(p.id, p.aluno_id, p.oferta_id, p.aula_id, p.concluida_em)
+                    for p in db.query(ProgressoAulaModel).order_by(ProgressoAulaModel.id)]
+
+    def test_revoked_offer_preserves_progress_after_reactivation(self):
+        self.preparar()
+        self.login('aluno')
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        progresso = self.progresso_registrado()
+        self.assertEqual(len(progresso), 1)
+
+        self.login('admin')
+        self.post(f'/cursos/ofertas/{self.o}/revogar', {})
+        self.login('aluno')
+        self.assertEqual(self.client.get(f'/aprender/{self.o}').status_code, 404)
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {}, 404)
+        self.assertEqual(self.progresso_registrado(), progresso)
+
+        self.login('admin')
+        oferta = self.post(f'/cursos/{self.c}/ofertas', {'turma_id': self.t})
+        self.assertEqual(oferta['oferta_id'], self.o)
+        self.login('aluno')
+        pagina = self.client.get(f'/aprender/{self.o}')
+        self.assertEqual(pagina.status_code, 200)
+        self.assertIn(b'100%', pagina.data)
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        self.assertEqual(self.progresso_registrado(), progresso)
+        self.assertIn(b'0%', self.client.get(f'/aprender/{self.o2}').data)
+
+    def test_removed_enrollment_preserves_progress_after_reenrollment(self):
+        self.preparar()
+        self.login('aluno')
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        progresso = self.progresso_registrado()
+        self.assertEqual(len(progresso), 1)
+
+        self.login('admin')
+        self.post('/admin/gestao-turmas', {'acao': 'desmatricular',
+                  'turma_id': self.t, 'aluno_id': self.ids['aluno_id']})
+        self.login('aluno')
+        self.assertEqual(self.client.get(f'/aprender/{self.o}').status_code, 404)
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {}, 404)
+        self.assertEqual(self.progresso_registrado(), progresso)
+
+        self.login('admin')
+        self.post('/admin/gestao-turmas', {'acao': 'matricular',
+                  'turma_id': self.t, 'aluno_id': self.ids['aluno_id']})
+        self.login('aluno')
+        pagina = self.client.get(f'/aprender/{self.o}')
+        self.assertEqual(pagina.status_code, 200)
+        self.assertIn(b'100%', pagina.data)
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        self.assertEqual(self.progresso_registrado(), progresso)
+        self.assertIn(b'0%', self.client.get(f'/aprender/{self.o2}').data)
+
     def test_archived_class_blocks_access_and_teaching(self):
         self.preparar()
+        self.login('aluno')
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
+        progresso = self.progresso_registrado()
+        self.assertEqual(len(progresso), 1)
         self.login('admin')
         self.post('/admin/gestao-turmas', {'acao': 'arquivar', 'turma_id': self.t})
         self.login('aluno')
         self.assertEqual(self.client.get(f'/aprender/{self.o}').status_code, 404)
+        self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {}, 404)
+        self.assertEqual(self.progresso_registrado(), progresso)
+        outra_oferta = self.client.get(f'/aprender/{self.o2}')
+        self.assertEqual(outra_oferta.status_code, 200)
+        self.assertIn(b'0%', outra_oferta.data)
         with get_session() as db:
             self.assertFalse(autoriza_docencia(db, self.ids['professor_id'], self.t, self.d))
 

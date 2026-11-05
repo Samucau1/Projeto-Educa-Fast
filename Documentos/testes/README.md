@@ -86,6 +86,31 @@ A coleção tem 201 requisições e 269 verificações, incluindo cursos, LGPD e
 
 Os testes de documentos com arquivos e a comprovação direta da persistência no banco estão na suíte Python. A coleção verifica as rotas HTTP, formulários, sessões e JWTs; não valida a aparência da interface nem executa JavaScript do navegador.
 
+## Integridade e preservação do progresso nos cursos
+
+A cobertura em `Códigos/tests/test_cursos.py` verifica que mudanças de acesso preservam o progresso e que uma aula só pode ser concluída na oferta do curso ao qual pertence.
+
+| Cenário | Resultado esperado |
+| --- | --- |
+| Arquivar uma turma após concluir uma aula | Consulta e conclusão retornam 404; docência fica bloqueada; progresso permanece intacto. |
+| Revogar uma oferta e liberá-la novamente | Durante a revogação, consulta e conclusão retornam 404. A liberação reutiliza a oferta e recupera o progresso de 100%. |
+| Remover a matrícula e matricular novamente | Durante a remoção, consulta e conclusão retornam 404. A nova matrícula recupera o progresso de 100%. |
+| Tentar concluir uma aula de outro curso | Retorna 404, sem criar progresso indevido ou modificar o existente, mesmo com acesso aos dois cursos. A mesma aula pode ser concluída na oferta correta. |
+
+Os testes comparam identificador, aluno, oferta, aula e data de conclusão antes e depois das operações. Concluir novamente após recuperar acesso não duplica nem altera o registro. A oferta do mesmo curso em outro ano continua com 0%, sem transferência de progresso entre ofertas.
+
+O cenário de aula de outro curso usa dois cursos publicados e ofertados à mesma turma. A tentativa é feita antes e depois de uma conclusão legítima, verificando a relação entre aula e curso sem depender da falta de matrícula ou de acesso ao segundo curso.
+
+Para executar somente a suíte de cursos, na pasta `Códigos`, com as dependências instaladas:
+
+```powershell
+..\.venv\Scripts\python.exe -m unittest discover -s tests -p test_cursos.py -v
+```
+
+A execução usa o cliente HTTP de testes do Flask, autenticação, CSRF e consultas de persistência. Por padrão, usa SQLite em memória, sem acessar o banco da instalação. Não verifica aparência no navegador nem reprodução de vídeo.
+
+Validação local em **05/11/2026**, com Python 3.12.16: 18 cenários encontrados, 17 aprovados e um ignorado por exigir MySQL; sem falhas ou erros, em 65,525 s. Os três cenários novos e o cenário ampliado de arquivamento passaram. A suíte completa do sistema e o MySQL não foram executados nesta ampliação; os relatórios de homologação anteriores permanecem como histórico.
+
 ## Evidências e situação antes do GitHub
 
 Consulte [`RELATORIO_VALIDACAO_FINAL.md`](RELATORIO_VALIDACAO_FINAL.md). O relatório anterior fica preservado como histórico em [`RELATORIO_REGRESSAO.md`](RELATORIO_REGRESSAO.md). Os resultados detalhados estão em:

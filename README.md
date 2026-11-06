@@ -1,5 +1,7 @@
 # Educa Fast — Secretaria Escolar DF
 
+[![CI](https://github.com/Samucau1/Projeto-Educa-Fast/actions/workflows/ci.yml/badge.svg)](https://github.com/Samucau1/Projeto-Educa-Fast/actions/workflows/ci.yml)
+
 Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, comunicados, notas, atividades e documentos. A aplicação possui áreas para a secretaria (administrador), professores e alunos.
 
 ## Índice

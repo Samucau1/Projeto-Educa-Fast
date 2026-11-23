@@ -29,3 +29,6 @@ Códigos/app/static/dist/
 # Browser test artifacts
 Códigos/frontend/test-results/
 Códigos/frontend/playwright-report/
+# Private TLS material must never enter Git.
+**/certs/
+*.key

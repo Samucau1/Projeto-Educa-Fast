@@ -1,0 +1,179 @@
+{
+  "aprovado": true,
+  "data_utc": "2026-10-22T21:51:41.792Z",
+  "verificacoes_de_pagina": [
+    {
+      "role": "admin",
+      "url": "/admin/dashboard",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/dashboard",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/cadastro-alunos",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/cadastro-alunos",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/cadastro-professores",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/cadastro-professores",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/banco-de-dados",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/banco-de-dados",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/disciplinas",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/disciplinas",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/turmas",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/turmas",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/comunicados",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/comunicados",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/alunos/1",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/alunos/1",
+      "device": "mobile"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/professores/1",
+      "device": "desktop"
+    },
+    {
+      "role": "admin",
+      "url": "/admin/professores/1",
+      "device": "mobile"
+    },
+    {
+      "role": "superadmin",
+      "url": "/super/usuarios",
+      "device": "desktop"
+    },
+    {
+      "role": "superadmin",
+      "url": "/super/usuarios",
+      "device": "mobile"
+    },
+    {
+      "role": "superadmin",
+      "url": "/super/layout",
+      "device": "desktop"
+    },
+    {
+      "role": "superadmin",
+      "url": "/super/layout",
+      "device": "mobile"
+    },
+    {
+      "role": "superadmin",
+      "url": "/mensagens",
+      "device": "desktop"
+    },
+    {
+      "role": "superadmin",
+      "url": "/mensagens",
+      "device": "mobile"
+    },
+    {
+      "role": "professor",
+      "url": "/professor",
+      "device": "desktop"
+    },
+    {
+      "role": "professor",
+      "url": "/professor",
+      "device": "mobile"
+    },
+    {
+      "role": "professor",
+      "url": "/mensagens",
+      "device": "desktop"
+    },
+    {
+      "role": "professor",
+      "url": "/mensagens",
+      "device": "mobile"
+    },
+    {
+      "role": "aluno",
+      "url": "/aluno",
+      "device": "desktop"
+    },
+    {
+      "role": "aluno",
+      "url": "/aluno",
+      "device": "mobile"
+    },
+    {
+      "role": "aluno",
+      "url": "/aluno/disciplinas/1",
+      "device": "desktop"
+    },
+    {
+      "role": "aluno",
+      "url": "/aluno/disciplinas/1",
+      "device": "mobile"
+    },
+    {
+      "role": "aluno",
+      "url": "/mensagens",
+      "device": "desktop"
+    },
+    {
+      "role": "aluno",
+      "url": "/mensagens",
+      "device": "mobile"
+    }
+  ],
+  "erros_javascript": [],
+  "recursos_externos": [],
+  "observacao": "Não altera usuários, notas, mensagens ou cores. Teste em Edge com MySQL manual."
+}

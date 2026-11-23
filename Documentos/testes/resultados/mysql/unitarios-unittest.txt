@@ -1,0 +1,13 @@
+test_concurrent_photo_removal_during_quota_scan (test_unitarios.UnitariosTest.test_concurrent_photo_removal_during_quota_scan) ... ok
+test_cpf_index_normalizes_format_without_exposing_digits (test_unitarios.UnitariosTest.test_cpf_index_normalizes_format_without_exposing_digits) ... ok
+test_date_storage_roundtrip_and_null (test_unitarios.UnitariosTest.test_date_storage_roundtrip_and_null) ... ok
+test_encryption_randomized_roundtrip_and_tampering (test_unitarios.UnitariosTest.test_encryption_randomized_roundtrip_and_tampering) ... ok
+test_external_and_malformed_redirects_rejected (test_unitarios.UnitariosTest.test_external_and_malformed_redirects_rejected) ... ok
+test_local_redirects_preserve_query (test_unitarios.UnitariosTest.test_local_redirects_preserve_query) ... ok
+test_role_normalization (test_unitarios.UnitariosTest.test_role_normalization) ... ok
+test_upload_stream_encryption_size_and_quota_cleanup (test_unitarios.UnitariosTest.test_upload_stream_encryption_size_and_quota_cleanup) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.036s
+
+OK

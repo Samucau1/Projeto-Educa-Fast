@@ -1,0 +1,338 @@
+{% set page_title = 'Área do professor' %}
+{% from 'partials/gestao_icons.html' import icon %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Professor | Educa Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/professor_painel.css') }}">
+    {% include "partials/react_runtime.html" %}
+</head>
+<body class="app-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    <div id="professor-painel-root" class="flex w-full" data-react-shell data-react-template="professor-painel-template"></div>
+    <template id="professor-painel-template">
+    {% include 'partials/workspace_sidebar.html' %}
+
+    <div class="workspace-main">
+    {% include 'partials/workspace_topbar.html' %}
+    <main id="main-content" class="app-content">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <span class="eyebrow">MINHA ESCOLA</span>
+                    <h1 class="text-3xl font-bold">Olá, Prof. {{ professor.nome }}!</h1>
+                <p class="text-gray-400">{{ professor.disciplina }} · {{ professor.regime }}</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold">{{ professor.email }}</p>
+                    <p class="text-[10px] text-cyan-400">PROF-{{ professor.id }}</p>
+                </div>
+                {% if professor.foto_perfil %}
+                <img src="{{ url_for('document.perfil_arquivo', filename=professor.foto_perfil) }}" alt="Foto de {{ professor.nome }}" class="w-12 h-12 rounded-full border-2 border-white/20 object-cover">
+                {% else %}
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 border-2 border-white/20"></div>
+                {% endif %}
+            </div>
+        </header>
+
+        <section data-professor-panel="turmas" class="space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold">Turmas</h2>
+                <span class="text-sm text-gray-400">Turmas associadas ao seu cadastro</span>
+            </div>
+
+            {% for turma in turmas %}
+            <article class="glass-card professor-card rounded-[28px] p-6">
+                <div class="flex flex-wrap items-start justify-between gap-4 mb-5">
+                    <div>
+                        <h3 class="text-lg font-bold text-cyan-400">{{ turma.nome }}</h3>
+                        <p class="text-sm text-gray-400">{{ turma.codigo }} · {{ turma.ano_letivo }} · {{ turma.turno }}</p>
+                    </div>
+                    <span class="professor-pill">{{ turma.alunos|length }} alunos</span>
+                </div>
+
+                <div class="mb-5">
+                    <p class="text-xs uppercase tracking-wider text-gray-500 mb-2">Disciplinas nesta turma</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for disciplina in turma.disciplinas %}
+                        <span class="professor-chip">{{ disciplina.nome }}</span>
+                        {% else %}
+                        <span class="text-sm text-gray-400">Nenhuma disciplina associada ao professor nesta turma.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="professor-activity-panel">
+                    <div>
+                        <h4>Lançar atividade</h4>
+                        <p>Publique uma atividade para esta turma.</p>
+                    </div>
+                    {% if turma.disciplinas %}
+                    <form action="{{ url_for('professor.lancar_atividade') }}" method="post" enctype="multipart/form-data" class="professor-activity-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="turma_id" value="{{ turma.id }}">
+                        <select name="disciplina_id" required>
+                            {% for disciplina in turma.disciplinas %}
+                            <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <input name="titulo" type="text" placeholder="Título da atividade" required>
+                        <input name="data_entrega" type="date">
+                        <input name="arquivo" type="file">
+                        <textarea name="descricao" placeholder="Descrição da atividade"></textarea>
+                        <button>Lançar atividade</button>
+                    </form>
+                    {% else %}
+                    <p class="text-sm text-gray-400">Associe uma disciplina ao professor e à turma para lançar atividade.</p>
+                    {% endif %}
+
+                    <div class="professor-activity-list">
+                        {% for atividade in turma.atividades %}
+                        <article>
+                            <div>
+                                <strong>{{ atividade.titulo }}</strong>
+                                <span>{{ atividade.disciplina }} · Entrega: {{ atividade.data_entrega }}</span>
+                                <p>{{ atividade.descricao }}</p>
+                                {% if atividade.arquivo %}
+                                <a href="{{ url_for('document.download_arquivo', filename=atividade.arquivo) }}">Baixar anexo</a>
+                                {% endif %}
+                            </div>
+                            <small>{{ atividade.data }}</small>
+                        </article>
+                        {% else %}
+                        <div class="professor-empty-line">Nenhuma atividade lançada para esta turma.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="professor-table-wrapper">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-gray-500 text-xs uppercase tracking-wider">
+                                <th class="pb-4 font-medium">Aluno</th>
+                                <th class="pb-4 font-medium">Disciplina</th>
+                                <th class="pb-4 font-medium">Nota</th>
+                                <th class="pb-4 font-medium">Observação</th>
+                                <th class="pb-4 font-medium"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            {% for aluno in turma.alunos %}
+                            <tr class="border-t border-white/5">
+                                <td class="py-4">
+                                    <span class="block font-bold text-white">{{ aluno.nome }}</span>
+                                    <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
+                                </td>
+                                <td class="py-4" colspan="4">
+                                    {% if turma.gerida %}
+                                    <a class="button button-primary" href="{{ url_for('academico.painel') }}">Abrir diário por período</a>
+                                    {% elif turma.disciplinas %}
+                                    <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <input type="hidden" name="turma_id" value="{{ turma.id }}">
+                                        <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
+                                        <select name="disciplina_id" required>
+                                            {% for disciplina in turma.disciplinas %}
+                                            <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <input name="nota" type="number" min="0" max="10" step="0.01" placeholder="0-10" required>
+                                        <input name="observacao" type="text" placeholder="Observação">
+                                        <button>Salvar nota</button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-gray-500">Associe uma disciplina ao professor e à turma para lançar nota.</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr class="border-t border-white/5">
+                                <td class="py-6 text-gray-400" colspan="5">Nenhum aluno associado a esta turma.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            {% else %}
+            <div class="glass-card professor-card rounded-[28px] p-6 text-gray-400">
+                Nenhuma turma associada ao seu cadastro.
+            </div>
+            {% endfor %}
+        </section>
+
+        <section data-professor-panel="notas" class="professor-panel-hidden">
+            <div class="glass-card professor-card rounded-[32px] p-8 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Lançar Notas</h2>
+                    <a class="button button-primary" href="{{ url_for('academico.painel') }}">Diário por turma, ano e período</a>
+                    <span class="text-sm text-gray-400">Por turma, aluno e disciplina</span>
+                </div>
+
+                <div class="space-y-5">
+                    {% for turma in turmas %}
+                    <article class="professor-doc-block">
+                        <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+                            <div>
+                                <h3>{{ turma.nome }}</h3>
+                                <p class="text-sm text-gray-400">{{ turma.codigo }} · {{ turma.ano_letivo }} · {{ turma.turno }}</p>
+                            </div>
+                            <span class="professor-pill">{{ turma.alunos|length }} alunos</span>
+                        </div>
+
+                        {% if turma.alunos and turma.disciplinas %}
+                        <div class="professor-table-wrapper">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-gray-500 text-xs uppercase tracking-wider">
+                                        <th class="pb-4 font-medium">Aluno</th>
+                                        <th class="pb-4 font-medium">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">
+                                    {% for aluno in turma.alunos %}
+                                    <tr class="border-t border-white/5">
+                                        <td class="py-4">
+                                            <span class="block font-bold text-white">{{ aluno.nome }}</span>
+                                            <span class="text-xs text-gray-500">{{ aluno.matricula }}</span>
+                                        </td>
+                                        <td class="py-4">
+                                            {% if turma.gerida %}<a class="button button-primary" href="{{ url_for('academico.painel') }}">Abrir diário por período</a>{% else %}
+                                            <form action="{{ url_for('professor.salvar_nota') }}" method="post" class="professor-grade-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                                <input type="hidden" name="turma_id" value="{{ turma.id }}">
+                                                <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
+                                                <select name="disciplina_id" required>
+                                                    {% for disciplina in turma.disciplinas %}
+                                                    <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input name="nota" type="number" min="0" max="10" step="0.01" placeholder="0-10" required>
+                                                <input name="observacao" type="text" placeholder="Observação">
+                                                <button>Salvar nota</button>
+                                            </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-sm text-gray-400">Esta turma precisa ter alunos e disciplinas para lançar notas.</p>
+                        {% endif %}
+                    </article>
+                    {% else %}
+                    <div class="professor-doc-block">
+                        <h3>Nenhuma turma disponível</h3>
+                        <p class="text-sm text-gray-400">Quando a administração associar turmas ao seu cadastro, o lançamento de notas aparecerá aqui.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="glass-card professor-card rounded-[32px] p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Notas Lançadas</h2>
+                    <span class="text-sm text-gray-400">Histórico recente</span>
+                </div>
+
+                <div class="professor-table-wrapper">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-gray-500 text-xs uppercase tracking-wider">
+                            <th class="pb-4 font-medium">Aluno</th>
+                            <th class="pb-4 font-medium">Turma</th>
+                            <th class="pb-4 font-medium">Disciplina</th>
+                            <th class="pb-4 font-medium">Nota</th>
+                            <th class="pb-4 font-medium">Observação</th>
+                            <th class="pb-4 font-medium">Data</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for nota in notas %}
+                        <tr class="border-t border-white/5">
+                            <td class="py-4 font-medium text-white">{{ nota.aluno }}</td>
+                            <td class="py-4 text-gray-400">{{ nota.turma }}</td>
+                            <td class="py-4 text-gray-400">{{ nota.disciplina }}</td>
+                            <td class="py-4 text-cyan-400 font-bold">{{ nota.nota }}</td>
+                            <td class="py-4 text-gray-400">{{ nota.observacao }}</td>
+                            <td class="py-4 text-gray-400">{{ nota.data }}</td>
+                        </tr>
+                        {% else %}
+                        <tr class="border-t border-white/5">
+                            <td class="py-6 text-gray-400" colspan="6">Nenhuma nota lançada até o momento.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </section>
+
+        <section data-professor-panel="documentos" class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] professor-panel-hidden">
+            <div class="glass-card professor-card rounded-[32px] p-8">
+                <h2 class="text-xl font-bold">Solicitações da Secretaria</h2>
+                <p class="mt-1 text-sm text-gray-400">Anexe aqui os documentos pedidos pela secretaria.</p>
+
+                {% for solicitacao in solicitacoes_documentos %}
+                <article class="professor-doc-block">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <h3>{{ solicitacao.titulo }}</h3>
+                            <p class="text-sm text-gray-400">{{ solicitacao.mensagem }}</p>
+                            <span class="text-xs text-gray-500">{{ solicitacao.data }}</span>
+                        </div>
+                        <strong class="professor-request-status professor-request-status-{{ solicitacao.status }}">{{ solicitacao.status_label }}</strong>
+                    </div>
+                    {% if solicitacao.status != "enviado" %}
+                    <form action="{{ url_for('professor.upload_documento_professor') }}" method="post" enctype="multipart/form-data" class="professor-doc-form mt-4"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="solicitacao_id" value="{{ solicitacao.id }}">
+                        <label>
+                            <span>Arquivo</span>
+                            <input name="arquivo" type="file" required>
+                        </label>
+                        <button>Enviar documento</button>
+                    </form>
+                    {% endif %}
+                </article>
+                {% else %}
+                <div class="professor-doc-block">
+                    <h3>Nenhuma solicitação</h3>
+                    <p class="text-sm text-gray-400">Quando a secretaria solicitar um documento, ele aparecerá aqui.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="glass-card professor-card rounded-[32px] p-8">
+                <h2 class="text-xl font-bold">Documentos Enviados</h2>
+                <p class="mt-1 text-sm text-gray-400">Histórico dos arquivos respondidos à secretaria.</p>
+
+                <div class="mt-6 space-y-4">
+                    {% for documento in documentos %}
+                    <article class="professor-doc-item">
+                        <div>
+                            <h3>{{ documento.titulo }}</h3>
+                            <p>{{ documento.disciplina }}</p>
+                            <span>{{ documento.data }}</span>
+                        </div>
+                        <a href="{{ url_for('document.download_arquivo', filename=documento.arquivo) }}">Baixar</a>
+                    </article>
+                    {% else %}
+                    <div class="professor-doc-item">
+                        <div>
+                            <h3>Nenhum documento enviado</h3>
+                            <p>Os documentos enviados aparecerão aqui.</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+    </div>
+</template>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 
 from app.auth import decode_token_from_request, normalize_role
 from app.controllers.document_controller import get_upload_folder, upload_documento
+from app.security import local_return_path, save_upload, download_upload
 from app.database import get_session
 from app.models import (
     AlunoModel,
@@ -31,9 +32,9 @@ def _get_or_create_disciplina_geral(db):
 
 
 @document_bp.route('/arquivos/upload', methods=['POST'])
-@document_bp.route("/api/arquivos/upload", methods=["POST"])
 def upload_arquivo():
-    is_admin = normalize_role(session.get("user_role")) == "secretaria"
+    redirect_to = local_return_path(request.form.get("redirect_to"))
+    is_admin = normalize_role(session.get("user_role")) in {"admin", "superadmin"}
     jwt_payload = None
     if not is_admin:
         jwt_payload, error_response = decode_token_from_request()
@@ -42,7 +43,7 @@ def upload_arquivo():
 
         role = normalize_role(jwt_payload.get("role") or jwt_payload.get("tipo"))
         if role != "professor":
-            return jsonify({"erro": "Acesso permitido apenas para professores ou a secretaria escolar"}), 403
+            return jsonify({"erro": "Acesso permitido apenas para professores ou administradores"}), 403
 
     if "arquivo" not in request.files:
         return jsonify({"erro": "Arquivo nao enviado"}), 400
@@ -54,8 +55,7 @@ def upload_arquivo():
         is_admin=is_admin,
     )
 
-    redirect_to = request.form.get("redirect_to")
-    if 200 <= status < 300 and redirect_to and redirect_to.startswith("/") and not request.path.startswith("/api/"):
+    if 200 <= status < 300 and redirect_to:
         return redirect(redirect_to)
 
     return jsonify(response), status
@@ -64,6 +64,13 @@ def upload_arquivo():
 @document_bp.route('/arquivos/download/<path:filename>', methods=['GET'])
 def download_arquivo(filename):
     role = normalize_role(session.get("user_role"))
+    user_id = session.get("user_id")
+    if not user_id:
+        payload, error_response = decode_token_from_request()
+        if error_response:
+            return error_response
+        role = normalize_role(payload.get("role"))
+        user_id = int(payload["sub"])
     safe_filename = secure_filename(filename)
 
     if role == "aluno":
@@ -73,7 +80,7 @@ def download_arquivo(filename):
                 db.query(DocumentoModel)
                 .join(AlunoModel, AlunoModel.id == DocumentoModel.aluno_id)
                 .filter(
-                    AlunoModel.usuario_id == session.get("user_id"),
+                    AlunoModel.usuario_id == user_id,
                     DocumentoModel.caminho_arquivo == safe_filename,
                 )
                 .first()
@@ -83,7 +90,7 @@ def download_arquivo(filename):
                 .join(AlunoTurmaModel, AlunoTurmaModel.turma_id == AtividadeModel.turma_id)
                 .join(AlunoModel, AlunoModel.id == AlunoTurmaModel.aluno_id)
                 .filter(
-                    AlunoModel.usuario_id == session.get("user_id"),
+                    AlunoModel.usuario_id == user_id,
                     AtividadeModel.caminho_arquivo == safe_filename,
                 )
                 .first()
@@ -100,7 +107,7 @@ def download_arquivo(filename):
                 db.query(DocumentoModel)
                 .join(ProfessorModel, ProfessorModel.id == DocumentoModel.professor_id)
                 .filter(
-                    ProfessorModel.usuario_id == session.get("user_id"),
+                    ProfessorModel.usuario_id == user_id,
                     DocumentoModel.caminho_arquivo == safe_filename,
                 )
                 .first()
@@ -109,7 +116,7 @@ def download_arquivo(filename):
                 db.query(AtividadeModel)
                 .join(ProfessorModel, ProfessorModel.id == AtividadeModel.professor_id)
                 .filter(
-                    ProfessorModel.usuario_id == session.get("user_id"),
+                    ProfessorModel.usuario_id == user_id,
                     AtividadeModel.caminho_arquivo == safe_filename,
                 )
                 .first()
@@ -119,17 +126,17 @@ def download_arquivo(filename):
 
         if not documento and not atividade:
             return jsonify({"erro": "Arquivo nao encontrado para este professor"}), 404
-    elif role != "secretaria":
-        return jsonify(erro="Acesso negado"), 403
+    elif role not in {"admin", "superadmin"}:
+        return jsonify({"erro": "Perfil sem permissao para arquivos"}), 403
 
-    return send_from_directory(get_upload_folder(), safe_filename, as_attachment=True)
+    return download_upload(get_upload_folder(), safe_filename)
 
 
 @document_bp.route('/professores/<int:professor_id>/arquivos/upload', methods=['POST'])
-@document_bp.route("/api/professores/<int:professor_id>/arquivos/upload", methods=["POST"])
 def upload_arquivo_professor(professor_id):
-    if normalize_role(session.get("user_role")) != "secretaria":
-        return jsonify({"erro": "Acesso permitido apenas para a secretaria escolar"}), 403
+    redirect_to = local_return_path(request.form.get("redirect_to"))
+    if normalize_role(session.get("user_role")) not in {"admin", "superadmin"}:
+        return jsonify({"erro": "Acesso permitido apenas para administradores"}), 403
 
     if "arquivo" not in request.files:
         return jsonify({"erro": "Arquivo nao enviado"}), 400
@@ -154,7 +161,7 @@ def upload_arquivo_professor(professor_id):
             return jsonify({"erro": "Professor nao encontrado"}), 404
 
         disciplina = _get_or_create_disciplina_geral(db)
-        arquivo.save(saved_path)
+        save_upload(arquivo, saved_path)
         documento = DocumentoModel(
             aluno_id=None,
             professor_id=professor.id,
@@ -172,8 +179,7 @@ def upload_arquivo_professor(professor_id):
     finally:
         db.close()
 
-    redirect_to = request.form.get("redirect_to")
-    if redirect_to and redirect_to.startswith("/") and not request.path.startswith("/api/"):
+    if redirect_to:
         return redirect(redirect_to)
 
     return jsonify({"mensagem": "Arquivo enviado"}), 201
@@ -181,8 +187,17 @@ def upload_arquivo_professor(professor_id):
 
 @document_bp.route('/arquivos/perfil/<path:filename>', methods=['GET'])
 def perfil_arquivo(filename):
+    if not session.get("user_id"):
+        return jsonify({"erro": "Autenticacao obrigatoria"}), 403
     safe_filename = secure_filename(filename)
     if not safe_filename.startswith("perfil_"):
         return jsonify({"erro": "Arquivo nao encontrado"}), 404
 
-    return send_from_directory(get_upload_folder(), safe_filename)
+    if session.get("user_role") not in {"admin", "superadmin"}:
+        with get_session() as db:
+            own = (db.query(AlunoModel).filter_by(usuario_id=session["user_id"], foto_perfil=safe_filename).first()
+                   or db.query(ProfessorModel).filter_by(usuario_id=session["user_id"], foto_perfil=safe_filename).first())
+            if not own:
+                return jsonify({"erro": "Arquivo nao encontrado"}), 404
+
+    return download_upload(get_upload_folder(), safe_filename, attachment=False)

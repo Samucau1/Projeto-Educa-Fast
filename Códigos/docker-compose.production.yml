@@ -1,0 +1,61 @@
+# Standalone deployment: do not combine with the development/manual files.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "443:5000"
+    environment:
+      APP_ENV: production
+      COOKIE_SECURE: "1"
+      SECRET_KEY: ${SECRET_KEY:?Configure SECRET_KEY}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?Configure DATA_ENCRYPTION_KEY}
+      LGPD_CONTROLADOR: ${LGPD_CONTROLADOR:-EducaFast}
+      LGPD_CONTATO: ${LGPD_CONTATO:?Configure LGPD_CONTATO}
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:?Configure o dominio publico}
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-app_web}
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD}
+      DB_SSL_CA: /run/tls/ca.crt
+      TLS_CERT_FILE: /run/tls/web.crt
+      TLS_KEY_FILE: /run/tls/web.key
+      UPLOAD_FOLDER: /app/uploads
+    volumes:
+      - uploads_data:/app/uploads
+      - ./certs/ca.crt:/run/tls/ca.crt:ro
+      - ./certs/web.crt:/run/tls/web.crt:ro
+      - ./certs/web.key:/run/tls/web.key:ro
+    networks: [frontend, backend]
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    command: ["--require-secure-transport=ON", "--ssl-ca=/run/tls/ca.crt", "--ssl-cert=/run/tls/db.crt", "--ssl-key=/run/tls/db.key"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Configure MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-app_web}
+      MYSQL_USER: ${DB_USER:-app_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./certs/ca.crt:/run/tls/ca.crt:ro
+      - ./certs/db.crt:/run/tls/db.crt:ro
+      - ./certs/db.key:/run/tls/db.key:ro
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping --protocol=socket -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+networks:
+  frontend: {}
+  backend:
+    internal: true
+volumes:
+  mysql_data:
+  uploads_data:

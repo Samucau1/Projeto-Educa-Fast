@@ -1,4 +1,9 @@
 """Models da aplicacao."""
+from .escola_model import (IdentidadeEscolaModel, CalendarioEscolaModel, EventoCalendarioModel,
+                          PoliticaEscolaModel, RegraTurmaEscolaModel, RegraPeriodoEscolaModel)
+from .academico_model import PeriodoLetivoModel, AvaliacaoModel, LancamentoNotaModel, AuditoriaAcademicaModel
+from .curso_model import (CursoModel, CapituloModel, TemaModel, AulaModel, OfertaCursoModel,
+    ProgressoAulaModel, AtribuicaoDocenteModel, EstadoTurmaModel, AuditoriaCursoModel)
 
 from .aluno_model import AlunoModel
 from .aluno_disciplina_model import AlunoDisciplinaModel
@@ -15,6 +20,8 @@ from .solicitacao_documento_model import SolicitacaoDocumentoModel
 from .turma_model import TurmaModel
 from .turma_disciplina_model import TurmaDisciplinaModel
 from .usuario_model import UsuarioModel
+from .configuracao_model import ConfiguracaoModel
+from .privacidade_model import PedidoPrivacidadeModel, AuditoriaPrivacidadeModel, LimiteLoginModel
 
 __all__ = [
     "UsuarioModel",
@@ -33,6 +40,3 @@ __all__ = [
     "TurmaModel",
     "TurmaDisciplinaModel",
 ]
-
-from .governanca_model import ConfiguracaoModel, AuditoriaModel
-from .horario_model import HorarioModel

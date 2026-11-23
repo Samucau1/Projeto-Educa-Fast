@@ -1,522 +1,390 @@
-# Sistema de Gestão da Secretaria Escolar DF
+# Educa Fast — Secretaria Escolar DF
 
-O Sistema de Gestão da Secretaria Escolar DF é uma plataforma digital desenvolvida para apoiar as atividades administrativas de instituições de ensino, centralizando e organizando informações acadêmicas e administrativas.
+[![CI](https://github.com/Samucau1/Projeto-Educa-Fast/actions/workflows/ci.yml/badge.svg)](https://github.com/Samucau1/Projeto-Educa-Fast/actions/workflows/ci.yml)
 
-O frontend é uma SPA (Single Page Application) com componentes React e navegação pelo React Router. O backend Flask fornece APIs JSON, autenticação e acesso ao banco MySQL. O Vite compila o frontend, e o próprio Flask entrega os arquivos gerados ao navegador.
+Sistema web de gestão escolar que centraliza cadastros, turmas, disciplinas, comunicados, notas, atividades e documentos. A aplicação possui áreas para a secretaria (administrador), professores e alunos.
 
-## Estrutura do projeto
+## Índice
+
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias e arquitetura](#tecnologias-e-arquitetura)
+- [Arquitetura em camadas](#arquitetura-em-camadas)
+- [Telas do sistema](#telas-do-sistema)
+- [Estrutura](#estrutura)
+- [Executar com Docker Compose](#executar-com-docker-compose)
+- [Executar localmente sem Docker](#executar-localmente-sem-docker)
+- [Configuração](#configuração)
+- [Persistência](#persistência)
+- [Principais rotas](#principais-rotas)
+- [Comandos úteis](#comandos-úteis)
+- [Validação e limites atuais](#validação-e-limites-atuais)
+- [Documentação e licença](#documentação-e-licença)
+
+## Configuração institucional
+
+O superadmin configura a identidade da escola, o calendário, dias letivos, feriados/recessos/reposições e versões das regras de boletim. Semestres, trimestres, bimestres, pesos anuais e arredondamento são aplicados explicitamente por turma, preservando históricos. Consulte [o guia](Documentos/CONFIGURACAO_INSTITUCIONAL.md), [o protocolo obrigatório de design](Documentos/PROTOCOLO_DESIGN.md) e [a validação](Documentos/testes/RELATORIO_ESCOLA.md).
+
+## Diário e boletim por período
+
+O sistema inclui revisão explícita das atribuições antigas, avaliações com pesos e notas separadas por turma, ano e período. Professores lançam e publicam notas; a secretaria gerencia períodos e o vínculo das notas anteriores. Consulte [uso e arquitetura](Documentos/DIARIO_E_RECONCILIACAO.md) e [homologação](Documentos/testes/RELATORIO_ACADEMICO.md).
+
+## Cursos reutilizáveis
+
+Professores organizam cursos em capítulos, temas e videoaulas. A administração publica o conteúdo e libera o mesmo curso para várias turmas e anos, com progresso separado por oferta. Cursos publicados são preservados; novas edições podem ser duplicadas em rascunho. A tela **Gestão acadêmica** permite atribuir professor, turma e disciplina explicitamente.
+
+Consulte [arquitetura e uso](Documentos/CURSOS_REUTILIZAVEIS.md) e [validação dos cursos](Documentos/testes/RELATORIO_CURSOS.md).
+
+## Funcionalidades
+
+| Perfil | Recursos implementados |
+| --- | --- |
+| Administrador | Consultar o painel da secretaria; cadastrar e editar alunos e professores; criar disciplinas e turmas; associar alunos e professores às turmas e professores às disciplinas; publicar comunicados; solicitar, enviar e consultar documentos. |
+| Professor | Consultar turmas e alunos vinculados; lançar atividades com anexos; registrar ou atualizar notas; consultar comunicados; enviar documentos solicitados pela secretaria. |
+| Aluno | Consultar disciplinas, notas, atividades e comunicados; baixar arquivos disponíveis; enviar documentos solicitados pela secretaria. |
+
+Os cadastros incluem dados específicos de cada perfil e foto opcional em JPG ou PNG de até 2 MB. As notas devem estar entre 0 e 10, com validação dos vínculos entre professor, aluno, turma e disciplina. Existe uma nota por aluno e disciplina; um novo lançamento atualiza esse registro.
+
+## Tecnologias e arquitetura
+
+- **Backend:** Python 3.12, Flask 3.1 e templates Jinja.
+- **Banco:** SQLAlchemy 2.0, PyMySQL e MySQL 8.4.
+- **Interface:** HTML5, CSS, JavaScript, Tailwind CSS e React 18 via CDN.
+- **Ambiente:** Docker, Docker Compose e python-dotenv.
+- **Dependência de criptografia:** cryptography, incluída nos requisitos Python.
+
+O ponto de entrada `Códigos/app.py` chama `create_app()`, carrega a configuração, inicializa o banco e registra os blueprints. As rotas encaminham as operações aos controllers, que consultam os modelos SQLAlchemy e retornam páginas ou respostas JSON.
+
+O HTML é renderizado no servidor com Jinja. Um shell React monta esse conteúdo no navegador, e scripts compartilhados e por página controlam abas, formulários e interações. Não há etapa de build com Node.js. O navegador precisa de internet para carregar as dependências externas da interface.
+
+O login verifica senhas armazenadas como hash pelo Werkzeug, estabelece uma sessão Flask e retorna um JWT HS256. As páginas verificam o perfil pela sessão; algumas rotas JSON exigem o cabeçalho `Authorization: Bearer <token>`.
+
+## Arquitetura em camadas
+
+A organização segue uma separação de responsabilidades semelhante ao MVC, com blueprints para as rotas. As views de `app/views/` atendem à página inicial e ao dashboard administrativo; outras rotas renderizam os templates diretamente.
+
+```mermaid
+flowchart TD
+    Navegador["Navegador: administrador, professor ou aluno"]
+    Rotas["Flask: blueprints em app/routes"]
+    Acesso["Sessão Flask, guards e validação JWT"]
+    Controllers["Controllers: operações e validações"]
+    Modelos["Modelos SQLAlchemy e sessões do banco"]
+    Banco[(MySQL)]
+    Templates["Views e templates Jinja"]
+    Interface["Shell React, JavaScript e CSS"]
+    Arquivos["Pasta de uploads"]
+
+    Navegador -->|Requisição HTTP| Rotas
+    Rotas --> Acesso
+    Acesso --> Controllers
+    Controllers --> Modelos
+    Modelos <--> Banco
+    Controllers -->|Contexto da página| Templates
+    Templates --> Interface
+    Interface -->|HTML e interações| Navegador
+    Controllers -->|Resposta JSON ou redirecionamento| Navegador
+    Controllers <--> Arquivos
+```
+
+| Camada | Arquivos/pastas | Responsabilidade |
+| --- | --- | --- |
+| Inicialização | `app.py`, `app/__init__.py`, `config.py` | Criar a aplicação, carregar configurações e registrar rotas. |
+| Entrada HTTP | `app/routes/` | Receber formulários, JSON e arquivos; selecionar a operação e montar a resposta. |
+| Autenticação e acesso | `app/auth.py`, `app/routes/guards.py` | Assinar/validar JWTs e verificar o perfil nas rotas protegidas. |
+| Aplicação | `app/controllers/` | Executar cadastros, associações, consultas dos painéis, notas, atividades e documentos. |
+| Persistência | `app/models/`, `app/database.py` | Mapear entidades e vínculos, abrir sessões e inicializar o esquema. |
+| Apresentação | `app/views/`, `app/templates/` | Renderizar páginas com os dados preparados pelo backend. |
+| Interação no navegador | `app/static/js/compartilhado/`, `app/static/js/paginas/` | Montar o shell React, alternar abas e processar interações específicas. |
+| Estilos e recursos comuns | `app/static/css/`, `app/templates/partials/` | Definir estilos por tela e carregar o runtime compartilhado do React. |
+
+### Implantação com containers
+
+```mermaid
+flowchart LR
+    Browser["Navegador"] -->|localhost:5000| App["Serviço app / flask_app\nPython e Flask :5000"]
+    App -->|db:3306| DB["Serviço db / mysql_db\nMySQL 8.4"]
+    Host["Cliente MySQL no host"] -->|localhost:3306| DB
+    DB --> Dados[(mysql_data)]
+    App --> Uploads[(uploads_data)]
+    Codigo["Pasta Códigos no host"] -->|Montada em /app| App
+```
+
+O serviço `app` usa o Dockerfile Python e depende do estado saudável de `db`. O serviço `db` usa a imagem `mysql:8.4`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
+
+### Organização dos dados
+
+| Grupo | Modelos e vínculos |
+| --- | --- |
+| Identidade | `UsuarioModel` armazena e-mail, hash de senha e perfil. `AlunoModel` e `ProfessorModel` armazenam os dados específicos e referenciam o usuário. |
+| Organização acadêmica | `TurmaModel` e `DisciplinaModel`, ligados por `TurmaDisciplinaModel`. Os vínculos de participação ficam em `AlunoTurmaModel`, `ProfessorTurmaModel` e `ProfessorDisciplinaModel`; também existe `AlunoDisciplinaModel`. |
+| Ensino | `AtividadeModel` relaciona professor, turma e disciplina. `NotaModel` relaciona aluno, professor e disciplina, com unicidade por aluno/disciplina. |
+| Comunicação | `ComunicadoModel` armazena os recados publicados pela secretaria. |
+| Documentação | `DocumentoModel` registra os metadados dos arquivos. `SolicitacaoDocumentoModel` registra destinatário, status e eventual documento enviado. Os arquivos ficam na pasta de uploads. |
+
+## Telas do sistema
+
+O catálogo abaixo descreve as telas implementadas e aponta para seus templates. Para visualizá-las em funcionamento, execute a aplicação e entre com o perfil correspondente. As abas dos painéis de professor e aluno são seções da mesma página.
+
+### Login
+
+| Tela e template | Rota | Conteúdo e ações |
+| --- | --- | --- |
+| [Login](Códigos/app/templates/login.html) | `/` | Campos de e-mail institucional e senha. Após autenticar, o usuário é direcionado ao painel de seu perfil. |
+
+### Secretaria / administrador
+
+| Tela e template | Rota principal | Conteúdo e ações |
+| --- | --- | --- |
+| [Dashboard da secretaria](Códigos/app/templates/admin_painel.html) | `/admin/dashboard` | Saudação, totais de alunos e professores, matrículas pendentes e últimos registros. Menu lateral para as áreas administrativas. |
+| [Cadastro de alunos](Códigos/app/templates/admin_cadastro_aluno.html) | `/admin/cadastro-alunos` | Dados pessoais e acadêmicos, matrícula, credenciais de acesso e foto de perfil. |
+| [Cadastro de professores](Códigos/app/templates/admin_cadastro_professores.html) | `/admin/cadastro-professores` | Nome, CPF, contato, disciplina principal, formação, regime de trabalho, admissão, credenciais e foto. |
+| [Banco de dados](Códigos/app/templates/admin_banco_dados.html) | `/admin/banco-de-dados` | Indicadores, listagem de registros acadêmicos e busca por nome ou ID, com acesso aos detalhes dos cadastros. É uma tela de consulta de pessoas, sem editor SQL. |
+| [Detalhes do aluno](Códigos/app/templates/admin_detalhes_aluno.html) | `/admin/alunos/<aluno_id>` | Perfil, edição cadastral, solicitações de documentos e arquivos enviados. |
+| [Detalhes do professor](Códigos/app/templates/admin_detalhes_professor.html) | `/admin/professores/<professor_id>` | Perfil e edição cadastral, aba de atuação e aba de documentos com solicitações e arquivos enviados. |
+| [Disciplinas](Códigos/app/templates/admin_disciplinas.html) | `/admin/disciplinas` | Criação com nome, código e carga horária; listagem e associação de professores. |
+| [Turmas](Códigos/app/templates/admin_turmas.html) | `/admin/turmas` | Cadastro e listagem de turmas, associação de alunos e professores e consulta das disciplinas vinculadas. |
+| [Comunicados](Códigos/app/templates/admin_comunicados.html) | `/admin/comunicados` | Formulário com título e mensagem e consulta dos recados publicados. |
+
+### Professor
+
+O [painel do professor](Códigos/app/templates/professor_painel.html), em `/professor/dashboard` (também `/professor`), reúne:
+
+| Aba | Conteúdo e ações |
+| --- | --- |
+| Turmas | Turmas vinculadas, alunos, disciplinas e lançamento de atividades, com possibilidade de anexar arquivo. |
+| Notas | Formulários de lançamento por aluno e disciplina, nota de 0 a 10, observação e consulta das notas lançadas. |
+| Documentos | Solicitações da secretaria, envio do arquivo de resposta e consulta dos documentos enviados. |
+
+### Aluno
+
+| Tela e template | Rota principal | Conteúdo e ações |
+| --- | --- | --- |
+| [Painel do aluno](Códigos/app/templates/aluno_painel.html) | `/aluno/dashboard` (também `/aluno`) | Abas de disciplinas, notas e documentos. Exibe as disciplinas associadas, as notas e observações e as solicitações de documentos, com upload de resposta e arquivos enviados. |
+| [Detalhes da disciplina](Códigos/app/templates/aluno_disciplina.html) | `/aluno/disciplinas/<disciplina_id>` | Informações da disciplina, professores e atividades com arquivos disponíveis para download. |
+
+### Navegação entre as telas
+
+```mermaid
+flowchart TD
+    Login["Login /"] --> Perfil{"Perfil autenticado"}
+    Perfil -->|admin| Admin["Dashboard da secretaria"]
+    Perfil -->|professor| Professor["Painel do professor"]
+    Perfil -->|aluno| Aluno["Painel do aluno"]
+    Admin --> Cadastros["Cadastro de alunos e professores"]
+    Admin --> Registros["Banco de dados"]
+    Registros --> Detalhes["Detalhes de aluno ou professor"]
+    Detalhes --> Documentos["Solicitar e consultar documentos"]
+    Admin --> Organizacao["Turmas e disciplinas"]
+    Admin --> Comunicados["Comunicados"]
+    Professor --> PT["Turmas e atividades"]
+    Professor --> PN["Notas"]
+    Professor --> PD["Documentos"]
+    Aluno --> AD["Disciplinas"]
+    AD --> Disciplina["Detalhes da disciplina e atividades"]
+    Aluno --> AN["Notas"]
+    Aluno --> AQ["Documentos"]
+```
+
+Para percorrer as telas com conteúdo, cadastre os usuários, configure as associações acadêmicas e lance dados conforme o [fluxo inicial](#5-preparar-o-fluxo-escolar). Listagens sem registros apresentam estados vazios; os dados exibidos dependem do perfil e dos vínculos cadastrados.
+
+## Estrutura
+
+> **Migração para React (em andamento):** a pasta `Códigos/frontend/` contém a SPA React/Vite iniciada no repositório principal. Ela ainda **não** é usada pela aplicação, que continua servindo as páginas Jinja descritas aqui. A pasta foi mantida como base para a migração futura do front-end.
+
 
 ```text
-Códigos/
-|-- app/
-|   |-- controllers/
-|   |-- models/
-|   |-- routes/
-|   |-- static/
-|   |   `-- dist/           # gerado pelo Vite
-|   |-- templates/
-|   |   `-- partials/
-|   `-- frontend.py
-|-- frontend/
-|   |-- src/
-|   |   |-- components/    # navegação, sessão, abas e formulários
-|   |   |-- pages/         # 15 telas em JSX
-|   |   `-- styles/
-|   `-- tests/            # testes Playwright
-|-- tests/                # servidor isolado para testes
-|-- app.py
-|-- config.py
-|-- docker-compose.yml
-|-- Dockerfile
-`-- requirements.txt
+Projeto-Educa-Fast/
+├── Códigos/
+│   ├── app/
+│   │   ├── controllers/    # Operações de cadastro, gestão e painéis
+│   │   ├── models/         # Entidades e relacionamentos SQLAlchemy
+│   │   ├── routes/         # Blueprints e verificações de acesso
+│   │   ├── static/         # CSS e JavaScript compartilhado/por página
+│   │   ├── templates/      # Páginas Jinja e runtime React
+│   │   ├── views/          # Funções de renderização
+│   │   ├── auth.py         # Geração e validação de JWT
+│   │   ├── database.py     # Engine, sessões e inicialização do esquema
+│   │   └── seed.py         # Administrador de demonstração
+│   ├── app.py
+│   ├── config.py
+│   ├── .env.example
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── requirements.txt
+├── Documentos/             # Casos de uso e plano de negócios
+├── Protótipo/              # Referência do protótipo no Figma
+├── dashboard.html          # HTML avulso; não inicia a aplicação
+├── LICENSE
+└── README.md
 ```
 
-## Tecnologias
+## Executar com Docker Compose
 
-### Frontend
+Requisitos: Git, Docker e Docker Compose (comando `docker compose`). A porta local `5000` precisa estar disponível; o MySQL permanece na rede interna, sem porta publicada.
 
-| Tecnologia | Versão principal | Uso no projeto |
-| --- | --- | --- |
-| React e React DOM | 18.3 | Renderização das 15 telas em componentes JSX e gerenciamento de estado. |
-| React Router DOM | 7 | Navegação SPA, rotas por perfil e compatibilidade com URLs antigas. |
-| JavaScript e JSX | — | Componentes, formulários, filtros e interações da interface. |
-| HTML5 e CSS3 | — | Documento de entrada e estilos das telas. |
-| Tailwind CSS | 3.4 | Classes utilitárias compiladas localmente. |
-| Vite | 7 | Build de produção, recompilação em modo watch e manifesto dos assets. |
-| PostCSS e Autoprefixer | 8 e 10 | Processamento do CSS no build. |
-| Node.js e npm | Node 22 na imagem Docker | Instalação das dependências e execução do build do frontend. |
-| Fetch API e FormData | APIs do navegador | Comunicação com o Flask e envio de formulários e arquivos sem recarregar a página. |
-
-### Backend e banco de dados
-
-| Tecnologia | Versão/configuração | Uso no projeto |
-| --- | --- | --- |
-| Python | 3.12 na imagem Docker | Execução do backend. |
-| Flask | 3.1.0 | APIs JSON, sessões, permissões, uploads e entrega da SPA. |
-| Jinja2 | Dependência do Flask | Inclusão dos assets no HTML de entrada; as telas são renderizadas pelo React. |
-| SQLAlchemy | 2.0.44 | Mapeamento dos modelos e acesso ao banco via ORM. |
-| PyMySQL | 1.1.2 | Conexão do backend com o MySQL. |
-| MySQL | 8.4 | Persistência dos dados acadêmicos e administrativos. |
-| python-dotenv | 1.0.1 | Leitura das variáveis do arquivo `.env`. |
-| cryptography | >=42 e <46 | Suporte criptográfico utilizado pelas dependências de conexão ao banco. |
-
-A SPA utiliza o cookie de sessão do Flask na mesma origem. As APIs verificam
-as permissões de administrador, secretaria escolar, professor e aluno no servidor.
-
-### Infraestrutura e testes
-
-| Tecnologia | Uso no projeto |
-| --- | --- |
-| Docker | Build em duas etapas: Node compila o frontend e Python executa o Flask. |
-| Docker Compose | Inicialização dos serviços `app` e `db`, rede e volumes persistentes. |
-| Playwright Test | Testes de ponta a ponta da SPA em navegador. |
-| SQLite | Banco temporário e isolado nos testes, sem acessar o MySQL da instalação. |
-
-## Requisitos
-
-- Docker
-- Docker Compose
-
-Para executar pelos containers, não é necessário instalar Node.js ou Python no
-host: o Dockerfile prepara ambos os ambientes. Para desenvolvimento e testes
-fora do Docker, instale Python com as dependências de `Códigos/requirements.txt`
-e Node.js 22.12+ (ou 20.19+) com npm.
-
-## Como executar
-
-1. Entre na pasta `Códigos`:
+### 1. Obter o projeto
 
 ```bash
-cd Códigos
+git clone https://github.com/Samucau1/Projeto-Educa-Fast.git
+cd Projeto-Educa-Fast
+cd "Códigos"
 ```
 
-2. Crie o arquivo de ambiente a partir do exemplo:
+### 2. Configurar o ambiente
+
+Copie o exemplo para `.env`. No PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+No Linux/macOS:
 
 ```bash
 cp .env.example .env
 ```
 
-3. Edite o `.env` e defina valores seguros para:
-- `SECRET_KEY`
-- `DB_PASSWORD`
-- `MYSQL_ROOT_PASSWORD`
+Edite `.env` e configure `SECRET_KEY`, `DATA_ENCRYPTION_KEY`, `DB_PASSWORD` e `MYSQL_ROOT_PASSWORD` com valores próprios. A chave Fernet deve ser gerada e guardada conforme [Segurança e LGPD](Documentos/SEGURANCA_E_LGPD.md). Não publique credenciais reais.
 
-4. Suba os serviços:
+### 3. Iniciar os serviços
+
+Execute dentro de `Códigos/`:
 
 ```bash
 docker compose up -d --build
-```
-
-5. Verifique se os containers estão rodando:
-
-```bash
 docker compose ps
-```
-
-6. Execute a seed para criar o administrador inicial:
-
-```bash
-docker compose exec app python -m app.seed
-```
-
-7. Acesse a aplicação em `http://localhost:5000`.
-8. O MySQL ficará disponível na porta `3306`.
-
-A seed padrão cria `gestor@escola.com` com o perfil **Administrador**.
-Defina uma senha de pelo menos oito caracteres quando o comando solicitar.
-Não há senha padrão. A conta acessa `/gestao`.
-
-## Perfis e administração geral
-
-| Perfil | Responsabilidade | Tela inicial |
-| --- | --- | --- |
-| Secretaria Escolar (`secretaria`) | Cadastros de alunos/professores, turmas, disciplinas, comunicados e documentos. | `/admin/dashboard` |
-| Administrador (`admin`) | Gestão geral de contas, permissões, auditoria, configurações, relatórios e backup do banco. | `/gestao` |
-| Professor (`professor`) | Publicar atividades e conteúdos, lançar notas e consultar entregas e comunicados. | `/professor` |
-| Aluno (`aluno`) | Consultar disciplinas, horários, notas e comunicados; enviar atividades e documentos solicitados. | `/aluno` |
-
-Na primeira inicialização desta versão, as contas antigas `ADMIN`/`admin`
-são convertidas para `secretaria`, preservando e-mail, senha e vínculos.
-A migração fica registrada em `configuracoes` e não converte administradores
-criados posteriormente. As URLs antigas `/admin/...` continuam atendendo à
-secretaria para preservar links existentes.
-
-Na pasta `Códigos`, criar o administrador padrão:
-
-```bash
-docker compose exec app python -m app.seed
-```
-
-O comando solicita uma senha de pelo menos oito caracteres, sem exibi-la.
-O seed preserva usuários existentes e não altera contas com e-mail já cadastrado.
-Entre com a nova conta para acessar `/gestao`. Para criar outra conta administrativa,
-usar `--admin --email outro.gestor@escola.com`.
-
-Para criar uma conta da secretaria explicitamente:
-
-```bash
-docker compose exec app python -m app.seed --secretaria --email secretaria@escola.com
-```
-
-A seed solicita a senha da nova conta. Contas anteriores, incluindo
-`admin@admin.com`, não são renomeadas nem têm seu perfil alterado.
-
-
-O administrador pode:
-
-- Criar contas de secretaria e outros administradores, editar seus perfis e e-mails.
-- Bloquear/desbloquear contas, redefinir senhas, exigir troca no próximo acesso e encerrar sessões ao salvar uma conta.
-- Liberar/revogar permissões de cadastro, gestão acadêmica, documentos e comunicados da secretaria. As permissões controlam operações de escrita, inclusive pelas URLs antigas; a consulta às telas da secretaria permanece disponível.
-- Consultar totais de alunos, professores, turmas, contas bloqueadas e documentos pendentes.
-- Consultar os últimos 100 eventos de auditoria, incluindo tentativas de login e alterações em contas, permissões, cadastros e notas. Alterações de cadastros, notas e configurações registram valores anteriores e novos; senhas e tokens não são registrados.
-- Definir parâmetros acadêmicos: ano letivo, quantidade de períodos, média de referência e prazo de notas. O prazo bloqueia lançamentos após a data configurada, no horário de São Paulo. Ano, períodos e média são referências institucionais; não modificam retroativamente turmas ou o modelo atual de notas.
-- Exportar relatórios CSV de contas e dados acadêmicos.
-- Exportar e restaurar backup JSON do banco, com confirmação e senha atual. A restauração aceita até 32 MB, exige um administrador ativo no backup, substitui os dados em uma transação e revoga as sessões anteriores.
-
-O backup inclui hashes de senhas e deve ser guardado com acesso restrito.
-Arquivos enviados não fazem parte do backup JSON: copie também o volume de uploads.
-A restauração não altera esse volume. O sistema continua atendendo uma única
-instituição; não há isolamento de dados entre várias escolas nesta versão.
-
-As permissões e o estado da conta são conferidos no servidor em cada requisição.
-O administrador não pode bloquear nem alterar o próprio perfil pelo formulário
-de contas; para trocar a própria senha, use o link no cabeçalho do painel.
-
-## Containers
-
-- `app`: container da aplicação Flask
-- `db`: container do MySQL
-
-## Banco de dados
-
-As tabelas são criadas automaticamente pelo ORM (SQLAlchemy) na inicialização da aplicação.
-
-Importante:
-- As variáveis `MYSQL_*` e criação de usuário/banco são aplicadas na primeira inicialização do volume do MySQL.
-- Se você trocar senha no `.env` depois disso, será necessário recriar o volume:
-
-```bash
-docker compose down -v
-docker compose up -d --build
-```
-
-## Configuração
-
-As configurações da aplicação ficam em `config.py` e são lidas de variáveis de ambiente:
-
-- `SECRET_KEY`
-- `DB_HOST`
-- `DB_PORT`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_NAME`
-- `MYSQL_ROOT_PASSWORD` (usada pelo container do MySQL)
-
-No ambiente Docker, as variáveis são lidas do arquivo `.env` via `docker-compose.yml`.
-
-## Arquitetura
-
-- `frontend/src/App.jsx`: rotas da SPA e compatibilidade com URLs antigas.
-- `frontend/src/pages`: 15 telas renderizadas em componentes React, sem HTML injetado.
-- `frontend/src/components`: sessão, proteção por perfil, navegação, abas, formulários e carregamento de dados.
-- `frontend/src/styles`: estilos das telas; Tailwind é compilado no build.
-- `app/routes/api_routes.py`: consultas e operações administrativas em JSON.
-- `app/routes`: também mantém autenticação, uploads e downloads protegidos.
-- `app/controllers` e `app/models`: regras de negócio e acesso ao banco.
-- `app/templates/spa.html`: documento de entrada único, contendo apenas a raiz React e os assets.
-- `app/frontend.py`: resolve os arquivos versionados pelo manifesto do Vite.
-- `app/static/dist`: build gerado, servido pelo próprio Flask.
-
-A navegação interna usa o histórico do navegador sem recarregar o documento.
-O Flask entrega o mesmo documento nas URLs das telas, permitindo abrir links
-diretos e atualizar a página. URLs antigas são encaminhadas para as rotas atuais
-pelo React Router. As APIs validam a sessão e o perfil no servidor; não dependem
-da proteção visual do React. Sessão e dados privados usam `Cache-Control: no-store`.
-
-Os formulários enviam `FormData` por `fetch`, incluindo arquivos. Erros de
-validação são exibidos no próprio formulário e, após sucesso, os dados da tela
-são consultados novamente. Não é necessário armazenar JWT no navegador: a SPA
-usa o cookie de sessão do Flask na mesma origem.
-
-Principais endpoints:
-
-| Endpoint | Operação |
-| --- | --- |
-| `POST /login` | Autenticação |
-| `GET /api/session`, `POST /api/logout` | Sessão |
-| `GET /api/admin/dashboard`, `GET /api/admin/banco-de-dados` | Resumos e dados para cadastros |
-| `GET /api/admin/registros` | Consultar registros com paginação, busca, filtro por tipo e exportação |
-| `GET /api/gestao/painel` | Consultar contas paginadas, resumo, configurações e auditoria |
-| `GET/POST /api/admin/disciplinas`, `/api/admin/turmas`, `/api/admin/comunicados` | Gestão acadêmica |
-| `POST /api/cadastro/aluno`, `/api/cadastro/professor` | Cadastros com foto |
-| `GET /api/admin/alunos/:id`, `/api/admin/professores/:id` | Detalhes |
-| `POST /api/admin/alunos/:id/editar`, `/api/admin/professores/:id/editar` | Edição |
-| `POST /api/admin/alunos/:id/documentos/solicitar`, `/api/admin/professores/:id/documentos/solicitar` | Solicitações |
-| `GET /api/aluno`, `GET /api/aluno/disciplinas/:id`, `GET /api/professor` | Portais |
-| `POST /api/professor/notas/salvar` | Lançar notas |
-| `POST /api/professor/atividades/lancar` | Publicar atividades ou conteúdos pelo campo `tipo` |
-| `POST /api/aluno/atividades/:id/enviar` | Enviar resposta de uma atividade da própria turma |
-| `GET /api/aluno/comunicados`, `GET /api/professor/comunicados` | Consultar avisos por perfil com carregamento progressivo |
-| `POST /api/aluno/documentos/upload`, `/api/professor/documentos/upload` | Documentos solicitados |
-| `POST /api/arquivos/upload`, `/api/professores/:id/arquivos/upload` | Arquivos enviados pela secretaria |
-
-## Comandos úteis
-
-Ver containers:
-
-```bash
-docker compose ps
-```
-
-Ver logs da aplicação:
-
-```bash
 docker compose logs -f app
 ```
 
-Executar seed:
+O serviço `app` aguarda o healthcheck do MySQL antes de iniciar. Na inicialização, a aplicação cria as tabelas e aplica os ajustes de esquema previstos em `app/database.py`.
+
+### 4. Criar o administrador em um banco novo
+
+> **Atenção:** o seed executa a exclusão de todos os registros de usuários antes de inserir o administrador. Use apenas na preparação de um banco novo de desenvolvimento. Reexecutá-lo em uma base com dados pode apagar acessos ou falhar por vínculos de chave estrangeira. O script não cria alunos, professores, disciplinas nem turmas.
+
+Após a aplicação inicializar as tabelas:
 
 ```bash
 docker compose exec app python -m app.seed
 ```
 
-Parar os containers:
+Acesse [http://localhost:5000](http://localhost:5000) com as credenciais de demonstração:
+
+| Campo | Valor |
+| --- | --- |
+| E-mail | `admin@admin.com` |
+| Senha | `123` |
+
+Esses valores estão fixos em `app/seed.py`. Antes de utilizar o seed em outro ambiente, substitua as credenciais no script.
+
+### 5. Preparar o fluxo escolar
+
+1. Entre como administrador e cadastre alunos e professores, definindo seus acessos.
+2. Crie disciplinas e vincule os professores responsáveis.
+3. Crie turmas com suas disciplinas e associe alunos e professores.
+4. Entre como professor para lançar atividades e notas nas turmas vinculadas.
+5. Entre como aluno para consultar as informações acadêmicas.
+6. Pela secretaria, solicite documentos; o destinatário poderá enviá-los em seu painel.
+
+## Executar localmente sem Docker
+
+Use Python 3.12 e uma instância MySQL com banco e usuário previamente criados. Dentro de `Códigos/`, copie `.env.example` para `.env` e configure `DB_HOST=localhost` e as credenciais dessa instância.
+
+No PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python app.py
+```
+
+No Linux/macOS, ative o ambiente com `source .venv/bin/activate`. Depois que a aplicação criar as tabelas, execute `python -m app.seed` em outro terminal, dentro de `Códigos/` e com o ambiente virtual ativo, respeitando o aviso de exclusão de usuários acima. A aplicação fica em `http://localhost:5000`.
+
+## Configuração
+
+| Variável | Uso e comportamento |
+| --- | --- |
+| `SECRET_KEY` | Assina sessões e JWTs; obrigatória em todas as inicializações, com pelo menos 32 caracteres aleatórios. |
+| `DATA_ENCRYPTION_KEY` | Chave Fernet independente, obrigatória para campos pessoais e arquivos. Preserve-a separadamente dos dados. |
+| `LGPD_CONTROLADOR` / `LGPD_CONTATO` | Controlador (EducaFast) e contato de privacidade; contato obrigatório em produção. |
+| `DB_HOST` | Host MySQL; padrão local `localhost`. O Compose define `db`. |
+| `DB_PORT` | Porta de conexão ao MySQL; padrão `3306`. O Compose não publica o banco no host. |
+| `DB_USER` | Usuário do banco; padrão local `root`, padrão do Compose `app_user`. |
+| `DB_PASSWORD` | Senha do usuário do banco; obrigatória no Compose. |
+| `DB_NAME` | Nome do banco; padrão `app_web`. |
+| `MYSQL_ROOT_PASSWORD` | Senha administrativa na inicialização do container MySQL; obrigatória no Compose. |
+| `JWT_EXPIRATION_HOURS` | Validade do JWT em horas; padrão `8`. |
+| `UPLOAD_FOLDER` | Pasta dos arquivos enviados; padrão `uploads`. |
+| `DB_URL` | URL SQLAlchemy opcional; substitui a conexão montada com as variáveis `DB_*`. |
+
+Localmente, `config.py` lê o `.env` com `load_dotenv()`. No Docker, o Compose injeta as variáveis declaradas no serviço. `JWT_EXPIRATION_HOURS` e `DB_URL` não são repassadas explicitamente pelo bloco `environment`, mas podem ser lidas do `.env` montado em `/app`.
+
+## Persistência
+
+Os modelos representam usuários, alunos, professores, turmas, disciplinas, seus vínculos, notas, atividades, comunicados, documentos e solicitações de documentos. A inicialização cria o esquema e aplica alterações pontuais; não há ferramenta de migrações versionadas configurada.
+
+No Compose, `mysql_data` persiste o banco e `uploads_data` persiste os arquivos em `/app/uploads`. Mantenha `UPLOAD_FOLDER=uploads` para usar esse volume como configurado. O código local é montado em `/app`.
+
+As variáveis de criação de banco e credenciais do container MySQL são aplicadas na primeira inicialização de um volume vazio. Alterar somente o `.env` não atualiza as senhas de um banco existente; ajuste também os usuários no MySQL. Faça backup do banco e dos arquivos antes de alterações no ambiente.
+
+`docker compose down` preserva os volumes. **Adicionar `-v` remove os volumes declarados, incluindo o banco e os uploads**; não use essa opção se precisar manter os dados.
+
+## Principais rotas
+
+| Método | Caminho | Finalidade |
+| --- | --- | --- |
+| GET | `/` | Login ou redirecionamento ao painel do perfil autenticado. |
+| POST | `/login` | Recebe JSON com `email` e `senha`; retorna JWT e cria sessão. |
+| GET / POST | `/logout` | GET confirma; POST com CSRF encerra a sessão Flask. |
+| GET | `/admin/dashboard` | Painel da secretaria. |
+| GET/POST | `/admin/turmas` | Cadastro de turmas e associações. |
+| GET/POST | `/admin/disciplinas` | Disciplinas e vínculo com professores. |
+| GET/POST | `/admin/comunicados` | Consulta e publicação de comunicados. |
+| GET | `/professor/dashboard` | Painel do professor. |
+| POST | `/professor/notas/salvar` | Registro ou atualização de nota. |
+| POST | `/professor/atividades/lancar` | Criação de atividade, com anexo opcional. |
+| GET | `/aluno/dashboard` | Painel do aluno. |
+| GET | `/aluno/disciplinas/<disciplina_id>` | Detalhes de uma disciplina do aluno. |
+| GET | `/alunos/busca` | Busca de alunos; exige JWT de professor. |
+| POST | `/arquivos/upload` | Upload pela secretaria ou professor autenticado com JWT. |
+| GET | `/arquivos/download/<filename>` | Download com verificação de autenticação/acesso. |
+
+Consulte `Códigos/app/routes/` para os demais endpoints e aliases de compatibilidade.
+
+## Comandos úteis
+
+Dentro de `Códigos/`:
 
 ```bash
+# Estado dos serviços
+docker compose ps
+
+# Logs da aplicação e do banco
+docker compose logs -f app db
+
+# Reconstruir após alterações nas dependências ou imagem
+docker compose up -d --build
+
+# Parar e remover containers, preservando volumes
 docker compose down
 ```
 
-## Desenvolvimento do frontend
+Se a aplicação não iniciar, confira os logs, as credenciais e o estado de `db`. Conflitos nas portas `5000` ou `3306` exigem liberar a porta ou ajustar o mapeamento no Compose.
 
-Requer Node.js 22.12+ (ou 20.19+) e npm. Na pasta `Códigos/frontend`:
+## Validação e limites atuais
 
-```bash
-npm ci
-npm run build
-```
+O repositório inclui regressão automatizada, cenários de segurança/LGPD e coleção Postman. Consulte [Testes](Documentos/testes/README.md). Para o fluxo manual, entre com cada perfil, configure os vínculos de turma/disciplina e confira os controles de acesso e privacidade em banco descartável.
 
-Os comandos disponíveis em `frontend/package.json` são:
+O Compose local usa Gunicorn, sem depuração, e publica a aplicação somente em loopback. Para produção com HTTPS e TLS verificado no MySQL, use o arquivo independente `Códigos/docker-compose.production.yml`, após preparar chaves e certificados conforme [Segurança e LGPD](Documentos/SEGURANCA_E_LGPD.md). Não publique o servidor de desenvolvimento.
 
-| Comando | Função |
-| --- | --- |
-| `npm ci` | Instala as dependências nas versões do lockfile. |
-| `npm run build` | Gera os arquivos de produção em `app/static/dist`. |
-| `npm run dev` | Observa alterações e recompila os arquivos servidos pelo Flask. |
-| `npm run test:e2e` | Executa os testes Playwright com servidor e banco isolados. |
+## Documentação e licença
 
-Para recompilar ao alterar os componentes ou estilos:
-
-```bash
-npm run dev
-```
-
-Execute o Flask separadamente e acesse a porta 5000. O comando `dev` observa
-os arquivos e grava o build servido pelo Flask; não usa um servidor na porta 5173.
-Atualize o navegador após a recompilação para carregar o novo bundle.
-
-O Docker executa o build automaticamente em uma etapa Node e copia os assets
-para a imagem Python. O serviço `app` usa os arquivos da imagem; após alterações,
-execute `docker compose up -d --build`. O volume de uploads permanece persistente.
-
-Todas as telas são renderizadas no navegador pelo React. O Jinja é usado apenas
-para inserir os arquivos do build no documento de entrada, sem renderizar dados
-acadêmicos ou conteúdo das telas.
-
-## Arquivos gerados e versionamento
-
-Edite os componentes e estilos em `Códigos/frontend/src`. O comando de build
-produz JavaScript e CSS com nomes versionados e o arquivo
-`app/static/dist/.vite/manifest.json`. O Flask consulta esse manifesto para
-carregar os assets corretos por meio de `templates/partials/frontend_assets.html`.
-
-Devem ser versionados os fontes do frontend e backend, os templates de entrada,
-as configurações do Vite, Tailwind e PostCSS, `package.json`, `package-lock.json`,
-os testes e os arquivos de configuração do Docker.
-
-`node_modules/`, `app/static/dist/`, relatórios de testes e `.env` ficam fora do
-Git, conforme o `.gitignore`. O Docker gera o build durante a criação da imagem.
-
-## Testes da SPA
-
-Instale as dependências Python em um ambiente virtual e as dependências npm.
-Depois, na pasta `Códigos/frontend`:
-
-```bash
-npm run build
-npx playwright install chromium
-npm run test:e2e
-```
-
-Os testes iniciam um Flask na porta 5051 com banco SQLite e uploads temporários,
-sem acessar o MySQL ou os uploads da instalação. Cobrem login, navegação sem
-recarregar, cadastros, filtros, edição, documentos, atividades, notas, permissões,
-sessão expirada, URLs antigas e atualização direta de uma rota. Também cobrem
-paginação e filtros, comunicados por perfil, espaçamento dos botões, lançamento
-de notas em janela, publicação de conteúdos e entrega de atividades.
-
-Para usar um Python de ambiente virtual ou um Chrome já instalado:
-
-```bash
-SPA_TEST_PYTHON=/caminho/venv/bin/python PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/google-chrome npm run test:e2e
-```
-
-### Testes da administração geral
-
-Com as dependências Python instaladas, execute a partir da raiz:
-
-```bash
-python Códigos/tests/test_governanca.py
-```
-
-Esses testes usam SQLite temporário e cobrem migração única, seed sem exclusões,
-separação de perfis, permissões, bloqueio/revogação de sessões, troca obrigatória
-de senha, prazo de notas, auditoria, restauração com rollback, paginação e
-autorização dos envios e downloads de atividades.
-A suíte Playwright inclui o fluxo do novo administrador e o primeiro acesso
-de uma conta de secretaria com senha temporária.
-
-## População com dados fictícios
-
-Na pasta `Códigos`, com os containers atualizados:
-
-```bash
-docker compose exec -T app python -m app.seed_demo
-```
-
-A carga adiciona 800 alunos e 200 professores (proporção 80:20), preservando
-contas e registros existentes. Também cria 20 turmas, 10 disciplinas, vínculos
-acadêmicos, 8.000 notas, 400 atividades, 1.000 documentos, 1.000 solicitações,
-12 comunicados e registros de configuração/auditoria. Os 1.400 arquivos TXT
-fictícios ficam no volume de uploads e podem ser baixados pelo sistema.
-
-Os e-mails seguem os padrões `aluno0001@demo.invalid` e
-`professor0001@demo.invalid`. A senha aleatória compartilhada pelas contas
-fictícias é exibida somente na primeira execução. Nomes, CPFs e documentos são
-sintéticos e servem exclusivamente para demonstração.
-
-O marcador `carga_demo_v1` impede duplicação em novas execuções. A proporção
-80:20 refere-se às pessoas adicionadas; eventuais alunos/professores já
-existentes são mantidos. Configurações acadêmicas existentes são preservadas.
-Em caso de falha, a transação é revertida e os arquivos recém-criados são removidos.
-
-Validação isolada da carga:
-
-```bash
-python Códigos/tests/test_seed_demo.py
-```
-
-## Cronograma semanal por turma
-
-Na secretaria, abra **Turmas**, clique na turma desejada e selecione a aba
-**Disciplinas e cronograma**. Essa aba mostra somente a grade semanal. Clique
-em **Gerenciar disciplinas e horários** para abrir os formulários em outra janela:
-
-1. Selecione a disciplina; a turma já vem definida pela janela aberta.
-2. Informe os horários de início e fim e marque os dias de segunda a sábado.
-3. Clique em **Associar disciplina e salvar horários**.
-
-O sistema cria o vínculo da disciplina com a turma caso ainda não exista.
-Uma disciplina pode ter vários intervalos na semana. A edição permite ajustar
-um lançamento por vez; a remoção de um horário preserva o vínculo da disciplina.
-Intervalos inválidos e sobreposições na mesma turma são rejeitados. Esta
-validação não verifica conflitos de disponibilidade de professores entre turmas.
-
-Os horários ficam na tabela `horarios`, vinculados a `turmas_disciplinas`.
-As operações exigem o perfil secretaria e a permissão de gestão acadêmica,
-e ficam registradas na auditoria.
-
-O aluno visualiza os horários de suas próprias turmas em **Disciplinas**, numa
-grade semanal com navegação para os detalhes de cada disciplina. Disciplinas
-sem horário definido continuam disponíveis abaixo da grade. A coluna do dia
-atual recebe destaque; em telas menores a grade tem rolagem horizontal.
-
-Para acrescentar horários fictícios às turmas já criadas pela carga demo:
-
-```bash
-docker compose exec -T app python -m app.seed_horarios_demo
-```
-
-O comando somente atende às turmas `DEMO-T...` da carga fictícia e não altera
-uma turma que já tenha horários. Os horários fictícios aparecem identificados
-como demonstração e podem ser editados pela secretaria. Novas execuções da
-carga completa `app.seed_demo` também preenchem a grade de demonstração.
-
-### Janelas de gerenciamento de turmas
-
-A página Turmas exibe a lista de turmas e o botão **Nova turma**, que abre o
-cadastro em uma janela centralizada. Ao clicar no nome de uma turma, uma nova
-janela reúne as abas **Alunos**, **Professores** e **Disciplinas e cronograma**.
-Os botões de associação ficam dentro dessas abas; alunos e professores já
-vinculados não são oferecidos novamente. A lista é atualizada após salvar.
-As consultas retornam todos os vínculos, inclusive nas turmas da carga demo.
-
-## Interface e navegação
-
-- Manter a navegação lateral e o padrão visual azul nas páginas internas.
-- Centralizar e limitar a área principal, com painéis, listas e tabelas com rolagem própria.
-- Abrir ações de cadastro, edição, associação, publicação e envio em janelas centralizadas.
-- Preservar os layouts próprios de login e troca de senha, com formulários centralizados.
-- Padronizar botões de ação com gradiente ciano/azul, altura mínima de 44 px, fonte de 14 px e raio de 12 px, sem faixa lateral de cor diferente.
-- Separar grupos de ações com 12 px; usar 16 px entre **Solicitar documento** e **Enviar arquivo** nos detalhes de alunos e professores.
-- Permitir fechar janelas pelo botão de fechar ou Escape, bloqueando o fechamento durante o envio.
-- Exibir erros e confirmações no formulário e atualizar a consulta após salvar.
-
-### Secretaria escolar
-
-- Listar disciplinas cadastradas e abrir **Nova disciplina** em janela flutuante.
-- Abrir os professores associados ao selecionar uma disciplina e oferecer a associação dentro dessa janela.
-- Listar turmas e abrir cadastro, detalhes e associações em janelas, conforme o contexto.
-- Exibir a grade em **Disciplinas e cronograma** e abrir **Gerenciar disciplinas e horários** para associar disciplinas e configurar os dias e intervalos.
-- Consultar e cadastrar alunos e professores por listas com busca e formulários em janela.
-- Redirecionar **Ver detalhes** do painel geral e do banco de dados diretamente ao cadastro completo do aluno ou professor.
-- Editar dados, solicitar documentos, enviar arquivos e baixar documentos nas páginas de detalhes.
-
-### Paginação e comunicados da secretaria
-
-- Paginar no servidor os usuários em **Banco de Dados** e em **Contas**, na gestão administrativa.
-- Carregar 20 registros por padrão e permitir selecionar 10, 20, 50 ou 100 por página.
-- Aplicar busca e filtros à base completa e retornar à primeira página ao alterar os critérios.
-- Preservar o CSV da secretaria com todos os resultados do filtro, independentemente da página atual.
-- Exibir os comunicados completos na página principal, com total, rolagem própria e paginação no servidor.
-- Posicionar **Novo comunicado** à direita do cabeçalho e abrir o formulário em janela flutuante.
-- Retornar à primeira página após publicar um comunicado.
-
-### Portal do professor
-
-- Consultar turmas e abrir seus detalhes em janela flutuante.
-- Organizar as publicações da turma nas abas **Atividades** e **Conteúdos**, dentro do mesmo painel.
-- Abrir **Lançar atividade** em janela para informar disciplina, título, descrição, prazo opcional e anexo opcional.
-- Abrir **Publicar conteúdo** em janela para compartilhar materiais de estudo, sem prazo de entrega.
-- Manter as publicações existentes como atividades.
-- Retirar a lista de alunos e o lançamento de notas dos detalhes da turma.
-- Preservar a aba **Notas**, mostrar o histórico na página e abrir o lançamento pelo botão **Lançar notas** em janela flutuante.
-- Consultar documentos próprios e entregas dos alunos em **Documentos → Arquivos e entregas**, com identificação do aluno e download.
-
-### Portal do aluno
-
-- Consultar a grade semanal das próprias turmas e abrir os detalhes de cada disciplina.
-- Retirar a seção de professores da página da disciplina.
-- Reunir **Atividades** e **Conteúdos** em abas no mesmo painel, seguindo o estilo do portal do professor.
-- Permitir baixar anexos das duas categorias e enviar respostas apenas para atividades.
-- Abrir **Enviar atividade** em janela para anexar a resposta.
-- Exibir confirmação, data, histórico e download das próprias entregas; permitir novos envios sem apagar os anteriores.
-- Vincular cada entrega à atividade, ao aluno, à disciplina e ao professor responsável.
-- Validar a turma e a disciplina no servidor antes de aceitar uma entrega e impedir acesso aos arquivos de outro aluno.
-- Manter o envio de documentos solicitados pela secretaria em janela flutuante.
-
-### Comunicados nos portais acadêmicos
-
-- Disponibilizar a consulta pelo botão **Comunicados** no menu lateral de alunos e professores.
-- Carregar no máximo 3 recados inicialmente e até 5 adicionais por clique em **Carregar mais**.
-- Acumular os recados dentro de uma área com rolagem própria e ocultar o botão ao chegar ao fim.
-- Mostrar avisos gerais e os destinados ao perfil autenticado; impedir a consulta pelo endpoint do outro perfil.
-- Manter a publicação e a gestão dos comunicados na secretaria escolar.
-
-## Alterações de persistência
-
-- Registrar governança nas tabelas de configurações e auditoria e nas propriedades de acesso das contas.
-- Persistir o cronograma na tabela `horarios`, vinculada às associações entre turmas e disciplinas.
-- Distinguir atividades de conteúdos pelo campo `atividades.tipo`, com valor inicial `atividade` para os registros existentes.
-- Vincular entregas pelo campo opcional `documentos.atividade_id`, preservando os demais usos dos documentos.
-- Aplicar a criação de tabelas e os ajustes de colunas durante a inicialização, preservando os dados existentes.
-- Manter os arquivos enviados no volume persistente de uploads e controlar seus downloads por perfil e vínculo.
+- [Documentação completa do sistema](Documentos/DOCUMENTACAO_DO_SISTEMA.md)
+- [Segurança, criptografia e LGPD — configuração e responsabilidades](Documentos/SEGURANCA_E_LGPD.md)
+- [Testes de API/Postman e regressão](Documentos/testes/README.md)
+- [Iniciar o ambiente manual](Documentos/testes/TESTE_MANUAL.md#iniciar-o-ambiente-em-segundo-plano): execute `.\iniciar-educafast.ps1` no PowerShell ou `.\iniciar-educafast.cmd` no CMD, na raiz do projeto.
+- [Especificação de casos de uso](Documentos/Especificação%20de%20Casos%20de%20Uso.md)
+- [Documentos do projeto](Documentos/)
+- [Referência do protótipo](Protótipo/)
+- [Licença MIT](LICENSE)

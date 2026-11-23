@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 
 from app.controllers.admin_controller import format_created_at
 from app.controllers.document_controller import get_upload_folder
+from app.security import save_upload
 from app.database import get_session
 from app.models import (
     AlunoModel,
@@ -89,6 +90,13 @@ def get_teacher_area_data(user_id):
             .order_by(TurmaModel.nome.asc())
             .all()
         )
+        from app.services.cursos import turma_ativa, autoriza_docencia
+        from app.models.curso_model import EstadoTurmaModel, AtribuicaoDocenteModel
+        turma_rows = [t for t in turma_rows if turma_ativa(db, t.id) and (
+            not db.get(EstadoTurmaModel, t.id) or db.query(AtribuicaoDocenteModel).join(
+            TurmaDisciplinaModel, AtribuicaoDocenteModel.turma_disciplina_id == TurmaDisciplinaModel.id).filter(
+            AtribuicaoDocenteModel.professor_id == professor.id, AtribuicaoDocenteModel.ativo.is_(True),
+            TurmaDisciplinaModel.turma_id == t.id).first())]
         turma_ids = [turma.id for turma in turma_rows]
 
         disciplinas_por_turma = {turma.id: [] for turma in turma_rows}
@@ -110,6 +118,8 @@ def get_teacher_area_data(user_id):
                 .all()
             )
             for turma_id, disciplina in disciplina_rows:
+                if not autoriza_docencia(db, professor.id, turma_id, disciplina.id):
+                    continue
                 disciplinas_por_turma.setdefault(turma_id, []).append(
                     {
                         "id": disciplina.id,
@@ -148,8 +158,6 @@ def get_teacher_area_data(user_id):
             for atividade, disciplina in atividade_rows:
                 atividades_por_turma.setdefault(atividade.turma_id, []).append(
                     {
-                        "id": atividade.id,
-                        "tipo": atividade.tipo,
                         "titulo": atividade.titulo,
                         "descricao": atividade.descricao or "Sem descricao.",
                         "disciplina": disciplina.nome,
@@ -173,10 +181,12 @@ def get_teacher_area_data(user_id):
             .all()
         )
         documentos_rows = (
-            db.query(DocumentoModel, DisciplinaModel, AlunoModel.nome)
+            db.query(DocumentoModel, DisciplinaModel)
             .join(DisciplinaModel, DisciplinaModel.id == DocumentoModel.disciplina_id)
-            .outerjoin(AlunoModel, AlunoModel.id == DocumentoModel.aluno_id)
-            .filter(DocumentoModel.professor_id == professor.id)
+            .filter(
+                DocumentoModel.professor_id == professor.id,
+                DocumentoModel.aluno_id.is_(None),
+            )
             .order_by(DocumentoModel.id.desc())
             .limit(30)
             .all()
@@ -204,6 +214,7 @@ def get_teacher_area_data(user_id):
                     "nome": turma.nome,
                     "codigo": turma.codigo,
                     "ano_letivo": turma.ano_letivo,
+                    "gerida": db.get(EstadoTurmaModel, turma.id) is not None,
                     "turno": turma.turno or "Nao informado",
                     "disciplinas": disciplinas_por_turma.get(turma.id, []),
                     "alunos": alunos_por_turma.get(turma.id, []),
@@ -226,14 +237,11 @@ def get_teacher_area_data(user_id):
             "documentos": [
                 {
                     "titulo": documento.titulo,
-                    "aluno": aluno_nome,
-                    "atividade_id": documento.atividade_id,
-                    "id": documento.id,
                     "arquivo": documento.caminho_arquivo,
                     "disciplina": disciplina.nome,
                     "data": format_created_at(documento.data_envio),
                 }
-                for documento, disciplina, aluno_nome in documentos_rows
+                for documento, disciplina in documentos_rows
             ],
             "solicitacoes_documentos": [
                 {
@@ -261,11 +269,6 @@ def launch_activity(user_id, data, files=None):
     if not turma_id or not disciplina_id or not titulo:
         return {"erro": "Turma, disciplina e titulo sao obrigatorios"}, 400
 
-    tipo = data.get("tipo", "atividade")
-    if tipo not in {"atividade", "conteudo"}:
-        return {"erro": "Tipo de publicação inválido."}, 400
-    if tipo == "conteudo":
-        data_entrega = ""
     arquivo = files.get("arquivo") if files else None
     filename = None
     saved_path = None
@@ -314,13 +317,15 @@ def launch_activity(user_id, data, files=None):
             .first()
         )
 
+        from app.services.cursos import autoriza_docencia
+        if not autoriza_docencia(db, professor.id, turma_id, disciplina_id):
+            return {"erro": "Atribuicao docente ausente, revogada ou turma arquivada"}, 403
         if not professor_na_turma:
             return {"erro": "Professor nao pertence a esta turma"}, 403
         if not professor_disciplina or not turma_disciplina:
             return {"erro": "Disciplina nao disponivel para este professor nesta turma"}, 403
 
         atividade = AtividadeModel(
-            tipo=tipo,
             professor_id=professor.id,
             turma_id=turma_id,
             disciplina_id=disciplina_id,
@@ -330,10 +335,10 @@ def launch_activity(user_id, data, files=None):
             caminho_arquivo=filename,
         )
         if saved_path:
-            arquivo.save(saved_path)
+            save_upload(arquivo, saved_path)
         db.add(atividade)
         db.commit()
-        return {"mensagem": "Conteúdo publicado" if tipo == "conteudo" else "Atividade lancada"}, 201
+        return {"mensagem": "Atividade lancada"}, 201
     except Exception:
         db.rollback()
         if saved_path and os.path.exists(saved_path):
@@ -385,8 +390,14 @@ def upload_requested_document(user_id, form, files):
         if not solicitacao:
             return {"erro": "Solicitacao de documento nao encontrada"}, 404
 
+        claimed = db.query(SolicitacaoDocumentoModel).filter_by(
+            id=solicitacao.id, professor_id=professor.id, status="pendente"
+        ).update({"status": "processando"}, synchronize_session=False)
+        if not claimed:
+            return {"erro": "Solicitacao ja atendida"}, 409
+
         disciplina = _get_or_create_disciplina_geral(db)
-        arquivo.save(saved_path)
+        save_upload(arquivo, saved_path)
         documento = DocumentoModel(
             aluno_id=None,
             professor_id=professor.id,
@@ -426,7 +437,7 @@ def save_student_grade(user_id, data):
     except InvalidOperation:
         return {"erro": "Nota invalida"}, 400
 
-    if nota_value < 0 or nota_value > 10:
+    if not nota_value.is_finite() or nota_value < 0 or nota_value > 10:
         return {"erro": "Nota deve estar entre 0 e 10"}, 400
 
     db = get_session()
@@ -474,11 +485,17 @@ def save_student_grade(user_id, data):
 
         if not aluno_na_turma:
             return {"erro": "Aluno nao pertence a esta turma"}, 403
+        from app.services.cursos import autoriza_docencia
+        if not autoriza_docencia(db, professor.id, turma_id, disciplina_id):
+            return {"erro": "Atribuicao docente ausente, revogada ou turma arquivada"}, 403
         if not professor_na_turma:
             return {"erro": "Professor nao pertence a esta turma"}, 403
         if not professor_disciplina or not turma_disciplina:
             return {"erro": "Disciplina nao disponivel para este professor nesta turma"}, 403
 
+        from app.models.curso_model import EstadoTurmaModel
+        if db.get(EstadoTurmaModel, turma_id):
+            return {"erro": "Use o diario por periodo para preservar turma e ano do lancamento"}, 409
         nota = (
             db.query(NotaModel)
             .filter(
@@ -487,7 +504,6 @@ def save_student_grade(user_id, data):
             )
             .first()
         )
-        nota_anterior = str(nota.nota) if nota else None
         if nota:
             nota.professor_id = professor.id
             nota.nota = nota_value
@@ -502,8 +518,6 @@ def save_student_grade(user_id, data):
             )
             db.add(nota)
 
-        from app.governanca import auditar
-        auditar(db, "Nota alterada", {"aluno_id": aluno_id, "disciplina_id": disciplina_id, "antes": nota_anterior, "depois": str(nota_value)})
         db.commit()
         return {"mensagem": "Nota salva"}, 200
     except IntegrityError:

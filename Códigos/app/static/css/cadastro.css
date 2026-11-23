@@ -1,0 +1,45 @@
+.cadastro-card:hover {
+    transform: none;
+}
+
+.field {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.field:focus-within {
+    border-color: rgba(6, 182, 212, 0.72);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.16);
+}
+
+.field input,
+.field select {
+    background: transparent;
+    outline: none;
+    width: 100%;
+    color: white;
+}
+
+.field input::placeholder {
+    color: rgba(255, 255, 255, 0.48);
+}
+
+.field select option {
+    color: #0a2540;
+}
+
+@media (max-width: 768px) {
+    body {
+        display: block;
+    }
+
+    aside {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    main {
+        padding: 24px;
+    }
+}

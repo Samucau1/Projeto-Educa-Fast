@@ -4,13 +4,13 @@ from app.auth import normalize_role
 
 
 def admin_required():
-    if normalize_role(session.get("user_role")) != "secretaria":
+    if normalize_role(session.get("user_role")) not in {"admin", "superadmin"}:
         abort(403)
 
 
 def admin_json_required():
-    if normalize_role(session.get("user_role")) != "secretaria":
-        return jsonify({"erro": "Acesso permitido apenas para a secretaria escolar"}), 403
+    if normalize_role(session.get("user_role")) not in {"admin", "superadmin"}:
+        return jsonify({"erro": "Acesso permitido apenas para administradores"}), 403
 
     return None
 

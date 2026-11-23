@@ -1,0 +1,22 @@
+{% extends 'gestao_base.html' %}
+{% set page_title = 'Cursos' %}
+{% block content %}
+{% include 'partials/curso_estilo.html' %}
+<section class="page-heading"><div><span class="eyebrow">APRENDIZAGEM</span><h1>{{ 'Meus cursos' if session.user_role == 'aluno' else 'Biblioteca de cursos' }}</h1><p>Material organizado para aprender, ensinar e reutilizar em diferentes turmas e anos.</p></div></section>
+{% if session.user_role != 'aluno' %}
+<section class="panel course-panel"><h2>Novo curso</h2>
+<form method="post" action="{{ url_for('cursos.criar') }}" class="course-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<label>Título<input name="titulo" maxlength="150" required></label>
+<label>Disciplina<select name="disciplina_id" required><option value="">Selecione</option>{% for d in disciplinas %}<option value="{{ d.id }}">{{ d.nome }}</option>{% endfor %}</select></label>
+{% if session.user_role in ['admin','superadmin'] %}<label>Professor responsável<select name="professor_id" required><option value="">Selecione</option>{% for p in professores %}<option value="{{ p.id }}">{{ p.nome }}</option>{% endfor %}</select></label>{% endif %}
+<label>Descrição<textarea name="descricao" maxlength="10000"></textarea></label>
+<button class="button button-primary">Criar rascunho</button>
+</form><p>O responsável precisa estar vinculado à disciplina. A administração revisa e publica o conteúdo.</p></section>
+{% endif %}
+<div class="course-grid">
+{% for curso in cursos %}<article class="panel course-panel"><span class="eyebrow">{{ curso.estado }}</span><h2>{{ curso.titulo }}</h2><p>{{ curso.descricao }}</p><a class="button button-primary" href="{{ url_for('cursos.editor',curso_id=curso.id) }}">Abrir curso</a></article>{% endfor %}
+{% for card in cards %}<article class="panel course-panel"><span class="eyebrow">{{ card.turma.nome }} · {{ card.turma.ano_letivo }}</span><h2>{{ card.curso.titulo }}</h2><p>{{ card.curso.descricao }}</p><progress value="{{ card.progresso }}" max="100" aria-label="Progresso do curso"></progress><p>{{ card.progresso }}% concluído</p><a class="button button-primary" href="{{ url_for('cursos.aprender',oferta_id=card.oferta.id) }}">Continuar aprendendo</a></article>{% endfor %}
+{% if not cursos and not cards %}<section class="panel course-panel"><h2>Nenhum curso disponível</h2><p>{{ 'Os cursos liberados para suas turmas aparecerão aqui.' if session.user_role == 'aluno' else 'Crie o primeiro curso para organizar seu material.' }}</p></section>{% endif %}
+</div>
+{% endblock %}

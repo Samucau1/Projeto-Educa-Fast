@@ -1,0 +1,34 @@
+{
+  "aprovado": true,
+  "data": "2026-10-24T01:49:14.118348+00:00",
+  "banco": "MySQL 8.4 descartável",
+  "etapas": [
+    {
+      "clientes": 1,
+      "requisicoes": 21,
+      "p95_ms": 43.395,
+      "http_inesperados": 0
+    },
+    {
+      "clientes": 4,
+      "requisicoes": 84,
+      "p95_ms": 83.573,
+      "http_inesperados": 0
+    },
+    {
+      "clientes": 8,
+      "requisicoes": 168,
+      "p95_ms": 140.451,
+      "http_inesperados": 0
+    },
+    {
+      "clientes": 16,
+      "requisicoes": 336,
+      "p95_ms": 278.361,
+      "http_inesperados": 0
+    }
+  ],
+  "requisicoes": 609,
+  "progressos_persistidos": 1,
+  "limites": "Rajadas locais curtas; não estabelece capacidade ou SLA de produção."
+}

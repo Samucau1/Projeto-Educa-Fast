@@ -1,5 +1,0 @@
-{% set assets = frontend_assets() %}
-{% for css in assets.get('css', []) %}
-<link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css) }}">
-{% endfor %}
-<script type="module" src="{{ url_for('static', filename='dist/' ~ assets['file']) }}"></script>

@@ -1,0 +1,19 @@
+<style>
+body { background: {{ tema.cor_fundo }} !important; }
+.text-cyan-400, .text-cyan-300 { color: {{ tema.cor_destaque }} !important; }
+.gestao-nav { position: relative; display: flex; flex-wrap: wrap; gap: 1rem; padding: .75rem 1rem; background: #102438; color: white; z-index: 10; }
+.gestao-nav a { color: {{ tema.cor_destaque }}; }
+</style>
+{% if session.get('user_id') %}
+<nav class="gestao-nav" aria-label="Gestão e mensagens">
+    <a href="{{ url_for('home.home') }}">Meu painel</a>
+    <a href="{{ url_for('gestao.mensagens') }}">Mensagens</a>
+    {% if session.get('user_role') in ['admin', 'superadmin'] %}
+    <a href="{{ url_for('home.admin_comunicados') }}">Enviar comunicado</a>
+    {% endif %}
+    {% if session.get('user_role') == 'superadmin' %}
+    <a href="{{ url_for('gestao.usuarios') }}">Usuários e permissões</a>
+    <a href="{{ url_for('gestao.layout') }}">Cores do layout</a>
+    {% endif %}
+</nav>
+{% endif %}

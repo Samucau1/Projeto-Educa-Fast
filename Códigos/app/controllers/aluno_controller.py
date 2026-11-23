@@ -3,8 +3,6 @@ from datetime import datetime
 from app.controllers.admin_controller import format_created_at
 from app.database import get_session
 from app.models import (
-    HorarioModel,
-    TurmaModel,
     AlunoModel,
     AlunoTurmaModel,
     AtividadeModel,
@@ -105,7 +103,6 @@ def get_aluno_area_data(user_id):
             for disciplina in disciplinas
         }
 
-        horarios = []
         if disciplinas_map:
             turma_ids = [
                 turma_id
@@ -115,16 +112,6 @@ def get_aluno_area_data(user_id):
                     .all()
                 )
             ]
-            for horario, vinculo, turma in (
-                db.query(HorarioModel, TurmaDisciplinaModel, TurmaModel)
-                .join(TurmaDisciplinaModel, TurmaDisciplinaModel.id == HorarioModel.turma_disciplina_id)
-                .join(TurmaModel, TurmaModel.id == TurmaDisciplinaModel.turma_id)
-                .filter(TurmaModel.id.in_(turma_ids))
-                .order_by(HorarioModel.inicio, HorarioModel.dia_semana).all()
-            ):
-                horarios.append(dict(id=horario.id, disciplina_id=vinculo.disciplina_id,
-                    turma=turma.nome, dia_semana=horario.dia_semana, inicio=horario.inicio,
-                    fim=horario.fim, demonstracao=horario.demonstracao))
             professor_links = (
                 db.query(ProfessorDisciplinaModel.disciplina_id, ProfessorModel.nome)
                 .join(ProfessorModel, ProfessorModel.id == ProfessorDisciplinaModel.professor_id)
@@ -157,8 +144,7 @@ def get_aluno_area_data(user_id):
                 for atividade, disciplina, professor in atividade_rows:
                     disciplinas_map[disciplina.id]["atividades"].append(
                         {
-                            "tipo": atividade.tipo,
-                    "titulo": atividade.titulo,
+                            "titulo": atividade.titulo,
                             "descricao": atividade.descricao or "Sem descricao.",
                             "professor": professor.nome,
                             "data_entrega": atividade.data_entrega or "Sem prazo",
@@ -168,7 +154,6 @@ def get_aluno_area_data(user_id):
                     )
 
         return {
-            "horarios": horarios,
             "aluno": {
                 "id": aluno.id,
                 "nome": aluno.nome,
@@ -249,6 +234,18 @@ def get_aluno_disciplina_detail(user_id, disciplina_id):
                 .all()
             )
         ]
+        professores = (
+            db.query(ProfessorModel.nome)
+            .join(ProfessorDisciplinaModel, ProfessorDisciplinaModel.professor_id == ProfessorModel.id)
+            .join(ProfessorTurmaModel, ProfessorTurmaModel.professor_id == ProfessorModel.id)
+            .filter(ProfessorDisciplinaModel.disciplina_id == disciplina.id)
+            .filter(ProfessorTurmaModel.turma_id.in_(turma_ids))
+            .order_by(ProfessorModel.nome.asc())
+            .distinct()
+            .all()
+            if turma_ids
+            else []
+        )
         atividades = (
             db.query(AtividadeModel, ProfessorModel)
             .join(ProfessorModel, ProfessorModel.id == AtividadeModel.professor_id)
@@ -259,15 +256,6 @@ def get_aluno_disciplina_detail(user_id, disciplina_id):
             if turma_ids
             else []
         )
-
-        entregas = {}
-        for documento in db.query(DocumentoModel).filter(
-            DocumentoModel.aluno_id == aluno.id,
-            DocumentoModel.atividade_id.in_([atividade.id for atividade, _ in atividades]),
-        ).order_by(DocumentoModel.id.desc()):
-            entregas.setdefault(documento.atividade_id, []).append(dict(
-                id=documento.id, arquivo=documento.caminho_arquivo,
-                data=format_created_at(documento.data_envio)))
 
         return {
             "aluno": {
@@ -284,12 +272,10 @@ def get_aluno_disciplina_detail(user_id, disciplina_id):
                 "nome": disciplina.nome,
                 "codigo": disciplina.codigo,
                 "carga_horaria": disciplina.carga_horaria,
+                "professores": [nome for (nome,) in professores],
             },
             "atividades": [
                 {
-                    "id": atividade.id,
-                    "entregas": entregas.get(atividade.id, []),
-                    "tipo": atividade.tipo,
                     "titulo": atividade.titulo,
                     "descricao": atividade.descricao or "Sem descricao.",
                     "professor": professor.nome,

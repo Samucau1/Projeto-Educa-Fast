@@ -45,6 +45,10 @@ export default function App() {
         }
         if (id !== sequencia.current) return;
         if (!resposta.headers.get('X-EducaFast-Pagina')) {
+            if (!resposta.ok) {
+                setErro('Não foi possível concluir a ação. Recarregue a página e tente novamente.');
+                return;
+            }
             if (method === 'GET') {
                 window.location.assign(url);
                 return;
@@ -76,6 +80,8 @@ export default function App() {
         setErro(null);
         setEstado(novoEstado);
         if (!hash) window.scrollTo(0, 0);
+        // Como num carregamento de página: o foco volta ao início do documento.
+        if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
     }, []);
 
     // Carga inicial: mapa de rotas e tela do endereço atual.
@@ -111,6 +117,8 @@ export default function App() {
             e.preventDefault();
             const metodo = (form.getAttribute('method') || 'GET').toUpperCase();
             const acao = form.getAttribute('action') || caminhoAtual();
+            // Só formulários da própria aplicação: o token CSRF nunca sai para outra origem.
+            if (new URL(acao, window.location.href).origin !== window.location.origin) return;
             const dados = new FormData(form, e.submitter || undefined);
             if (metodo === 'GET') {
                 const destino = new URL(acao, window.location.href);

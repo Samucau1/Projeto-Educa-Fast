@@ -47,7 +47,10 @@ def home():
 def admin_dashboard():
     admin_required()
 
-    context = {"title": "Dashboard da Secretaria", **get_admin_data()}
+    data = get_admin_data()
+    # O painel exibe só os totais e os registros recentes; as listagens completas ficam fora do JSON.
+    campos = ("total_alunos", "total_professores", "matriculas_pendentes", "matriculas_hoje", "registros_recentes")
+    context = {"title": "Dashboard da Secretaria", **{k: data[k] for k in campos}}
     return render_dashboard(context)
 
 

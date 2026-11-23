@@ -14,8 +14,14 @@ from pathlib import Path
 
 from flask import current_app, g, get_flashed_messages, jsonify, request, session, url_for
 from sqlalchemy import inspect as sa_inspect
+from werkzeug.exceptions import HTTPException
 
 SPA_HEADER = "X-EducaFast-SPA"
+# Colunas de modelos que nunca vão para o navegador junto com objetos ORM (minimização, LGPD).
+# Telas que exibem esses dados recebem valores preparados pelos controllers (ex.: cpf_value).
+COLUNAS_PROTEGIDAS = {"senha", "cpf", "cpf_hash", "telefone", "data_nascimento"}
+# Campos de formulário que não são devolvidos quando a tela é reexibida após um erro.
+CAMPOS_NAO_DEVOLVIDOS = {"senha", "csrf_token"}
 PAGE_HEADER = "X-EducaFast-Pagina"
 
 
@@ -44,7 +50,8 @@ def to_json(value):
     except Exception:
         mapper = None
     if mapper is not None:
-        return {attr.key: to_json(getattr(value, attr.key)) for attr in mapper.column_attrs}
+        return {attr.key: to_json(getattr(value, attr.key)) for attr in mapper.column_attrs
+                if attr.key not in COLUNAS_PROTEGIDAS}
     if hasattr(value, "keys") and hasattr(value, "__getitem__"):
         return {str(k): to_json(value[k]) for k in value.keys()}
     return str(value)
@@ -91,13 +98,25 @@ def global_context():
     }
 
 
+def formulario_devolvido():
+    """Campos enviados, para a tela reexibida após um erro preencher o formulário de novo."""
+    if request.method != "POST":
+        return {}
+    try:
+        campos = request.form
+    except HTTPException:
+        # Ex.: corpo acima do limite (413); a tela de erro não depende do formulário.
+        return {}
+    return {k: v for k, v in campos.items() if k not in CAMPOS_NAO_DEVOLVIDOS}
+
+
 def page_payload(page, data):
     payload = {
         "pagina": page,
         "dados": to_json(data),
         "global": global_context(),
         "mensagens": [list(m) for m in get_flashed_messages(with_categories=True)],
-        "form": request.form.to_dict() if request.method == "POST" else {},
+        "form": formulario_devolvido(),
         "args": request.args.to_dict(),
     }
     return payload

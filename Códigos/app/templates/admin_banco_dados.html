@@ -1,0 +1,145 @@
+{% set page_title = 'Registros acadêmicos' %}
+{% from 'partials/gestao_icons.html' import icon %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros acadêmicos | Educa Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_banco_dados.css') }}">
+    {% include "partials/react_runtime.html" %}
+</head>
+<body class="app-page">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    <div id="admin-banco-dados-root" class="flex w-full" data-react-shell data-react-template="admin-banco-dados-template"></div>
+    <template id="admin-banco-dados-template">
+
+    {% include 'partials/workspace_sidebar.html' %}
+
+    <div class="workspace-main">
+    {% include 'partials/workspace_topbar.html' %}
+    <main id="main-content" class="app-content">
+        <header class="flex flex-col gap-5 mb-10 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+                <span class="eyebrow">GESTÃO ESCOLAR</span>
+                    <h1 class="text-3xl font-bold">Registros acadêmicos</h1>
+                <p class="text-gray-400">Consulta e gerenciamento dos registros acadêmicos.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <button class="banco-action-button">
+
+                    Exportar CSV
+                </button>
+
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="glass-card p-6 rounded-3xl">
+                <p class="text-gray-400 text-sm">Registros de Alunos</p>
+                <h2 class="text-4xl font-bold mt-2">{{ total_alunos }}</h2>
+                <div class="mt-4 text-xs text-green-400">Base acadêmica ativa</div>
+            </div>
+            <div class="glass-card p-6 rounded-3xl">
+                <p class="text-gray-400 text-sm">Registros de Professores</p>
+                <h2 class="text-4xl font-bold mt-2">{{ total_professores }}</h2>
+                <div class="mt-4 text-xs text-cyan-400">Equipe docente</div>
+            </div>
+            <div class="glass-card p-6 rounded-3xl">
+                <p class="text-gray-400 text-sm">Pendências</p>
+                <h2 class="text-4xl font-bold mt-2">{{ matriculas_pendentes }}</h2>
+                <div class="mt-4 text-xs text-yellow-400">Documentos e validações</div>
+            </div>
+            <div class="glass-card p-6 rounded-3xl">
+                <p class="text-gray-400 text-sm">Atualizações Hoje</p>
+                <h2 class="text-4xl font-bold mt-2">{{ matriculas_hoje }}</h2>
+                <div class="mt-4 text-xs text-cyan-400">Cadastros e edições</div>
+            </div>
+        </div>
+
+        <section class="glass-card p-8 rounded-[32px] banco-card">
+            <div class="flex flex-col gap-4 mb-6 xl:flex-row xl:items-center xl:justify-between">
+                <div>
+                    <h3 class="text-xl font-bold">Registros Acadêmicos</h3>
+                    <p class="text-sm text-gray-400">Filtre por nome, e-mail, matrícula, CPF ou tipo.</p>
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <label class="banco-search">
+                        <input id="banco-search-input" type="search" placeholder="Pesquisar por nome ou ID...">
+                    </label>
+                    <select id="banco-type-select" class="banco-select" aria-label="Tipo de registro">
+                        <option value="todos">Todos os Tipos</option>
+                        <option value="aluno">Alunos</option>
+                        <option value="professor">Professores</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="banco-table-wrapper">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-gray-500 text-xs uppercase tracking-wider">
+                            <th class="pb-4 font-medium">Identificação</th>
+                            <th class="pb-4 font-medium">Nome</th>
+                            <th class="pb-4 font-medium">Tipo</th>
+                            <th class="pb-4 font-medium">Detalhe</th>
+                            <th class="pb-4 font-medium">Status</th>
+                            <th class="pb-4 font-medium text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for aluno in alunos %}
+                        <tr class="border-t border-white/5 banco-row" data-type="aluno" data-search="{{ aluno.matricula }} {{ aluno.nome }} {{ aluno.email }} {{ aluno.curso }} {{ aluno.status }}">
+                            <td class="py-4 font-medium text-white">{{ aluno.matricula }}</td>
+                            <td class="py-4">
+                                <span class="block font-medium text-white">{{ aluno.nome }}</span>
+                                <span class="text-xs text-gray-500">{{ aluno.email }}</span>
+                            </td>
+                            <td class="py-4"><span class="type-pill tipo-aluno">Aluno</span></td>
+                            <td class="py-4 text-gray-400">{{ aluno.curso }}</td>
+                            <td class="py-4"><span class="status-pill {{ aluno.status_class }}">{{ aluno.status }}</span></td>
+                            <td class="py-4 text-right">
+                                <a href="{{ url_for('home.admin_detalhes_aluno', aluno_id=aluno.id) }}" class="banco-row-button">Gerenciar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for professor in professores %}
+                        <tr class="border-t border-white/5 banco-row" data-type="professor" data-search="{{ professor.id }} {{ professor.nome }} {{ professor.email }} {{ professor.cpf }} {{ professor.disciplina }}">
+                            <td class="py-4 font-medium text-white">PROF-{{ professor.id }}</td>
+                            <td class="py-4">
+                                <span class="block font-medium text-white">{{ professor.nome }}</span>
+                                <span class="text-xs text-gray-500">{{ professor.email }}</span>
+                            </td>
+                            <td class="py-4"><span class="type-pill tipo-professor">Professor</span></td>
+                            <td class="py-4 text-gray-400">{{ professor.disciplina }}</td>
+                            <td class="py-4"><span class="status-pill status-active">Ativo</span></td>
+                            <td class="py-4 text-right">
+                                <a href="{{ url_for('home.admin_detalhes_professor', professor_id=professor.id) }}" class="banco-row-button">Gerenciar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        <tr id="banco-empty-row" class="hidden border-t border-white/5">
+                            <td class="py-6 text-gray-400" colspan="6">Nenhum registro encontrado para o filtro selecionado.</td>
+                        </tr>
+
+                        {% if not alunos and not professores %}
+                        <tr class="border-t border-white/5">
+                            <td class="py-6 text-gray-400" colspan="6">Nenhum registro cadastrado.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    </div>
+</template>
+    <script src="{{ url_for('static', filename='js/paginas/banco_dados.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compartilhado/shell_react.js') }}"></script>
+</body>
+</html>

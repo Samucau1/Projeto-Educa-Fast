@@ -1,0 +1,129 @@
+.discipline-card:hover {
+    transform: none;
+}
+
+.discipline-alert {
+    margin-top: 18px;
+    border: 1px solid rgba(248, 113, 113, 0.26);
+    border-radius: 14px;
+    background: rgba(248, 113, 113, 0.1);
+    padding: 12px 14px;
+    color: #fca5a5;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.discipline-field {
+    display: block;
+    margin-top: 20px;
+}
+
+.discipline-field span {
+    display: block;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.discipline-field input,
+.discipline-field select {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0 16px;
+    color: white;
+    outline: none;
+}
+
+.discipline-field select option {
+    background: #111827;
+    color: white;
+}
+
+.discipline-field input::placeholder {
+    color: rgba(156, 163, 175, 0.78);
+}
+
+.discipline-submit {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 24px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #06b6d4, #2563eb);
+    color: white;
+    font-weight: 800;
+}
+
+.discipline-table-wrapper {
+    overflow-x: auto;
+}
+
+.discipline-table-wrapper table {
+    min-width: 560px;
+}
+
+.discipline-link-list {
+    margin-top: 22px;
+    display: grid;
+    gap: 14px;
+}
+
+.discipline-link-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+}
+
+.discipline-link-item h3,
+.discipline-link-item strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.discipline-link-item p,
+.discipline-link-item span {
+    display: block;
+    margin-top: 5px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.discipline-empty {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 18px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    body {
+        display: block;
+    }
+
+    aside {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    main {
+        padding: 24px;
+    }
+
+    .discipline-link-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

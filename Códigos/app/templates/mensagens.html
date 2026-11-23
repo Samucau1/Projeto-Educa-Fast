@@ -1,0 +1,17 @@
+{% extends 'gestao_base.html' %}
+{% from 'partials/gestao_icons.html' import icon %}
+{% set page_title = 'Mensagens' %}
+{% block page_class %}messages-page{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">CONEXÃO COM A COMUNIDADE</span><h1>O que acontece na escola<span>.</span></h1><p>Avisos, novidades e informações importantes para todos.</p></div>{% if session.get('user_role') in ['superadmin','admin'] %}<a class="button button-primary" href="{{ url_for('home.admin_comunicados') }}">{{ icon('plus') }} Novo comunicado</a>{% endif %}</section>
+<section class="panel">
+    <div class="messages-toolbar"><span class="messages-counter">{{ icon('mail') }}<span id="messages-count" role="status" aria-live="polite">{{ comunicados|length }} mensagens</span></span><label class="search-field">{{ icon('search') }}<input id="messages-search" type="search" placeholder="Buscar nas mensagens" aria-label="Buscar nas mensagens"></label></div>
+    <div class="message-list">
+    {% for comunicado in comunicados %}
+        <article class="message-card" data-message><span class="message-symbol">{{ icon('mail') }}</span><div class="message-content"><div class="message-meta"><span>Comunicado da escola</span><span>{{ comunicado.created_at_label }}</span></div><h2>{{ comunicado.titulo }}</h2><p class="message-text">{{ comunicado.mensagem }}</p><span class="message-audience">{{ icon('users') }} Toda a comunidade</span></div></article>
+    {% else %}<div class="empty-state">{{ icon('mail') }}<h3>As novidades chegam por aqui</h3><p>Nenhuma mensagem publicada. Os próximos comunicados da escola aparecerão neste espaço.</p></div>{% endfor %}
+        <div class="empty-state" id="messages-no-results" hidden>{{ icon('search') }}<h3>Nenhuma mensagem encontrada</h3><p>Tente outra palavra na busca.</p></div>
+    </div>
+</section>
+<p class="page-footnote">{{ icon('info') }} Exibindo até 100 mensagens recentes. Comunicados publicados pela administração.</p>
+{% endblock %}

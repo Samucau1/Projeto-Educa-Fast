@@ -11,7 +11,6 @@ class AtividadeModel(Base):
     professor_id: Mapped[int] = mapped_column(Integer, ForeignKey("professores.id"), nullable=False)
     turma_id: Mapped[int] = mapped_column(Integer, ForeignKey("turmas.id"), nullable=False)
     disciplina_id: Mapped[int] = mapped_column(Integer, ForeignKey("disciplinas.id"), nullable=False)
-    tipo: Mapped[str] = mapped_column(String(20), nullable=False, default="atividade", server_default="atividade")
     titulo: Mapped[str] = mapped_column(String(150), nullable=False)
     descricao: Mapped[str | None] = mapped_column(Text, nullable=True)
     data_entrega: Mapped[str | None] = mapped_column(String(10), nullable=True)

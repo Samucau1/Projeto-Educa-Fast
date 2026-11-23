@@ -1,0 +1,322 @@
+.aluno-card:hover {
+    transform: none;
+}
+
+.aluno-panel-hidden {
+    display: none !important;
+}
+
+.aluno-table-wrapper {
+    overflow-x: auto;
+}
+
+.aluno-table-wrapper table {
+    min-width: 720px;
+}
+
+.aluno-discipline-card {
+    align-self: start;
+}
+
+.aluno-discipline-toggle {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    text-align: left;
+    text-decoration: none;
+}
+
+.aluno-discipline-toggle strong {
+    display: block;
+    color: #67e8f9;
+    font-weight: 800;
+}
+
+.aluno-discipline-toggle small {
+    display: block;
+    margin-top: 10px;
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.aluno-discipline-arrow {
+    color: #67e8f9;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.aluno-discipline-hidden {
+    display: none;
+}
+
+.aluno-discipline-content {
+    margin-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 16px;
+}
+
+.aluno-discipline-content h4 {
+    margin: 0 0 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.aluno-activity-item,
+.aluno-activity-empty {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.12);
+    padding: 14px;
+}
+
+.aluno-activity-item {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.aluno-activity-item strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+}
+
+.aluno-activity-item span,
+.aluno-activity-item small,
+.aluno-activity-empty {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.aluno-activity-item p {
+    margin: 7px 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.aluno-activity-item a {
+    width: fit-content;
+    color: #67e8f9;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.aluno-chip {
+    border: 1px solid rgba(34, 211, 238, 0.26);
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: #67e8f9;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.aluno-exclusive-activities {
+    display: grid;
+    gap: 14px;
+}
+
+.aluno-exclusive-activity {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 18px;
+}
+
+.aluno-exclusive-activity strong {
+    display: block;
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.aluno-exclusive-activity span,
+.aluno-exclusive-activity small {
+    display: block;
+    margin-top: 7px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.aluno-exclusive-activity p {
+    margin: 9px 0 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.aluno-exclusive-activity a {
+    flex: 0 0 auto;
+    color: #67e8f9;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.aluno-doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+}
+
+.aluno-request-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 18px;
+}
+
+.aluno-request-item h3 {
+    margin: 0;
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.aluno-request-item p {
+    margin: 6px 0 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.aluno-request-item span {
+    display: block;
+    margin-top: 8px;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.aluno-request-status {
+    align-self: start;
+    min-width: 78px;
+    border-radius: 999px;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 11px;
+}
+
+.aluno-request-status-pendente {
+    border: 1px solid rgba(250, 204, 21, 0.28);
+    color: #facc15;
+}
+
+.aluno-request-status-enviado {
+    border: 1px solid rgba(34, 211, 238, 0.28);
+    color: #22d3ee;
+}
+
+.aluno-request-upload {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 12px;
+    align-items: center;
+}
+
+.aluno-doc-item h3 {
+    margin: 0;
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.aluno-doc-item p {
+    margin: 5px 0 0;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.aluno-doc-item a {
+    color: #67e8f9;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.aluno-field,
+.aluno-file {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    outline: none;
+}
+
+.aluno-field {
+    padding: 0 16px;
+}
+
+.aluno-field::placeholder {
+    color: rgba(156, 163, 175, 0.78);
+}
+
+.aluno-file {
+    padding: 10px;
+    font-size: 13px;
+    color: #d1d5db;
+}
+
+.aluno-file::file-selector-button {
+    margin-right: 12px;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 7px 12px;
+    color: white;
+    font-weight: 700;
+}
+
+.aluno-submit {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 24px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #06b6d4, #2563eb);
+    color: white;
+    font-weight: 800;
+}
+
+.aluno-submit.compact {
+    margin-top: 0;
+    min-height: 46px;
+}
+
+@media (max-width: 768px) {
+    body {
+        display: block;
+    }
+
+    aside {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    main {
+        padding: 24px;
+    }
+
+    .aluno-request-item,
+    .aluno-request-upload {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,479 @@
+{
+  "data_sao_paulo": "2026-10-23T22:01:07.741301-03:00",
+  "servidor": "Werkzeug HTTP threaded, loopback, MySQL 8.4 descartavel",
+  "limites": "Amostra limitada, nao determina capacidade maxima nem substitui soak prolongado.",
+  "etapas": [
+    {
+      "requisicoes": 68,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 7.495,
+      "p95_ms": 76.447,
+      "max_ms": 82.337,
+      "stage": "fluxos-1-1",
+      "usuarios": 1,
+      "segundos": 1.313,
+      "req_por_segundo": 51.79
+    },
+    {
+      "requisicoes": 496,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 27.137,
+      "p95_ms": 89.889,
+      "max_ms": 109.985,
+      "stage": "fluxos-4-2",
+      "usuarios": 4,
+      "segundos": 4.883,
+      "req_por_segundo": 101.58
+    },
+    {
+      "requisicoes": 1044,
+      "inesperadas": 4,
+      "http_5xx": 4,
+      "p50_ms": 45.454,
+      "p95_ms": 145.666,
+      "max_ms": 215.839,
+      "stage": "fluxos-8-3",
+      "usuarios": 8,
+      "segundos": 11.66,
+      "req_por_segundo": 89.54
+    },
+    {
+      "requisicoes": 416,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 124.589,
+      "p95_ms": 317.761,
+      "max_ms": 388.838,
+      "stage": "leituras-16",
+      "usuarios": 16,
+      "segundos": 4.329,
+      "req_por_segundo": 96.1
+    },
+    {
+      "requisicoes": 832,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 257.462,
+      "p95_ms": 583.995,
+      "max_ms": 1333.245,
+      "stage": "leituras-32",
+      "usuarios": 32,
+      "segundos": 8.56,
+      "req_por_segundo": 97.2
+    }
+  ],
+  "total": {
+    "requisicoes": 2856,
+    "inesperadas": 4,
+    "http_5xx": 4,
+    "p50_ms": 84.813,
+    "p95_ms": 420.227,
+    "max_ms": 1333.245
+  },
+  "familias": {
+    "academico/atividade": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 88.584,
+      "p95_ms": 129.652,
+      "max_ms": 150.953
+    },
+    "academico/disciplina": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 36.943,
+      "p95_ms": 63.897,
+      "max_ms": 79.85
+    },
+    "academico/nota": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 47.215,
+      "p95_ms": 69.305,
+      "max_ms": 72.622
+    },
+    "academico/turma": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 38.138,
+      "p95_ms": 56.605,
+      "max_ms": 56.69
+    },
+    "academico/vinculo-disciplina": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 41.761,
+      "p95_ms": 60.634,
+      "max_ms": 62.361
+    },
+    "academico/vinculo-turma": {
+      "requisicoes": 58,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 45.995,
+      "p95_ms": 99.996,
+      "max_ms": 128.914
+    },
+    "admin/telas": {
+      "requisicoes": 116,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 36.725,
+      "p95_ms": 142.005,
+      "max_ms": 161.007
+    },
+    "aluno/telas": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 56.861,
+      "p95_ms": 98.154,
+      "max_ms": 117.836
+    },
+    "autenticacao/login": {
+      "requisicoes": 113,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 129.605,
+      "p95_ms": 430.256,
+      "max_ms": 1231.418
+    },
+    "autenticacao/logout": {
+      "requisicoes": 45,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 6.609,
+      "p95_ms": 16.611,
+      "max_ms": 18.931
+    },
+    "bloqueio/csrf": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 15.774,
+      "p95_ms": 26.506,
+      "max_ms": 27.783
+    },
+    "bloqueio/disciplina-alheia": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 30.652,
+      "p95_ms": 46.782,
+      "max_ms": 55.456
+    },
+    "bloqueio/documento-alheio": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 24.198,
+      "p95_ms": 39.429,
+      "max_ms": 41.11
+    },
+    "bloqueio/foto-alheia": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 35.941,
+      "p95_ms": 55.329,
+      "max_ms": 68.865
+    },
+    "bloqueio/lgpd-admin": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 15.471,
+      "p95_ms": 25.839,
+      "max_ms": 28.665
+    },
+    "bloqueio/professor-publicacao": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 16.931,
+      "p95_ms": 24.317,
+      "max_ms": 26.15
+    },
+    "bloqueio/reabertura": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 26.781,
+      "p95_ms": 43.534,
+      "max_ms": 45.079
+    },
+    "bloqueio/reenvio": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 33.003,
+      "p95_ms": 52.351,
+      "max_ms": 54.522
+    },
+    "bloqueio/visitante": {
+      "requisicoes": 13,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 13.246,
+      "p95_ms": 31.847,
+      "max_ms": 31.847
+    },
+    "cadastro/aluno": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 118.937,
+      "p95_ms": 170.727,
+      "max_ms": 189.89
+    },
+    "cadastro/detalhes": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 55.681,
+      "p95_ms": 98.158,
+      "max_ms": 131.905
+    },
+    "cadastro/editar-aluno": {
+      "requisicoes": 29,
+      "inesperadas": 4,
+      "http_5xx": 4,
+      "p50_ms": 79.912,
+      "p95_ms": 131.047,
+      "max_ms": 140.749
+    },
+    "cadastro/editar-professor": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 34.679,
+      "p95_ms": 52.428,
+      "max_ms": 55.229
+    },
+    "cadastro/professor": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 118.349,
+      "p95_ms": 167.126,
+      "max_ms": 193.007
+    },
+    "comunicados/ler": {
+      "requisicoes": 100,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 32.529,
+      "p95_ms": 50.809,
+      "max_ms": 55.573
+    },
+    "comunicados/publicar": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 35.066,
+      "p95_ms": 46.683,
+      "max_ms": 47.637
+    },
+    "documentos/download": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 29.409,
+      "p95_ms": 40.753,
+      "max_ms": 42.604
+    },
+    "documentos/foto": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 34.442,
+      "p95_ms": 49.305,
+      "max_ms": 50.133
+    },
+    "documentos/responder": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 92.104,
+      "p95_ms": 191.285,
+      "max_ms": 215.839
+    },
+    "documentos/solicitar": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 44.139,
+      "p95_ms": 62.505,
+      "max_ms": 69.264
+    },
+    "documentos/upload-jwt": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 93.7,
+      "p95_ms": 145.361,
+      "max_ms": 146.779
+    },
+    "documentos/upload-professor": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 84.813,
+      "p95_ms": 166.51,
+      "max_ms": 181.444
+    },
+    "layout/gravar": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 26.967,
+      "p95_ms": 54.878,
+      "max_ms": 55.58
+    },
+    "layout/ler": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 18.599,
+      "p95_ms": 47.881,
+      "max_ms": 53.855
+    },
+    "leitura/saturacao": {
+      "requisicoes": 1200,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 209.26,
+      "p95_ms": 527.759,
+      "max_ms": 1333.245
+    },
+    "lgpd/exportar": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 66.587,
+      "p95_ms": 86.854,
+      "max_ms": 91.212
+    },
+    "lgpd/fila": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 29.671,
+      "p95_ms": 43.698,
+      "max_ms": 46.419
+    },
+    "lgpd/pedido": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 29.997,
+      "p95_ms": 42.298,
+      "max_ms": 48.779
+    },
+    "lgpd/protocolos": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 30.065,
+      "p95_ms": 39.44,
+      "max_ms": 50.171
+    },
+    "lgpd/resposta": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 25.737,
+      "p95_ms": 45.139,
+      "max_ms": 45.991
+    },
+    "professor/busca": {
+      "requisicoes": 25,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 33.384,
+      "p95_ms": 48.419,
+      "max_ms": 49.402
+    },
+    "professor/telas": {
+      "requisicoes": 50,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 39.163,
+      "p95_ms": 121.0,
+      "max_ms": 135.465
+    },
+    "publico/privacidade": {
+      "requisicoes": 13,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 12.652,
+      "p95_ms": 31.46,
+      "max_ms": 31.46
+    },
+    "super/alterar-perfil": {
+      "requisicoes": 58,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 35.295,
+      "p95_ms": 72.587,
+      "max_ms": 96.616
+    },
+    "super/criar-admin": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 119.797,
+      "p95_ms": 158.615,
+      "max_ms": 166.842
+    },
+    "super/tela": {
+      "requisicoes": 29,
+      "inesperadas": 0,
+      "http_5xx": 0,
+      "p50_ms": 137.318,
+      "p95_ms": 173.923,
+      "max_ms": 178.836
+    }
+  },
+  "ciclos_completos": 25,
+  "persistencia": {
+    "notas": 25,
+    "documentos": 100,
+    "pedidos_lgpd": 25,
+    "atividades": 25
+  },
+  "esperado": {
+    "notas": 25,
+    "documentos": 100,
+    "pedidos_lgpd": 25,
+    "atividades": 25
+  },
+  "integridade": true,
+  "erros": [
+    {
+      "stage": "fluxos-8-3",
+      "error": "cadastro/editar-aluno: expected 302, got 500; b'<!doctype html>\\n<html lang=en>\\n<title>500 Internal Server Error</title>\\n<h1>Internal Server Error</h1>\\n<p>The server encountered an internal error and was unable to complete your request. Either the s'"
+    },
+    {
+      "stage": "fluxos-8-3",
+      "error": "cadastro/editar-aluno: expected 302, got 500; b'<!doctype html>\\n<html lang=en>\\n<title>500 Internal Server Error</title>\\n<h1>Internal Server Error</h1>\\n<p>The server encountered an internal error and was unable to complete your request. Either the s'"
+    },
+    {
+      "stage": "fluxos-8-3",
+      "error": "cadastro/editar-aluno: expected 302, got 500; b'<!doctype html>\\n<html lang=en>\\n<title>500 Internal Server Error</title>\\n<h1>Internal Server Error</h1>\\n<p>The server encountered an internal error and was unable to complete your request. Either the s'"
+    },
+    {
+      "stage": "fluxos-8-3",
+      "error": "cadastro/editar-aluno: expected 302, got 500; b'<!doctype html>\\n<html lang=en>\\n<title>500 Internal Server Error</title>\\n<h1>Internal Server Error</h1>\\n<p>The server encountered an internal error and was unable to complete your request. Either the s'"
+    }
+  ],
+  "criterio_p95_ms": 5000,
+  "aprovado": false
+}

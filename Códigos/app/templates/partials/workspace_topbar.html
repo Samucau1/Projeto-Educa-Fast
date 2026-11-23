@@ -1,0 +1,7 @@
+{% from 'partials/gestao_icons.html' import icon %}
+{% set role = session.get('user_role') %}
+{% set role_labels = {'superadmin':'Superperfil', 'admin':'Administrador', 'professor':'Professor', 'aluno':'Aluno'} %}
+<header class="topbar">
+    <div class="breadcrumb">{{ 'Administração' if role in ['superadmin','admin'] else 'Minha escola' }} {{ icon('chevron') }} <span>{{ page_title|default('Educa Fast') }}</span></div>
+    <div class="topbar-actions"><span class="access-label">{{ icon('shield') }} {{ role_labels.get(role, 'Usuário') }}</span><a class="icon-button" href="{{ url_for('auth.logout') }}" title="Sair do sistema" aria-label="Sair do sistema">{{ icon('logout') }}</a></div>
+</header>

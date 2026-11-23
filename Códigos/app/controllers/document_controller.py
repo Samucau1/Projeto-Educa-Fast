@@ -1,11 +1,15 @@
 import os
+from datetime import datetime
 from uuid import uuid4
 
 from flask import current_app
 from werkzeug.utils import secure_filename
 
 from app.database import get_session
-from app.models import AlunoModel, DisciplinaModel, DocumentoModel, ProfessorModel
+from app.models import (AlunoModel, DisciplinaModel, DocumentoModel, ProfessorModel,
+                        AlunoTurmaModel, ProfessorTurmaModel, ProfessorDisciplinaModel,
+                        TurmaDisciplinaModel, SolicitacaoDocumentoModel)
+from app.security import save_upload
 
 
 def get_upload_folder():
@@ -38,7 +42,7 @@ def _get_or_create_disciplina(session_db, disciplina_id=None):
     return disciplina, None
 
 
-def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_override=None):
+def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_override=None, solicitacao_id=None):
     if "arquivo" not in files:
         return {"erro": "Arquivo nao enviado"}, 400
 
@@ -56,6 +60,15 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
     saved_path = None
 
     try:
+        solicitacao = None
+        if solicitacao_id:
+            # Conditional update claims the request atomically, including across workers.
+            claimed = session_db.query(SolicitacaoDocumentoModel).filter_by(
+                id=solicitacao_id, aluno_id=aluno_id, status="pendente"
+            ).update({"status": "processando"}, synchronize_session=False)
+            if not claimed:
+                return {"erro": "Solicitacao ja atendida ou indisponivel"}, 409
+            solicitacao = session_db.get(SolicitacaoDocumentoModel, solicitacao_id)
         aluno = session_db.get(AlunoModel, aluno_id)
         if not aluno:
             return {"erro": "Aluno nao encontrado"}, 404
@@ -70,6 +83,18 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
             if not professor:
                 return {"erro": "Professor nao encontrado para o usuario autenticado"}, 403
 
+            disciplina_id = form.get("disciplina_id", type=int)
+            vinculo = (session_db.query(AlunoTurmaModel)
+                       .join(ProfessorTurmaModel, ProfessorTurmaModel.turma_id == AlunoTurmaModel.turma_id)
+                       .join(TurmaDisciplinaModel, TurmaDisciplinaModel.turma_id == AlunoTurmaModel.turma_id)
+                       .join(ProfessorDisciplinaModel, ProfessorDisciplinaModel.disciplina_id == TurmaDisciplinaModel.disciplina_id)
+                       .filter(AlunoTurmaModel.aluno_id == aluno_id,
+                               ProfessorTurmaModel.professor_id == professor.id,
+                               ProfessorDisciplinaModel.professor_id == professor.id,
+                               TurmaDisciplinaModel.disciplina_id == disciplina_id).first())
+            if not vinculo:
+                return {"erro": "Aluno ou disciplina fora das turmas do professor"}, 403
+
         disciplina, error = _get_or_create_disciplina(
             session_db,
             form.get("disciplina_id", type=int),
@@ -83,7 +108,7 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
 
         filename = f"{uuid4().hex}_{original_filename}"
         saved_path = os.path.join(upload_folder, filename)
-        arquivo.save(saved_path)
+        save_upload(arquivo, saved_path)
 
         documento = DocumentoModel(
             aluno_id=aluno.id,
@@ -93,6 +118,11 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
             caminho_arquivo=filename,
         )
         session_db.add(documento)
+        if solicitacao:
+            session_db.flush()
+            solicitacao.documento_id = documento.id
+            solicitacao.status = "enviado"
+            solicitacao.completed_at = datetime.now()
         session_db.commit()
 
         return {
@@ -113,45 +143,3 @@ def upload_documento(form, files, current_user=None, is_admin=False, aluno_id_ov
         raise
     finally:
         session_db.close()
-
-
-def enviar_atividade_aluno(user_id, atividade_id, files):
-    from app.models import AtividadeModel, AlunoTurmaModel, TurmaDisciplinaModel
-    arquivo = files.get('arquivo')
-    if not arquivo or not arquivo.filename:
-        return {"erro": "Selecione o arquivo da atividade."}, 400
-    original = secure_filename(arquivo.filename)
-    if not original:
-        return {"erro": "Nome do arquivo inválido."}, 400
-    saved_path = None
-    with get_session() as db:
-        try:
-            aluno = db.query(AlunoModel).filter_by(usuario_id=user_id).first()
-            atividade = db.get(AtividadeModel, atividade_id)
-            if not aluno or not atividade:
-                return {"erro": "Atividade não encontrada."}, 404
-            if atividade.tipo != "atividade":
-                return {"erro": "Conteúdos não recebem entregas."}, 400
-            vinculo = db.query(AlunoTurmaModel).join(
-                TurmaDisciplinaModel, TurmaDisciplinaModel.turma_id == AlunoTurmaModel.turma_id
-            ).filter(AlunoTurmaModel.aluno_id == aluno.id,
-                     AlunoTurmaModel.turma_id == atividade.turma_id,
-                     TurmaDisciplinaModel.disciplina_id == atividade.disciplina_id).first()
-            if not vinculo:
-                return {"erro": "Atividade não encontrada para este aluno."}, 404
-            folder = get_upload_folder()
-            os.makedirs(folder, exist_ok=True)
-            filename = f"entrega_{uuid4().hex}_{original[-180:]}"
-            saved_path = os.path.join(folder, filename)
-            arquivo.save(saved_path)
-            documento = DocumentoModel(aluno_id=aluno.id, professor_id=atividade.professor_id,
-                disciplina_id=atividade.disciplina_id, atividade_id=atividade.id,
-                titulo=atividade.titulo, caminho_arquivo=filename)
-            db.add(documento)
-            db.commit()
-            return {"mensagem": "Atividade enviada com sucesso.", "id": documento.id}, 201
-        except Exception:
-            db.rollback()
-            if saved_path and os.path.exists(saved_path):
-                os.remove(saved_path)
-            raise

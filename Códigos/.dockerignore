@@ -1,9 +1,7 @@
-frontend/node_modules
-app/static/dist
-__pycache__
-**/__pycache__
 .env
-.venv
+.env.*
+certs
 uploads
-frontend/test-results
-frontend/playwright-report
+**/__pycache__
+**/*.pyc
+tests

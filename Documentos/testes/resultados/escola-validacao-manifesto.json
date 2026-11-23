@@ -1,0 +1,96 @@
+{
+  "commit_codigo_validado": "0fd637572ff7da8a0844e671cced6cfce3f0d30d",
+  "arvore_codigo": "5266741ddfffdead7d152a2f2f8bc3032761e5ba",
+  "protocolo_estatico_aprovado": true,
+  "capturas_inspecionadas_sha256": {
+    "boletim-personalizado-desktop.png": "08b96804757d4072a903aa837467945605c47a868d7626549a63c731d83c9fcc",
+    "boletim-personalizado-mobile.png": "1d24395f4f9b2df9efe0a68e060824920c2ced528f1111ac8ba04bb4a2b555b8",
+    "configuracao-padrao.png": "ffcbfc902a30add9bf8693960d10b1103a62d70468fd9c0524a249190cf33532",
+    "identidade-clara-desktop.png": "8c77313b1b173d5ea190d81e80c287d7a2e9d649cd4eb4d26d4655d416946d51",
+    "identidade-clara-mobile.png": "c504cbcdfa576917800f14b9fdd48badd2534519efa5ab99df17beb16ea5667b",
+    "login-personalizado-mobile.png": "d5969ebd0225042aaa345d2d75b203c16b21710038b8f83285153922ee6b2f67"
+  },
+  "evidencias": {
+    "regressao-resumo.json": {
+      "sha256": "e6191f419d54a8a96e5b423ca6ca1d14ee44617d957e7dc1a6687ca364f91a0e",
+      "resultado": {
+        "data_sao_paulo": "2026-10-24T18:17:40.723833-03:00",
+        "python": "3.14.3",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "SQLite em memória com foreign_keys=ON",
+        "testes": 81,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 4,
+        "duracao_segundos": 51.184,
+        "aprovado": true
+      }
+    },
+    "mysql/regressao-resumo.json": {
+      "sha256": "b0547cdd0582304b755913b85cbc8fe1628600760843f861e07f4d47ccc6740d",
+      "resultado": {
+        "data_sao_paulo": "2026-10-24T18:17:31.785416-03:00",
+        "python": "3.12.15",
+        "flask": "3.1.0",
+        "sqlalchemy": "2.0.44",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "testes": 81,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 0,
+        "duracao_segundos": 68.414,
+        "aprovado": true
+      }
+    },
+    "postman-resumo.json": {
+      "sha256": "7f628267b5ec2a663e08793b0805341dd4955bf7832ea95768ab57b1dd2f0838",
+      "resultado": {
+        "data_sao_paulo": "2026-10-24T18:18:42.482929-03:00",
+        "newman": "6.2.1",
+        "banco": "SQLite descartável com foreign_keys=ON",
+        "requisicoes": 201,
+        "verificacoes": 269,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 59.938,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "mysql/postman-resumo.json": {
+      "sha256": "10c35adb021e95a7532c8094fea48201127c26468b996b03aa6fcd3fee17b788",
+      "resultado": {
+        "data_sao_paulo": "2026-10-24T18:17:42.561114-03:00",
+        "newman": "6.2.1",
+        "banco": "MySQL 8.4 isolado no Docker",
+        "requisicoes": 201,
+        "verificacoes": 269,
+        "falhas": 0,
+        "erros": 0,
+        "duracao_segundos": 8.004,
+        "exit_code": 0,
+        "aprovado": true
+      }
+    },
+    "escola-interface/resumo.json": {
+      "sha256": "8a16d1e3221e981012e24aaf4f92708c867aae883567d9c17b1cf0d8ba2bbdfc",
+      "resultado": {
+        "aprovado": true,
+        "data": "2026-10-24T21:20:16.521Z",
+        "desktop": "1440x1000",
+        "mobile": "390x844",
+        "cenarios": [
+          "padrão EducaFast",
+          "calendário e recesso",
+          "semestres pesos 1/3",
+          "marca e paleta clara",
+          "boletim anual 6.50",
+          "isolamento do superadmin"
+        ],
+        "erros_javascript": []
+      }
+    }
+  },
+  "escopo": "Instalação de uma escola; dados sintéticos. Nenhuma configuração aplicada ao banco real."
+}

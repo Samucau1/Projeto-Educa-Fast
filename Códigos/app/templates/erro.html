@@ -1,0 +1,10 @@
+{% extends 'gestao_base.html' %}
+{% from 'partials/gestao_icons.html' import icon %}
+{% set page_title = titulo %}
+{% block content %}
+<section class="error-page panel">
+    <span class="error-code">{{ codigo }}</span><span class="error-symbol">{{ icon('lock' if codigo == 403 else 'search') }}</span>
+    <span class="eyebrow">VAMOS ENCONTRAR O CAMINHO</span><h1>{{ titulo }}<span>.</span></h1><p>{{ mensagem }}</p>
+    <div class="error-actions"><a class="button button-primary" href="{{ url_for('home.home') }}">{{ icon('grid') }} {{ 'Voltar ao meu painel' if session.get('user_id') else 'Ir para o login' }}</a>{% if session.get('user_id') %}<a class="button button-secondary" href="{{ url_for('gestao.mensagens') }}">Ver mensagens</a>{% endif %}</div>
+</section>
+{% endblock %}

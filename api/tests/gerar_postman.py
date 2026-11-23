@@ -13,7 +13,8 @@ def folder(name):
 
 
 def request(items, name, path, status=200, method="GET", data=None, json_body=None, scripts=(), bearer=None):
-    headers = []
+    # Telas são pedidas como a aplicação React (JSON); endpoints de API ignoram o cabeçalho.
+    headers = [{"key": "X-EducaFast-SPA", "value": "1"}]
     if method == "POST" and path != "/login" and not ("sem CSRF" in name):
         headers.append({"key": "X-CSRF-Token", "value": "{{csrf_token}}"})
     req = {"method": method, "header": headers, "url": "{{base_url}}" + path}
@@ -27,6 +28,12 @@ def request(items, name, path, status=200, method="GET", data=None, json_body=No
     checks = [f'pm.test("HTTP {status}", function () {{ pm.response.to.have.status({status}); }});']
     checks.extend(scripts)
     items.append({"name": name, "request": req, "protocolProfileBehavior": {"followRedirects": False}, "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": checks}}]})
+
+
+def json_eql(caminho, valor):
+    """Confere um valor dos dados da tela (JSON devolvido por render_page)."""
+    name = json.dumps(f"Valor esperado em {caminho}")
+    return f'pm.test({name}, function () {{ pm.expect(pm.response.json().{caminho}).to.eql({json.dumps(valor)}); }});'
 
 
 def contains(text):
@@ -44,9 +51,9 @@ def login(items, role):
 
 def csrf(items, path):
     request(items, "Obter formulario e CSRF", path, scripts=[
-        'const match = pm.response.text().match(/name="csrf_token" value="([^"]+)"/);',
-        'pm.test("CSRF presente", function () { pm.expect(match).not.to.eql(null); });',
-        'if (match) pm.collectionVariables.set("csrf_token", match[1]);',
+        'const token = pm.response.json().global.csrf_token;',
+        'pm.test("CSRF presente", function () { pm.expect(token).to.be.a("string").and.not.to.be.empty; });',
+        'if (token) pm.collectionVariables.set("csrf_token", token);',
     ])
 
 
@@ -86,7 +93,7 @@ def build():
     request(items, "Salvar cores", "/super/layout", 302, "POST", data={"cor_fundo": "#123456", "cor_destaque": "#abcdef", "csrf_token": "{{csrf_token}}"})
     request(items, "Cores persistidas", "/super/layout", scripts=[contains("#123456"), contains("#abcdef")])
     request(items, "Cor invalida rejeitada", "/super/layout", method="POST", data={"cor_fundo": "red;}", "cor_destaque": "#abcdef", "csrf_token": "{{csrf_token}}"}, scripts=[contains("#RRGGBB")])
-    request(items, "Cor anterior preservada", "/super/layout", scripts=[contains('value="#123456"')])
+    request(items, "Cor anterior preservada", "/super/layout", scripts=[json_eql("global.tema.cor_fundo", "#123456")])
     request(items, "Comunicado do superperfil", "/admin/comunicados", 302, "POST", data={"titulo": "Super {{run_id}}", "mensagem": "Comunicado do superperfil para todos", "csrf_token": "{{csrf_token}}"})
 
     items = folder("03 - Admin, turmas e comunicados")
@@ -106,7 +113,7 @@ def build():
     request(items, "Comunicado vazio", "/admin/comunicados", method="POST", data={"titulo": "", "mensagem": "Vazia", "csrf_token": "{{csrf_token}}"}, scripts=[contains("obrigatorios")])
     request(items, "Comunicado com titulo acima do limite", "/admin/comunicados", method="POST", data={"titulo": "x" * 151, "mensagem": "Limite", "csrf_token": "{{csrf_token}}"}, scripts=[contains("150")])
     request(items, "Publicar mensagem geral", "/admin/comunicados", 302, "POST", data={"titulo": "Regressao {{run_id}}", "mensagem": "Texto integral para todos <script>alert(1)</script>", "csrf_token": "{{csrf_token}}"})
-    request(items, "Mensagem publicada e escapada", "/mensagens", scripts=[contains("Texto integral para todos &lt;script&gt;"), contains("Comunicado do superperfil para todos")])
+    request(items, "Mensagem publicada e escapada", "/mensagens", scripts=[contains("Texto integral para todos <script>"), contains("Comunicado do superperfil para todos")])
     request(items, "Upload sem arquivo", "/arquivos/upload", 400, "POST", data={"aluno_id": "{{aluno_id}}"})
 
     items = folder("04 - Professor e regressao academica")
@@ -115,7 +122,7 @@ def build():
     request(items, "JWT professor", "/professor/teste", bearer="{{token_professor}}")
     request(items, "Busca aluno com JWT", "/alunos/busca?termo=Aluno", bearer="{{token_professor}}", scripts=['pm.test("Alunos encontrados", function () { pm.expect(pm.response.json().alunos.length).to.be.above(0); });'])
     request(items, "Busca vazia", "/alunos/busca", 400, bearer="{{token_professor}}")
-    request(items, "Professor le mensagens", "/mensagens", scripts=[contains("Texto integral para todos &lt;script&gt;")])
+    request(items, "Professor le mensagens", "/mensagens", scripts=[contains("Texto integral para todos <script>")])
     request(items, "Professor nao publica", "/admin/comunicados", 403, "POST", data={"titulo": "Bloqueada", "mensagem": "Bloqueada", "csrf_token": "{{csrf_token}}"})
     request(items, "Professor nao cria usuarios", "/cadastro/aluno", 403, "POST", json_body={"nome": "Bloqueado"})
     request(items, "Professor nao acessa admin", "/admin/dashboard", 403)
@@ -133,7 +140,7 @@ def build():
     login(items, "aluno")
     request(items, "Painel aluno", "/aluno")
     request(items, "Aluno ve disciplina e atividade", "/aluno/disciplinas/{{disciplina_id}}", scripts=[contains("Atividade API")])
-    request(items, "Aluno le mensagens e tema", "/mensagens", scripts=[contains("Texto integral para todos &lt;script&gt;"), contains("#123456")])
+    request(items, "Aluno le mensagens e tema", "/mensagens", scripts=[contains("Texto integral para todos <script>"), contains("#123456")])
     request(items, "Aluno nao publica", "/admin/comunicados", 403, "POST", data={"titulo": "Bloqueada", "mensagem": "Bloqueada", "csrf_token": "{{csrf_token}}"})
     request(items, "Aluno nao cria usuarios", "/cadastro/aluno", 403, "POST", json_body={"nome": "Bloqueado"})
     request(items, "Aluno nao usa JWT de professor", "/professor/teste", 403, bearer="{{token_aluno}}")
@@ -152,7 +159,7 @@ def build():
     request(items, "JWT antigo perde permissao de professor", "/professor/teste", 403, bearer="{{token_professor}}")
     request(items, "Restaurar professor", "/super/usuarios/{{professor_user_id}}/perfil", 302, "POST", data={"tipo": "professor", "csrf_token": "{{csrf_token}}"})
     request(items, "Restaurar cores padrao", "/super/layout", 302, "POST", data={"cor_fundo": "#06385d", "cor_destaque": "#22d3ee", "csrf_token": "{{csrf_token}}"})
-    request(items, "Conferir cores restauradas", "/super/layout", scripts=[contains('value="#06385d"')])
+    request(items, "Conferir cores restauradas", "/super/layout", scripts=[json_eql("global.tema.cor_fundo", "#06385d")])
     request(items, "Encerrar sessao", "/logout", 302, "POST")
 
     items = folder("07 - LGPD, privacidade e protecoes de sessao")
@@ -162,9 +169,9 @@ def build():
     request(items, "Solicitacao sem CSRF", "/minha-privacidade", 400, "POST", data={"tipo": "acesso"})
     request(items, "Registrar pedido LGPD", "/minha-privacidade", 302, "POST", data={"tipo": "correcao", "detalhe": "Pedido LGPD {{run_id}}"})
     request(items, "Consultar protocolo proprio", "/minha-privacidade", scripts=[
-        'const protocol = pm.response.text().match(/Protocolo (\\d+)/);',
-        'pm.test("Protocolo presente", function () { pm.expect(protocol).not.to.eql(null); });',
-        'if (protocol) pm.collectionVariables.set("pedido_lgpd_id", protocol[1]);',
+        'const pedidos = pm.response.json().dados.pedidos;',
+        'pm.test("Protocolo presente", function () { pm.expect(pedidos.length).to.be.above(0); });',
+        'if (pedidos.length) pm.collectionVariables.set("pedido_lgpd_id", String(pedidos[0].id));',
     ])
     export_checks = [
         'pm.test("Somente a conta titular", function () { pm.expect(pm.response.json().conta.email).to.eql("aluno@teste.local"); });',
@@ -215,8 +222,8 @@ def build():
     request(items, "Aluno acessa videoaula", "/aprender/{{oferta_id}}", scripts=[contains("Videoaula inicial")])
     request(items, "Confirmar conclusao", "/aprender/{{oferta_id}}/aulas/{{aula_id}}/concluir", 200, "POST", json_body={})
     request(items, "Conclusao idempotente", "/aprender/{{oferta_id}}/aulas/{{aula_id}}/concluir", 200, "POST", json_body={})
-    request(items, "Progresso concluido", "/aprender/{{oferta_id}}", scripts=[contains("100%")])
-    request(items, "Novo ano tem progresso independente", "/aprender/{{oferta_futura_id}}", scripts=[contains("0%"), contains("0 de 1 aulas")])
+    request(items, "Progresso concluido", "/aprender/{{oferta_id}}", scripts=[json_eql("dados.progresso", 100)])
+    request(items, "Novo ano tem progresso independente", "/aprender/{{oferta_futura_id}}", scripts=[json_eql("dados.progresso", 0), json_eql("dados.total", 1), json_eql("dados.concluidas.length", 0)])
     request(items, "Aluno sem autoria", "/cursos/{{curso_id}}", 403)
     login(items, "outro_aluno")
     request(items, "Outra matricula bloqueada", "/aprender/{{oferta_id}}", 404)
@@ -272,7 +279,7 @@ def build():
     login(items, "superadmin")
     request(items, "Configuracao institucional", "/super/escola")
     request(items, "Identidade personalizada com tokens", "/super/escola/identidade", 200, "POST", json_body={"versao": 0, "nome": "Escola API", "sigla": "API", "subtitulo": "APRENDER JUNTOS", "modo": "claro", "fundo": "#f3f6fb", "destaque": "#1d4ed8", "superficie": "#ffffff", "texto": "#18283b", "muted": "#475569", "raio": "12", "densidade": "confortavel", "fonte": "dm-sans"})
-    request(items, "Marca aparece nos paineis", "/mensagens", scripts=[contains("Escola API"), contains("school-theme")])
+    request(items, "Marca aparece nos paineis", "/mensagens", scripts=[contains("Escola API"), 'pm.test("Identidade da escola versionada", function () { pm.expect(pm.response.json().global.escola.versao).to.be.above(0); });'])
     request(items, "CSS arbitrario recusado", "/super/escola/identidade", 400, "POST", json_body={"versao": 1, "nome": "Escola API", "sigla": "API", "subtitulo": "Escola", "fundo": "red;}", "destaque": "#1d4ed8", "superficie": "#ffffff", "texto": "#18283b", "muted": "#475569"})
     request(items, "Criar calendario institucional", "/super/escola/calendarios", 201, "POST", json_body={"ano": 2028, "nome": "Calendario 2028", "inicio": "2028-01-01", "fim": "2028-12-31", "dias_semana": [0, 1, 2, 3, 4], "meta_letivos": 200}, scripts=['if (pm.response.code === 201) pm.collectionVariables.set("calendario_escola", pm.response.json().calendario_id);'])
     request(items, "Recesso informado pela escola", "/super/escola/calendarios/{{calendario_escola}}/eventos", 201, "POST", json_body={"versao": 1, "titulo": "Recesso de demonstracao", "tipo": "recesso", "inicio": "2028-02-10"})

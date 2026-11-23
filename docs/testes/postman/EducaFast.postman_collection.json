@@ -12,7 +12,12 @@
           "name": "Inicio e identificador da execucao",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/"
           },
           "protocolProfileBehavior": {
@@ -35,7 +40,12 @@
           "name": "Visitante bloqueado: /mensagens",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -57,7 +67,12 @@
           "name": "Visitante bloqueado: /admin/dashboard",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/dashboard"
           },
           "protocolProfileBehavior": {
@@ -79,7 +94,12 @@
           "name": "Visitante bloqueado: /super/usuarios",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios"
           },
           "protocolProfileBehavior": {
@@ -101,7 +121,12 @@
           "name": "Visitante bloqueado: /super/layout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -124,6 +149,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -165,6 +194,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -200,6 +233,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -237,6 +274,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -272,6 +313,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -309,6 +354,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -345,6 +394,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -379,7 +432,12 @@
           "name": "JWT ausente",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/professor/teste"
           },
           "protocolProfileBehavior": {
@@ -402,6 +460,10 @@
           "request": {
             "method": "GET",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer token.invalido.assinatura"
@@ -434,6 +496,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -471,7 +537,12 @@
           "name": "Obter formulario e CSRF",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios"
           },
           "protocolProfileBehavior": {
@@ -484,9 +555,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
-                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
-                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                  "const token = pm.response.json().global.csrf_token;",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(token).to.be.a(\"string\").and.not.to.be.empty; });",
+                  "if (token) pm.collectionVariables.set(\"csrf_token\", token);"
                 ]
               }
             }
@@ -497,6 +568,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -539,6 +614,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -578,6 +657,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -619,6 +702,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -658,6 +745,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -699,6 +790,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -739,6 +834,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -778,6 +877,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -821,6 +924,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -863,6 +970,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -904,6 +1015,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -955,7 +1070,12 @@
           "name": "Obter formulario e CSRF",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -968,9 +1088,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
-                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
-                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                  "const token = pm.response.json().global.csrf_token;",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(token).to.be.a(\"string\").and.not.to.be.empty; });",
+                  "if (token) pm.collectionVariables.set(\"csrf_token\", token);"
                 ]
               }
             }
@@ -980,7 +1100,12 @@
           "name": "Cores sem CSRF",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout",
             "body": {
               "mode": "urlencoded",
@@ -1018,6 +1143,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1064,7 +1193,12 @@
           "name": "Cores persistidas",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -1089,6 +1223,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1136,7 +1274,12 @@
           "name": "Cor anterior preservada",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -1149,7 +1292,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: value=\\\"#123456\\\"\", function () { pm.expect(pm.response.text()).to.include(\"value=\\\"#123456\\\"\"); });"
+                  "pm.test(\"Valor esperado em global.tema.cor_fundo\", function () { pm.expect(pm.response.json().global.tema.cor_fundo).to.eql(\"#123456\"); });"
                 ]
               }
             }
@@ -1160,6 +1303,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1213,6 +1360,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -1249,7 +1400,12 @@
           "name": "Tela /admin/dashboard",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/dashboard"
           },
           "protocolProfileBehavior": {
@@ -1271,7 +1427,12 @@
           "name": "Tela /admin/cadastro-alunos",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/cadastro-alunos"
           },
           "protocolProfileBehavior": {
@@ -1293,7 +1454,12 @@
           "name": "Tela /admin/cadastro-professores",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/cadastro-professores"
           },
           "protocolProfileBehavior": {
@@ -1315,7 +1481,12 @@
           "name": "Tela /admin/banco-de-dados",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/banco-de-dados"
           },
           "protocolProfileBehavior": {
@@ -1337,7 +1508,12 @@
           "name": "Tela /admin/disciplinas",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/disciplinas"
           },
           "protocolProfileBehavior": {
@@ -1359,7 +1535,12 @@
           "name": "Tela /admin/turmas",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/turmas"
           },
           "protocolProfileBehavior": {
@@ -1382,6 +1563,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1421,7 +1606,12 @@
           "name": "Admin sem acesso ao superperfil",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios"
           },
           "protocolProfileBehavior": {
@@ -1443,7 +1633,12 @@
           "name": "Admin sem acesso ao layout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -1466,6 +1661,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1514,6 +1713,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -1560,6 +1763,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1608,6 +1815,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -1655,6 +1866,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -1700,7 +1915,12 @@
           "name": "Obter formulario e CSRF",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados"
           },
           "protocolProfileBehavior": {
@@ -1713,9 +1933,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
-                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
-                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                  "const token = pm.response.json().global.csrf_token;",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(token).to.be.a(\"string\").and.not.to.be.empty; });",
+                  "if (token) pm.collectionVariables.set(\"csrf_token\", token);"
                 ]
               }
             }
@@ -1725,7 +1945,12 @@
           "name": "Comunicado sem CSRF",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/comunicados",
             "body": {
               "mode": "urlencoded",
@@ -1763,6 +1988,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1812,6 +2041,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -1860,6 +2093,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -1905,7 +2142,12 @@
           "name": "Mensagem publicada e escapada",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -1918,7 +2160,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });",
+                  "pm.test(\"Conteudo esperado: Texto integral para todos <script>\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos <script>\"); });",
                   "pm.test(\"Conteudo esperado: Comunicado do superperfil para todos\", function () { pm.expect(pm.response.text()).to.include(\"Comunicado do superperfil para todos\"); });"
                 ]
               }
@@ -1930,6 +2172,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -1973,6 +2219,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -2009,7 +2259,12 @@
           "name": "Painel professor",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/professor"
           },
           "protocolProfileBehavior": {
@@ -2032,6 +2287,10 @@
           "request": {
             "method": "GET",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{token_professor}}"
@@ -2059,6 +2318,10 @@
           "request": {
             "method": "GET",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{token_professor}}"
@@ -2088,6 +2351,10 @@
             "method": "GET",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Authorization",
                 "value": "Bearer {{token_professor}}"
               }
@@ -2113,7 +2380,12 @@
           "name": "Professor le mensagens",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -2126,7 +2398,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });"
+                  "pm.test(\"Conteudo esperado: Texto integral para todos <script>\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos <script>\"); });"
                 ]
               }
             }
@@ -2137,6 +2409,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2185,6 +2461,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -2223,7 +2503,12 @@
           "name": "Professor nao acessa admin",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/dashboard"
           },
           "protocolProfileBehavior": {
@@ -2246,6 +2531,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2299,6 +2588,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -2345,6 +2638,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2398,6 +2695,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -2449,6 +2750,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2502,6 +2807,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -2553,6 +2862,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2606,6 +2919,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -2657,6 +2974,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2710,6 +3031,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -2761,6 +3086,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2819,6 +3148,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -2855,7 +3188,12 @@
           "name": "Painel aluno",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aluno"
           },
           "protocolProfileBehavior": {
@@ -2877,7 +3215,12 @@
           "name": "Aluno ve disciplina e atividade",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aluno/disciplinas/{{disciplina_id}}"
           },
           "protocolProfileBehavior": {
@@ -2900,7 +3243,12 @@
           "name": "Aluno le mensagens e tema",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -2913,7 +3261,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: Texto integral para todos &lt;script&gt;\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos &lt;script&gt;\"); });",
+                  "pm.test(\"Conteudo esperado: Texto integral para todos <script>\", function () { pm.expect(pm.response.text()).to.include(\"Texto integral para todos <script>\"); });",
                   "pm.test(\"Conteudo esperado: #123456\", function () { pm.expect(pm.response.text()).to.include(\"#123456\"); });"
                 ]
               }
@@ -2925,6 +3273,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -2973,6 +3325,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -3013,6 +3369,10 @@
             "method": "GET",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Authorization",
                 "value": "Bearer {{token_aluno}}"
               }
@@ -3039,6 +3399,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3090,7 +3454,12 @@
           "name": "Aluno bloqueado: /super/usuarios",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios"
           },
           "protocolProfileBehavior": {
@@ -3112,7 +3481,12 @@
           "name": "Aluno bloqueado: /super/layout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -3134,7 +3508,12 @@
           "name": "Aluno bloqueado: /admin/dashboard",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/dashboard"
           },
           "protocolProfileBehavior": {
@@ -3156,7 +3535,12 @@
           "name": "Aluno bloqueado: /professor",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/professor"
           },
           "protocolProfileBehavior": {
@@ -3179,6 +3563,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -3216,7 +3604,12 @@
           "name": "Outro aluno nao ve disciplina",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aluno/disciplinas/{{disciplina_id}}"
           },
           "protocolProfileBehavior": {
@@ -3239,6 +3632,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3265,7 +3662,12 @@
           "name": "Mensagens bloqueadas apos logout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -3293,6 +3695,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -3330,7 +3736,12 @@
           "name": "Obter formulario e CSRF",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/usuarios"
           },
           "protocolProfileBehavior": {
@@ -3343,9 +3754,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "const match = pm.response.text().match(/name=\"csrf_token\" value=\"([^\"]+)\"/);",
-                  "pm.test(\"CSRF presente\", function () { pm.expect(match).not.to.eql(null); });",
-                  "if (match) pm.collectionVariables.set(\"csrf_token\", match[1]);"
+                  "const token = pm.response.json().global.csrf_token;",
+                  "pm.test(\"CSRF presente\", function () { pm.expect(token).to.be.a(\"string\").and.not.to.be.empty; });",
+                  "if (token) pm.collectionVariables.set(\"csrf_token\", token);"
                 ]
               }
             }
@@ -3356,6 +3767,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3409,6 +3824,10 @@
             "method": "GET",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Authorization",
                 "value": "Bearer {{token_professor}}"
               }
@@ -3435,6 +3854,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3477,6 +3900,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3523,7 +3950,12 @@
           "name": "Conferir cores restauradas",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/layout"
           },
           "protocolProfileBehavior": {
@@ -3536,7 +3968,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: value=\\\"#06385d\\\"\", function () { pm.expect(pm.response.text()).to.include(\"value=\\\"#06385d\\\"\"); });"
+                  "pm.test(\"Valor esperado em global.tema.cor_fundo\", function () { pm.expect(pm.response.json().global.tema.cor_fundo).to.eql(\"#06385d\"); });"
                 ]
               }
             }
@@ -3547,6 +3979,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3578,7 +4014,12 @@
           "name": "Aviso publico de privacidade",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/privacidade"
           },
           "protocolProfileBehavior": {
@@ -3601,7 +4042,12 @@
           "name": "Visitante sem dados pessoais",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -3624,6 +4070,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -3661,7 +4111,12 @@
           "name": "Solicitacao sem CSRF",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade",
             "body": {
               "mode": "urlencoded",
@@ -3694,6 +4149,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3735,7 +4194,12 @@
           "name": "Consultar protocolo proprio",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -3748,9 +4212,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "const protocol = pm.response.text().match(/Protocolo (\\d+)/);",
-                  "pm.test(\"Protocolo presente\", function () { pm.expect(protocol).not.to.eql(null); });",
-                  "if (protocol) pm.collectionVariables.set(\"pedido_lgpd_id\", protocol[1]);"
+                  "const pedidos = pm.response.json().dados.pedidos;",
+                  "pm.test(\"Protocolo presente\", function () { pm.expect(pedidos.length).to.be.above(0); });",
+                  "if (pedidos.length) pm.collectionVariables.set(\"pedido_lgpd_id\", String(pedidos[0].id));"
                 ]
               }
             }
@@ -3761,6 +4225,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -3792,6 +4260,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -3820,7 +4292,12 @@
           "name": "Aluno sem fila administrativa",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/privacidade"
           },
           "protocolProfileBehavior": {
@@ -3843,6 +4320,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -3880,7 +4361,12 @@
           "name": "Outro aluno nao ve o protocolo",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -3904,6 +4390,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -3941,7 +4431,12 @@
           "name": "Professor sem fila administrativa",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/privacidade"
           },
           "protocolProfileBehavior": {
@@ -3964,6 +4459,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -4003,6 +4502,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               },
@@ -4041,7 +4544,12 @@
           "name": "Fila administrativa de privacidade",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/admin/privacidade"
           },
           "protocolProfileBehavior": {
@@ -4064,6 +4572,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4107,6 +4619,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               }
@@ -4149,6 +4665,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -4185,7 +4705,12 @@
           "name": "Titular recebe resposta",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -4208,7 +4733,12 @@
           "name": "GET logout apenas confirma",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/logout"
           },
           "protocolProfileBehavior": {
@@ -4230,7 +4760,12 @@
           "name": "Sessao continua apos GET logout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -4253,6 +4788,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4279,7 +4818,12 @@
           "name": "Dados bloqueados apos logout",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/minha-privacidade"
           },
           "protocolProfileBehavior": {
@@ -4307,6 +4851,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -4345,6 +4893,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4387,6 +4939,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4427,6 +4983,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4469,6 +5029,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4508,6 +5072,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4550,6 +5118,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4588,7 +5160,12 @@
           "name": "Previa do professor",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/cursos/{{curso_id}}"
           },
           "protocolProfileBehavior": {
@@ -4612,6 +5189,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -4650,6 +5231,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4691,6 +5276,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4731,6 +5320,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4770,6 +5363,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4812,6 +5409,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4853,6 +5454,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4893,6 +5498,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -4932,6 +5541,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -4974,6 +5587,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -5010,7 +5627,12 @@
           "name": "Biblioteca do aluno",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/cursos"
           },
           "protocolProfileBehavior": {
@@ -5033,7 +5655,12 @@
           "name": "Aluno acessa videoaula",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aprender/{{oferta_id}}"
           },
           "protocolProfileBehavior": {
@@ -5057,6 +5684,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5098,6 +5729,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5136,7 +5771,12 @@
           "name": "Progresso concluido",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aprender/{{oferta_id}}"
           },
           "protocolProfileBehavior": {
@@ -5149,7 +5789,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: 100%\", function () { pm.expect(pm.response.text()).to.include(\"100%\"); });"
+                  "pm.test(\"Valor esperado em dados.progresso\", function () { pm.expect(pm.response.json().dados.progresso).to.eql(100); });"
                 ]
               }
             }
@@ -5159,7 +5799,12 @@
           "name": "Novo ano tem progresso independente",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aprender/{{oferta_futura_id}}"
           },
           "protocolProfileBehavior": {
@@ -5172,8 +5817,9 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
-                  "pm.test(\"Conteudo esperado: 0%\", function () { pm.expect(pm.response.text()).to.include(\"0%\"); });",
-                  "pm.test(\"Conteudo esperado: 0 de 1 aulas\", function () { pm.expect(pm.response.text()).to.include(\"0 de 1 aulas\"); });"
+                  "pm.test(\"Valor esperado em dados.progresso\", function () { pm.expect(pm.response.json().dados.progresso).to.eql(0); });",
+                  "pm.test(\"Valor esperado em dados.total\", function () { pm.expect(pm.response.json().dados.total).to.eql(1); });",
+                  "pm.test(\"Valor esperado em dados.concluidas.length\", function () { pm.expect(pm.response.json().dados.concluidas.length).to.eql(0); });"
                 ]
               }
             }
@@ -5183,7 +5829,12 @@
           "name": "Aluno sem autoria",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/cursos/{{curso_id}}"
           },
           "protocolProfileBehavior": {
@@ -5206,6 +5857,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -5243,7 +5898,12 @@
           "name": "Outra matricula bloqueada",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aprender/{{oferta_id}}"
           },
           "protocolProfileBehavior": {
@@ -5266,6 +5926,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -5304,6 +5968,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5346,6 +6014,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5386,6 +6058,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -5423,6 +6099,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5464,6 +6144,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -5500,7 +6184,12 @@
           "name": "Revogacao imediata",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/aprender/{{oferta_id}}"
           },
           "protocolProfileBehavior": {
@@ -5528,6 +6217,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -5565,7 +6258,12 @@
           "name": "Previa das atribuicoes sem alterar dados",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/academico/reconciliar/{{turma_id}}?formato=json"
           },
           "protocolProfileBehavior": {
@@ -5590,6 +6288,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5630,6 +6332,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5672,6 +6378,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5711,7 +6421,12 @@
           "name": "Consultar ofertas academicas",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/academico?formato=json"
           },
           "protocolProfileBehavior": {
@@ -5737,6 +6452,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -5775,6 +6494,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5817,6 +6540,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5858,6 +6585,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5897,6 +6628,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -5938,6 +6673,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -5977,6 +6716,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6018,6 +6761,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -6057,6 +6804,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6098,6 +6849,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -6134,7 +6889,12 @@
           "name": "Boletim preserva dois anos",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/boletim?formato=json"
           },
           "protocolProfileBehavior": {
@@ -6158,7 +6918,12 @@
           "name": "Aluno nao acessa diario do professor",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/academico/avaliacoes/{{avaliacao_atual}}"
           },
           "protocolProfileBehavior": {
@@ -6181,6 +6946,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -6218,7 +6987,12 @@
           "name": "Boletim nao revela notas de outro aluno",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/boletim?formato=json"
           },
           "protocolProfileBehavior": {
@@ -6242,6 +7016,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -6280,6 +7058,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6321,6 +7103,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -6358,6 +7144,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6404,6 +7194,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -6440,7 +7234,12 @@
           "name": "Admin nao altera regras institucionais",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/escola"
           },
           "protocolProfileBehavior": {
@@ -6463,6 +7262,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -6500,7 +7303,12 @@
           "name": "Configuracao institucional",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/escola"
           },
           "protocolProfileBehavior": {
@@ -6523,6 +7331,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6562,7 +7374,12 @@
           "name": "Marca aparece nos paineis",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/mensagens"
           },
           "protocolProfileBehavior": {
@@ -6576,7 +7393,7 @@
                 "exec": [
                   "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
                   "pm.test(\"Conteudo esperado: Escola API\", function () { pm.expect(pm.response.text()).to.include(\"Escola API\"); });",
-                  "pm.test(\"Conteudo esperado: school-theme\", function () { pm.expect(pm.response.text()).to.include(\"school-theme\"); });"
+                  "pm.test(\"Identidade da escola versionada\", function () { pm.expect(pm.response.json().global.escola.versao).to.be.above(0); });"
                 ]
               }
             }
@@ -6587,6 +7404,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6627,6 +7448,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6669,6 +7494,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -6709,6 +7538,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -6748,6 +7581,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6790,6 +7627,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -6831,6 +7672,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
               },
@@ -6870,6 +7715,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6911,6 +7760,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -6948,6 +7801,10 @@
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
               {
                 "key": "X-CSRF-Token",
                 "value": "{{csrf_token}}"
@@ -6989,6 +7846,10 @@
             "method": "POST",
             "header": [
               {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              },
+              {
                 "key": "Content-Type",
                 "value": "application/json"
               }
@@ -7025,7 +7886,12 @@
           "name": "Calendario visivel a comunidade",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/calendario-escolar"
           },
           "protocolProfileBehavior": {
@@ -7048,7 +7914,12 @@
           "name": "Aluno sem acesso a configuracao",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "X-EducaFast-SPA",
+                "value": "1"
+              }
+            ],
             "url": "{{base_url}}/super/escola"
           },
           "protocolProfileBehavior": {

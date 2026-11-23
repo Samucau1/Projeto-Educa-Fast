@@ -1,6 +1,6 @@
 # Educa Fast — API (backend Flask)
 
-Backend do Educa Fast. Nesta versão, ele também serve as telas web (templates Jinja) em `http://localhost:5000`.
+API do Educa Fast: dados, regras de negócio e permissões de todas as telas. Ela também serve o build da aplicação web ([`web/`](../web/README.md)), então o sistema completo fica em `http://localhost:5000`.
 
 ## Instalação, configuração e execução
 
@@ -9,11 +9,11 @@ Backend do Educa Fast. Nesta versão, ele também serve as telas web (templates 
 | Forma de execução | Requisitos |
 | --- | --- |
 | Docker (recomendado) | Git, Docker e Docker Compose (comando `docker compose`), porta `5000` livre |
-| Local, sem Docker | Git, Python 3.12, MySQL 8 com banco e usuário criados |
+| Local, sem Docker | Git, Python 3.12, Node.js 22 e npm (build da web), MySQL 8 com banco e usuário criados |
 
 ### Dependências
 
-As dependências Python estão em [`requirements.txt`](requirements.txt): Flask, SQLAlchemy, PyMySQL, python-dotenv, cryptography, gunicorn e as demais bibliotecas usadas. No Docker elas são instaladas automaticamente durante o build. Fora do Docker, instale com `pip` (passo 3 da execução local).
+As dependências Python estão em [`requirements.txt`](requirements.txt): Flask, SQLAlchemy, PyMySQL, python-dotenv, cryptography, gunicorn e as demais bibliotecas usadas. As dependências da interface estão em [`web/package.json`](../web/package.json). No Docker, tudo é instalado e compilado automaticamente durante o build da imagem. Fora do Docker, siga os passos 3 e 4 da execução local.
 
 ### Variáveis de ambiente
 
@@ -56,6 +56,8 @@ O primeiro comando gera a `SECRET_KEY` e o segundo, a `DATA_ENCRYPTION_KEY`. Se 
 | `UPLOAD_FOLDER` | Não | Pasta de uploads. Padrão `uploads`. |
 
 ### Executar com Docker (recomendado)
+
+O build da imagem compila também a aplicação web (`web/`); por isso o Compose usa a raiz do repositório como contexto.
 
 ```bash
 docker compose up -d --build
@@ -100,13 +102,21 @@ Acesse [http://localhost:5000](http://localhost:5000). Para ver os logs, use `do
    python -m pip install -r requirements.txt
    ```
 
-4. Inicie a aplicação, que fica em `http://localhost:5000`:
+4. Gere o build da aplicação web (sai em `app/static/dist/`):
+
+   ```bash
+   cd ../web && npm ci && npm run build && cd ../api
+   ```
+
+5. Inicie a aplicação, que fica em `http://localhost:5000`:
 
    ```bash
    python app.py
    ```
 
-5. Em outro terminal, com o ambiente ativo e as tabelas já criadas, rode `python -m app.seed` e `flask --app app.py criar-superusuario`.
+   Sem o passo 4, a API funciona, mas as telas exibem um aviso de build ausente.
+
+6. Em outro terminal, com o ambiente ativo e as tabelas já criadas, rode `python -m app.seed` e `flask --app app.py criar-superusuario`.
 
 ### Executar os testes
 
@@ -129,9 +139,9 @@ api/
 │   ├── models/         # Entidades e relacionamentos SQLAlchemy
 │   ├── routes/         # Blueprints e verificações de acesso
 │   ├── services/       # Regras acadêmicas, cursos e configuração da escola
-│   ├── static/         # CSS, JavaScript e fontes das telas
-│   ├── templates/      # Páginas Jinja
-│   ├── views/          # Funções de renderização e páginas de erro
+│   ├── static/dist/    # Build da aplicação web (gerado; fora do Git)
+│   ├── views/          # Telas de entrada, painel e páginas de erro
+│   ├── spa.py          # render_page: dados das telas em JSON para a aplicação React
 │   ├── auth.py         # Geração e validação de JWT
 │   ├── crypto.py       # Criptografia de dados pessoais
 │   ├── security.py     # CSRF, cabeçalhos e limites de requisição
@@ -149,6 +159,8 @@ api/
 ```
 
 ## Principais rotas
+
+As rotas de tela respondem com JSON quando recebem o cabeçalho `X-EducaFast-SPA: 1` (é o que a aplicação web envia) e com o `index.html` da aplicação web quando abertas direto no navegador. `GET /api/rotas` devolve o mapa de rotas usado pela interface para montar os links.
 
 | Método | Caminho | Finalidade |
 | --- | --- | --- |

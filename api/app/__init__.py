@@ -7,11 +7,8 @@ from .routes import register_routes
 
 
 def create_app():
-    app = Flask(
-        __name__,
-        template_folder="templates",
-        static_folder="static",
-    )
+    # As telas são desenhadas pela aplicação React (web/); o build fica em static/dist.
+    app = Flask(__name__, static_folder="static")
     app.config.from_object(Config)
     secret = app.config.get("SECRET_KEY") or ""
     if len(secret) < 32 or secret in {"desenvolvimento-web-flask", "troque-esta-chave-por-uma-chave-longa-e-aleatoria"}:

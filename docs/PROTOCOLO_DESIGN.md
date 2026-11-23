@@ -1,10 +1,10 @@
 # Protocolo de design EducaFast — v1
 
-Data: 24/10/2026. Obrigatório para novas interfaces e alterações visuais deste repositório. Referência: `design_system.css`, `app.css`, `gestao_base.html`, `workspace_head.html`, menu, topbar e telas existentes de gestão. A identidade padrão permanece escura, com DM Sans, destaque ciano, cartões, bordas discretas e navegação lateral que se adapta ao móvel.
+Data: 24/10/2026. Obrigatório para novas interfaces e alterações visuais deste repositório. Referência: `design_system.css`, `app.css` (em `web/public/css/`), os componentes `GestaoBase`, `WorkspaceSidebar`, `WorkspaceTopbar` e `headWorkspace` (em `web/src/`) e as telas existentes de gestão. A identidade padrão permanece escura, com DM Sans, destaque ciano, cartões, bordas discretas e navegação lateral que se adapta ao móvel.
 
 ## 1. Composição
 
-- Estender `gestao_base.html`; reutilizar menu, topbar, ícones e os estados de erro/sucesso existentes. Telas públicas com estrutura própria devem incluir `workspace_head.html`.
+- Usar o componente `GestaoBase` (`web/src/components/GestaoBase.jsx`); reutilizar menu, topbar, ícones (`Icon`) e os estados de erro/sucesso existentes. Telas públicas com estrutura própria devem incluir `headWorkspace` (`web/src/core/head.js`) no `head` da tela.
 - Usar `page-heading`, `eyebrow`, `panel`, `button`, `button-primary`, `button-secondary`, `notice` e os componentes de formulário/tabela já existentes. Os módulos acadêmicos usam os componentes `course-*`, centralizados em `escola.css`.
 - Hierarquia: título da página, descrição curta, ações primárias e cartões por assunto. Rascunho, pendência, bloqueio e estado vazio precisam ser compreensíveis.
 - Evitar informações técnicas de banco, tokens, migração ou implementação no fluxo do usuário. Explicar consequências: aplicação de regras, proteção de histórico e alteração de acessos.
@@ -15,7 +15,7 @@ Usar `--page`, `--surface`, `--surface-hover`, `--line`, `--text`, `--muted`, `-
 
 O superadmin pode alterar nome, sigla, subtítulo, cores, modo claro/escuro, DM Sans/fonte do dispositivo, espaçamento e raio dentro das opções suportadas. O sistema valida valores e contraste. Não aceitar CSS, HTML, JavaScript, URLs de fonte ou código arbitrário como configuração.
 
-`workspace_head.html` é a única fronteira autorizada para emitir tokens dinâmicos em um bloco de estilo: valores vêm de enums, cores hexadecimais e textos previamente validados. Templates novos não devem usar `style=`, `<style>`, eventos inline ou CDN. Templates legados existentes têm exceções históricas; ao alterá-las, remover a exceção na área tocada quando viável.
+`headWorkspace` (`web/src/core/head.js`) é a única fronteira autorizada para emitir tokens dinâmicos em um bloco de estilo: valores vêm de enums, cores hexadecimais e textos previamente validados. Telas novas não devem usar `style`, `<style>`, HTML inline (`dangerouslySetInnerHTML`) ou CDN. Telas legadas existentes têm exceções históricas; ao alterá-las, remover a exceção na área tocada quando viável.
 
 ## 3. Interação e acessibilidade
 
@@ -31,4 +31,4 @@ A validação interna exige contraste mínimo de 4,5 entre textos e superfície.
 4. Capturar e inspecionar visualmente a interface padrão e a personalização exercitada, em desktop e móvel. Registrar limitações reais.
 5. Registrar evidências com referência ao commit, revisar o diff e só então publicar.
 
-Uma mudança não recebe aprovação visual apenas porque o CSS compila. Ajustar os componentes em caso de contraste ruim, corte, desalinhamento ou diferença injustificada em relação ao padrão EducaFast. Os testes de navegador específicos ficam em `tests/verificar_*.cjs`; relatórios em `docs/testes/`.
+Uma mudança não recebe aprovação visual apenas porque o CSS compila. Ajustar os componentes em caso de contraste ruim, corte, desalinhamento ou diferença injustificada em relação ao padrão EducaFast. Os testes de navegador específicos ficam em `api/tests/verificar_*.cjs`; relatórios em `docs/testes/`.

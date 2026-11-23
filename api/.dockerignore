@@ -1,7 +1,0 @@
-.env
-.env.*
-certs
-uploads
-**/__pycache__
-**/*.pyc
-tests

@@ -1,7 +1,31 @@
 """Autoriza somente SQLite descartável ou o MySQL exclusivo do Compose de testes."""
 import os
 
+from flask.testing import FlaskClient
 from sqlalchemy.engine import make_url
+
+
+class ClienteSPA(FlaskClient):
+    """Cliente de testes que pede as telas no formato usado pela SPA (JSON)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.environ_base["HTTP_X_EDUCAFAST_SPA"] = "1"
+
+
+def tela(resposta):
+    """Dados da tela (JSON devolvido por render_page)."""
+    return resposta.get_json()
+
+
+def texto_tela(resposta):
+    """Todo o conteúdo da tela como texto, para procurar valores exibidos.
+
+    O React renderiza esses valores sempre como texto (nunca como HTML), então um
+    conteúdo como "<script>" chega intacto nos dados e aparece escapado na página.
+    """
+    import json
+    return json.dumps(tela(resposta), ensure_ascii=False)
 
 
 def mysql_de_testes():
@@ -17,6 +41,9 @@ def validar_mysql(url):
 
 
 def configurar_banco_testes():
+    # Os testes conversam com a API como a aplicação React: as telas respondem com JSON.
+    from flask import Flask
+    Flask.test_client_class = ClienteSPA
     # Somente o ambiente de testes recebe esta chave sintetica.
     os.environ["SECRET_KEY"] = "testes-isolados-chave-sintetica-2026-educafast"
     os.environ["DATA_ENCRYPTION_KEY"] = "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="

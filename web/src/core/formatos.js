@@ -6,3 +6,8 @@ export function dataBR(valor) {
     const [a, m, d] = String(valor).slice(0, 10).split('-');
     return `${d}/${m}/${a}`;
 }
+
+// O Jinja exibe None como o texto "None"; mantém a mesma saída para valores nulos.
+export function j(valor) {
+    return valor === null || valor === undefined ? 'None' : valor;
+}

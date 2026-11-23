@@ -6,6 +6,26 @@ on:
   pull_request:
 
 jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build da aplicação React
+        run: npm run build
+
   testes:
     runs-on: ubuntu-latest
     defaults:
@@ -21,6 +41,9 @@ jobs:
 
       - name: Instalar dependências
         run: pip install -r requirements.txt
+
+      - name: Verificar protocolo de design
+        run: python tests/verificar_protocolo_design.py
 
       - name: Rodar testes (SQLite em memória)
         working-directory: api/tests

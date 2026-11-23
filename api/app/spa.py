@@ -103,12 +103,16 @@ def page_payload(page, data):
     return payload
 
 
+BUILD_AUSENTE = "Build do front-end ausente. Execute 'npm ci' e 'npm run build' na pasta web/."
+
+
 def spa_index():
+    """index.html gerado pelo build do React (web/), ou um aviso quando o build não existe."""
     index = Path(current_app.static_folder) / "dist" / "index.html"
     if not index.is_file():
-        return ("Build do front-end ausente. Execute 'npm ci' e 'npm run build' na pasta web/.", 503,
-                {"Content-Type": "text/plain; charset=utf-8"})
-    return index.read_text(encoding="utf-8"), 200, {"Content-Type": "text/html; charset=utf-8"}
+        current_app.logger.warning(BUILD_AUSENTE)
+        return BUILD_AUSENTE, "text/plain; charset=utf-8"
+    return index.read_text(encoding="utf-8"), "text/html; charset=utf-8"
 
 
 def render_page(page, status=200, **data):
@@ -121,8 +125,8 @@ def render_page(page, status=200, **data):
         response.headers[PAGE_HEADER] = "1"
         response.headers["Vary"] = SPA_HEADER
         return response
-    body, index_status, headers = spa_index()
-    response = current_app.response_class(body, status=status if index_status == 200 else index_status, headers=headers)
+    body, content_type = spa_index()
+    response = current_app.response_class(body, status=status, content_type=content_type)
     response.headers["Vary"] = SPA_HEADER
     return response
 

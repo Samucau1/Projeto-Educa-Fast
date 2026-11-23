@@ -24,11 +24,11 @@ env/
 Thumbs.db
 # Frontend build
 node_modules/
-Códigos/app/static/dist/
+api/app/static/dist/
 
 # Browser test artifacts
-Códigos/frontend/test-results/
-Códigos/frontend/playwright-report/
+web/test-results/
+web/playwright-report/
 # Private TLS material must never enter Git.
 **/certs/
 *.key

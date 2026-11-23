@@ -7,7 +7,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $manualUrl = 'http://127.0.0.1:5050'
-$composePath = Join-Path $PSScriptRoot 'Códigos/docker-compose.test.yml'
+$composePath = Join-Path $PSScriptRoot 'api/docker-compose.test.yml'
 $composeArguments = @('compose', '-p', 'educafast-manual', '-f', $composePath, '--profile', 'manual')
 
 function Test-DockerEngine {
@@ -30,7 +30,7 @@ function Invoke-ManualDocker {
 
 try {
     if (-not (Test-Path -LiteralPath $composePath)) {
-        throw 'Não encontrei Códigos/docker-compose.test.yml. Mantenha o script na raiz do projeto.'
+        throw 'Não encontrei api/docker-compose.test.yml. Mantenha o script na raiz do projeto.'
     }
     $dockerCommand = Get-Command docker.exe -ErrorAction SilentlyContinue
     if ($dockerCommand) {
@@ -91,7 +91,7 @@ try {
             Write-Host '  Professor:   professor@teste.local'
             Write-Host '  Aluno:       aluno@teste.local'
             Write-Host '  Outro aluno: outro_aluno@teste.local'
-            Write-Host "`nRoteiro: Documentos/testes/TESTE_MANUAL.md"
+            Write-Host "`nRoteiro: docs/testes/TESTE_MANUAL.md"
             Write-Host 'Os dados atuais são preservados ao iniciar novamente.'
             Write-Host 'Para consultar o ambiente: .\iniciar-educafast.ps1 -Acao Status'
             Write-Host 'Para encerrar e descartar os dados: .\iniciar-educafast.ps1 -Acao Parar'

@@ -44,39 +44,59 @@ function criar(item) {
     return el;
 }
 
-function atual(chave) {
-    return document.head.querySelector(`[data-gerenciado="${CSS.escape(chave)}"]`);
-}
+const gerenciados = () => Array.from(document.head.querySelectorAll('[data-gerenciado]'));
 
-// Insere o que falta e espera as folhas novas carregarem, sem remover as da tela anterior.
+// Garante os itens da tela nova na ordem declarada, sem mover nenhum elemento existente:
+// mover um <link> faz o navegador reaplicar a folha e a página "pisca" sem estilo.
+// Itens novos (ou fora de ordem, que viram uma cópia na posição certa, vinda do cache)
+// entram desativados (media="not all") para não alterar a tela atual enquanto carregam;
+// finalizarHead os ativa no mesmo quadro em que a tela nova aparece.
+// Devolve os elementos usados pela tela.
 export async function prepararHead(itens) {
+    const usados = [];
     const esperas = [];
+    let cursor = null;
     for (const item of itens) {
-        let el = atual(item.chave);
-        if (el && item.tipo === 'style' && el.textContent !== item.texto) el.textContent = item.texto;
-        if (el && item.tipo === 'meta') el.content = item.conteudo ?? '';
-        if (!el) {
+        let el = gerenciados().find((e) => e.dataset.gerenciado === item.chave && !usados.includes(e)
+            && (item.tipo !== 'style' || e.textContent === item.texto)
+            && (!cursor || (cursor.compareDocumentPosition(e) & Node.DOCUMENT_POSITION_FOLLOWING)));
+        if (el) {
+            if (item.tipo === 'meta') el.content = item.conteudo ?? '';
+        } else {
             el = criar(item);
+            if (item.tipo !== 'meta') {
+                el.media = 'not all';
+                el.dataset.pendente = '';
+            }
             if (item.tipo === 'css') {
                 esperas.push(new Promise((resolve) => {
                     el.addEventListener('load', resolve, { once: true });
                     el.addEventListener('error', resolve, { once: true });
                 }));
             }
-            document.head.appendChild(el);
+            if (cursor) cursor.after(el);
+            else {
+                const primeiro = gerenciados()[0];
+                if (primeiro) primeiro.before(el);
+                else document.head.appendChild(el);
+            }
         }
+        usados.push(el);
+        cursor = el;
     }
     await Promise.all(esperas);
+    return usados;
 }
 
-// Depois que a tela nova aparece: deixa somente os itens dela, na ordem declarada.
-export function finalizarHead(itens) {
-    const chaves = new Set(itens.map((i) => i.chave));
-    document.head.querySelectorAll('[data-gerenciado]').forEach((el) => {
-        if (!chaves.has(el.dataset.gerenciado)) el.remove();
+// No quadro em que a tela nova aparece: ativa os itens dela e remove o que ela não usa.
+export function finalizarHead(usados) {
+    usados.forEach((el) => {
+        if ('pendente' in el.dataset) {
+            el.removeAttribute('media');
+            delete el.dataset.pendente;
+        }
     });
-    for (const item of itens) {
-        const el = atual(item.chave);
-        if (el) document.head.appendChild(el);
-    }
+    gerenciados().forEach((el) => {
+        if (!usados.includes(el)) el.remove();
+    });
 }

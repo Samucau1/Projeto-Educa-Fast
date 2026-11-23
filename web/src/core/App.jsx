@@ -67,7 +67,7 @@ export default function App() {
         const destino = new URL(resposta.url);
         const hash = method === 'GET' ? new URL(url, window.location.href).hash : '';
         const novoEstado = { ...payload, chave: id, url: destino.pathname + destino.search };
-        await prepararHead(headDaPagina(modulo, novoEstado));
+        novoEstado.elementosHead = await prepararHead(headDaPagina(modulo, novoEstado));
         if (id !== sequencia.current) return;
         const endereco = novoEstado.url + hash;
         if (endereco !== window.location.pathname + window.location.search + window.location.hash) {
@@ -132,7 +132,7 @@ export default function App() {
 
     useLayoutEffect(() => {
         if (!estado) return;
-        finalizarHead(headDaPagina(modulo, estado));
+        finalizarHead(estado.elementosHead);
         document.body.className = typeof modulo.bodyClass === 'function' ? modulo.bodyClass(estado.dados, estado.global) : (modulo.bodyClass || '');
         document.title = modulo.titulo ? modulo.titulo(estado.dados, estado.global) : 'Educa Fast';
         document.getElementById('root')?.removeAttribute('data-spa-loading');

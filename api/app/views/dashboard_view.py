@@ -1,5 +1,5 @@
-from flask import render_template
+from app.spa import render_page
 
 
 def render_dashboard(context=None):
-    return render_template("admin_painel.html", **(context or {}))
+    return render_page("admin_painel.html", **(context or {}))

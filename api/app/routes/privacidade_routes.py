@@ -1,6 +1,7 @@
 """Self-service rights with authenticated ownership and accountable handling."""
 from datetime import date, datetime
-from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, current_app, flash, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 from app.database import get_session
 from app.models import (AlunoModel, ProfessorModel, UsuarioModel, DocumentoModel, NotaModel,
                         PedidoPrivacidadeModel, AuditoriaPrivacidadeModel)
@@ -33,7 +34,7 @@ def serialize_profile(profile):
 
 @privacidade_bp.get("/privacidade")
 def aviso():
-    return render_template("privacidade.html", controlador=current_app.config["LGPD_CONTROLADOR"],
+    return render_page("privacidade.html", controlador=current_app.config["LGPD_CONTROLADOR"],
                            contato=current_app.config["LGPD_CONTATO"])
 
 
@@ -58,7 +59,7 @@ def meus_pedidos():
             flash("Solicitação registrada. Acompanhe o protocolo nesta página.", "success")
             return redirect(url_for("privacidade.meus_pedidos"))
         pedidos = db.query(PedidoPrivacidadeModel).filter_by(usuario_id=user_id).order_by(PedidoPrivacidadeModel.id.desc()).all()
-        return render_template("minha_privacidade.html", pedidos=pedidos, tipos=TIPOS, administracao=False)
+        return render_page("minha_privacidade.html", pedidos=pedidos, tipos=TIPOS, administracao=False)
 
 
 @privacidade_bp.post("/minha-privacidade/exportar")
@@ -94,7 +95,7 @@ def administrar():
     page = max(1, request.args.get("pagina", 1, type=int))
     with get_session() as db:
         pedidos = db.query(PedidoPrivacidadeModel).order_by(PedidoPrivacidadeModel.id.desc()).offset((page - 1) * 100).limit(101).all()
-        return render_template("minha_privacidade.html", pedidos=pedidos[:100], tipos=TIPOS,
+        return render_page("minha_privacidade.html", pedidos=pedidos[:100], tipos=TIPOS,
                                administracao=True, pagina=page, proxima=len(pedidos) > 100)
 
 

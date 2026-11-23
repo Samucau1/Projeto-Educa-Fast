@@ -1,4 +1,5 @@
-from flask import Blueprint, redirect, render_template, request, session, url_for
+from flask import Blueprint, redirect, request, session, url_for
+from app.spa import render_page
 
 from app.auth import normalize_role
 from app.controllers.admin_controller import (
@@ -56,7 +57,7 @@ def admin_dashboard():
 @home_blueprint.route("/admin_cadastro_aluno.html", methods=["GET"])
 def admin_cadastro_alunos():
     admin_required()
-    return render_template("admin_cadastro_aluno.html")
+    return render_page("admin_cadastro_aluno.html")
 
 
 @home_blueprint.route("/cadastro/professores", methods=["GET"])
@@ -65,7 +66,7 @@ def admin_cadastro_alunos():
 @home_blueprint.route("/admin_cadastro_professores.html", methods=["GET"])
 def admin_cadastro_professores():
     admin_required()
-    return render_template("admin_cadastro_professores.html")
+    return render_page("admin_cadastro_professores.html")
 
 
 @home_blueprint.route("/banco-de-dados", methods=["GET"])
@@ -74,7 +75,7 @@ def admin_cadastro_professores():
 @home_blueprint.route("/admin_banco_dados.html", methods=["GET"])
 def admin_banco_dados():
     admin_required()
-    return render_template("admin_banco_dados.html", **get_admin_data())
+    return render_page("admin_banco_dados.html", **get_admin_data())
 
 
 @home_blueprint.route("/comunicados", methods=["GET", "POST"])
@@ -91,7 +92,7 @@ def admin_comunicados():
 
         error = response.get("erro")
 
-    return render_template(
+    return render_page(
         "admin_comunicados.html",
         comunicados=get_comunicados(),
         error=error,
@@ -117,7 +118,7 @@ def admin_disciplinas():
 
         error = response.get("erro")
 
-    return render_template(
+    return render_page(
         "admin_disciplinas.html",
         **get_disciplinas_page_data(),
         error=error,
@@ -145,7 +146,7 @@ def admin_turmas():
 
         error = response.get("erro")
 
-    return render_template(
+    return render_page(
         "admin_turmas.html",
         **get_turmas_page_data(),
         error=error,
@@ -158,7 +159,7 @@ def admin_turmas():
 @home_blueprint.route("/admin_detalhes_aluno/<int:aluno_id>", methods=["GET"])
 def admin_detalhes_aluno(aluno_id):
     admin_required()
-    return render_template("admin_detalhes_aluno.html", **get_aluno_detail(aluno_id))
+    return render_page("admin_detalhes_aluno.html", **get_aluno_detail(aluno_id))
 
 
 @home_blueprint.route("/admin/alunos/<int:aluno_id>/documentos/solicitar", methods=["POST"])
@@ -181,7 +182,7 @@ def admin_editar_aluno(aluno_id):
 @home_blueprint.route("/admin_detalhes_professor/<int:professor_id>", methods=["GET"])
 def admin_detalhes_professor(professor_id):
     admin_required()
-    return render_template(
+    return render_page(
         "admin_detalhes_professor.html",
         **get_professor_detail(professor_id),
     )
@@ -206,7 +207,7 @@ def admin_solicitar_documento_professor(professor_id):
 def admin_detalhes_aluno_legacy():
     admin_required()
     aluno_id = request.args.get("id", type=int)
-    return render_template("admin_detalhes_aluno.html", **get_aluno_detail(aluno_id))
+    return render_page("admin_detalhes_aluno.html", **get_aluno_detail(aluno_id))
 
 
 @home_blueprint.route("/detalhes_professor.html", methods=["GET"])
@@ -214,7 +215,7 @@ def admin_detalhes_aluno_legacy():
 def admin_detalhes_professor_legacy():
     admin_required()
     professor_id = request.args.get("id", type=int)
-    return render_template(
+    return render_page(
         "admin_detalhes_professor.html",
         **get_professor_detail(professor_id),
     )

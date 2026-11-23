@@ -39,6 +39,8 @@ def create_app():
     app.register_blueprint(privacidade_bp)
     from .security import init_security
     init_security(app)
+    from .spa import init_spa
+    init_spa(app)
     from .views.error_view import register_error_pages
     register_error_pages(app)
 

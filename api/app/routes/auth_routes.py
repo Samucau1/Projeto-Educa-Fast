@@ -1,5 +1,6 @@
 import secrets
-from flask import Blueprint, g, jsonify, redirect, request, session, url_for, render_template
+from flask import Blueprint, g, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 
 from app.auth import professor_required
 from app.controllers.auth_controller import buscar_alunos, cadastrar_usuario, login_usuario
@@ -37,7 +38,7 @@ def login():
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     if request.method == "GET":
-        return render_template("logout.html")
+        return render_page("logout.html")
     session.clear()
     return redirect(url_for("home.home"))
 

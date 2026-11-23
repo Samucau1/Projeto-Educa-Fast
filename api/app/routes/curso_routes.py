@@ -1,5 +1,6 @@
 """Biblioteca de cursos e gestão de ofertas por turma/ano."""
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, flash, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 from app.database import get_session
@@ -37,14 +38,14 @@ def sucesso(endpoint, status=200, **values):
 def erro_http(exc):
     if request.is_json:
         return jsonify(erro=exc.description), exc.code
-    return render_template('curso_erro.html', error=exc.description), exc.code
+    return render_page('curso_erro.html', error=exc.description), exc.code
 
 
 @cursos_bp.errorhandler(IntegrityError)
 def conflito(exc):
     if request.is_json:
         return jsonify(erro='Conflito de gravação. Recarregue e tente novamente.'), 409
-    return render_template('curso_erro.html', error='Conflito de gravação. Recarregue e tente novamente.'), 409
+    return render_page('curso_erro.html', error='Conflito de gravação. Recarregue e tente novamente.'), 409
 
 
 @cursos_bp.get('/cursos')
@@ -66,7 +67,7 @@ def biblioteca():
                 concluidas = db.query(ProgressoAulaModel).filter_by(aluno_id=aluno.id, oferta_id=oferta.id).count()
                 cards.append({'oferta': oferta, 'curso': curso, 'turma': turma,
                               'progresso': round(100 * concluidas / len(aulas)) if aulas else 0})
-            return render_template('curso_biblioteca.html', cards=cards, cursos=[], disciplinas=[], professores=[])
+            return render_page('curso_biblioteca.html', cards=cards, cursos=[], disciplinas=[], professores=[])
         query = db.query(CursoModel)
         disciplinas = db.query(DisciplinaModel)
         if role == 'professor':
@@ -74,7 +75,7 @@ def biblioteca():
             query = query.filter_by(professor_id=prof.id)
             disciplinas = disciplinas.join(ProfessorDisciplinaModel,
                 ProfessorDisciplinaModel.disciplina_id == DisciplinaModel.id).filter(ProfessorDisciplinaModel.professor_id == prof.id)
-        return render_template('curso_biblioteca.html', cursos=query.order_by(CursoModel.id.desc()).all(),
+        return render_page('curso_biblioteca.html', cursos=query.order_by(CursoModel.id.desc()).all(),
             cards=[], disciplinas=disciplinas.all(), professores=db.query(ProfessorModel).all() if role != 'professor' else [])
 
 
@@ -108,7 +109,7 @@ def editor(curso_id):
         ofertas = db.query(OfertaCursoModel, TurmaModel).join(TurmaDisciplinaModel,
             OfertaCursoModel.turma_disciplina_id == TurmaDisciplinaModel.id).join(TurmaModel,
             TurmaDisciplinaModel.turma_id == TurmaModel.id).filter(OfertaCursoModel.curso_id == curso_id).all()
-        return render_template('curso_editor.html', curso=curso, estrutura=service.estrutura(db, curso_id),
+        return render_page('curso_editor.html', curso=curso, estrutura=service.estrutura(db, curso_id),
                                ofertas=ofertas, turmas=db.query(TurmaModel).order_by(TurmaModel.ano_letivo.desc()).all())
 
 
@@ -266,7 +267,7 @@ def aprender(oferta_id):
         if aula_id and atual is None:
             abort(404)
         index = aulas.index(atual) if atual else -1
-        return render_template('curso_aprender.html', curso=curso, oferta=oferta, estrutura=service.estrutura(db, curso.id),
+        return render_page('curso_aprender.html', curso=curso, oferta=oferta, estrutura=service.estrutura(db, curso.id),
             atual=atual, concluidas=concluidas, total=len(aulas), progresso=round(100 * len(concluidas) / len(aulas)) if aulas else 0,
             anterior=aulas[index - 1] if index > 0 else None,
             proxima=aulas[index + 1] if 0 <= index < len(aulas) - 1 else None)
@@ -363,6 +364,6 @@ def gestao_turmas():
             TurmaDisciplinaModel, AtribuicaoDocenteModel.turma_disciplina_id == TurmaDisciplinaModel.id).join(
             ProfessorModel, AtribuicaoDocenteModel.professor_id == ProfessorModel.id).join(
             DisciplinaModel, TurmaDisciplinaModel.disciplina_id == DisciplinaModel.id).all()
-        return render_template('curso_turmas.html', turmas=turmas, professores=db.query(ProfessorModel).all(),
+        return render_page('curso_turmas.html', turmas=turmas, professores=db.query(ProfessorModel).all(),
             disciplinas=db.query(DisciplinaModel).all(), alunos=db.query(AlunoModel).all(),
             estados={s.turma_id: s for s in db.query(EstadoTurmaModel)}, atribuicoes=atribuicoes)

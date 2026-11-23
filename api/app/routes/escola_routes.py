@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
-from flask import Blueprint, abort, jsonify, render_template, request, session, redirect, url_for, flash
+from flask import Blueprint, abort, jsonify, request, session, redirect, url_for, flash
+from app.spa import render_page
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 from app.database import get_session
@@ -31,14 +32,14 @@ def sucesso(status=200, **values):
 def erro(exc):
     if request.is_json or request.args.get('formato') == 'json':
         return jsonify(erro=exc.description), exc.code
-    return render_template('escola_erro.html', error=exc.description), exc.code
+    return render_page('escola_erro.html', error=exc.description), exc.code
 
 
 @escola_bp.errorhandler(IntegrityError)
 def conflito(exc):
     if request.is_json:
         return jsonify(erro='Registro duplicado ou edição concorrente. Recarregue antes de salvar.'), 409
-    return render_template('escola_erro.html', error='Registro duplicado ou edição concorrente.'), 409
+    return render_page('escola_erro.html', error='Registro duplicado ou edição concorrente.'), 409
 
 
 @escola_bp.get('/super/escola')
@@ -53,7 +54,7 @@ def configurar():
                    **json.loads(p.configuracao)} for p in politicas]
         if request.args.get('formato') == 'json':
             return jsonify(identidade=service.identidade_atual(db), calendarios=dados_cal, politicas=regras)
-        return render_template('escola_configurar.html', identidade=service.identidade_atual(db), calendarios=calendarios,
+        return render_page('escola_configurar.html', identidade=service.identidade_atual(db), calendarios=calendarios,
             resumos={c['id']: c for c in dados_cal}, politicas=regras,
             eventos=db.query(EventoCalendarioModel).order_by(EventoCalendarioModel.dia).all(),
             turmas=db.query(TurmaModel).order_by(TurmaModel.ano_letivo.desc(), TurmaModel.nome).all(),
@@ -184,6 +185,6 @@ def calendario_publicado():
     identidade()
     with get_session() as db:
         rows = db.query(CalendarioEscolaModel).order_by(CalendarioEscolaModel.ano.desc()).all()
-        return render_template('escola_calendario.html', calendarios=rows,
+        return render_page('escola_calendario.html', calendarios=rows,
             resumos={c.id: service.resumo_calendario(db, c) for c in rows},
             eventos=db.query(EventoCalendarioModel).order_by(EventoCalendarioModel.dia).all())

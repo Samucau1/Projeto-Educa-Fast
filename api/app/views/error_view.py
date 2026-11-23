@@ -1,4 +1,5 @@
-from flask import jsonify, render_template, request
+from flask import jsonify, request
+from app.spa import render_page
 
 
 def register_error_pages(app):
@@ -15,7 +16,7 @@ def register_error_pages(app):
             message = error.description
         if request.is_json or request.accept_mimetypes.best == "application/json":
             return jsonify({"erro": message}), error.code
-        return render_template("erro.html", codigo=error.code, titulo=title, mensagem=message), error.code
+        return render_page("erro.html", codigo=error.code, titulo=title, mensagem=message), error.code
 
     for code in pages:
         app.register_error_handler(code, handle)

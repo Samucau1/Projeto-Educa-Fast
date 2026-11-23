@@ -1,4 +1,5 @@
-from flask import Blueprint, abort, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 from werkzeug.datastructures import MultiDict
 
 from app.controllers.document_controller import upload_documento
@@ -22,7 +23,7 @@ def dashboard():
     if not data:
         abort(404)
 
-    return render_template("aluno_painel.html", **data)
+    return render_page("aluno_painel.html", **data)
 
 
 @aluno_bp.route("/aluno/disciplinas/<int:disciplina_id>", methods=["GET"])
@@ -32,7 +33,7 @@ def disciplina_detail(disciplina_id):
     if not data:
         abort(404)
 
-    return render_template("aluno_disciplina.html", **data)
+    return render_page("aluno_disciplina.html", **data)
 
 
 @aluno_bp.route("/aluno/documentos/upload", methods=["POST"])

@@ -96,15 +96,14 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    Browser["Navegador"] -->|localhost:5000| App["Serviço app / flask_app\nPython e Flask :5000"]
+    Browser["Navegador"] -->|localhost:5000| App["Serviço app / flask_app\nAPI Flask + telas React :5000"]
     App -->|db:3306| DB["Serviço db / mysql_db\nMySQL 8.4"]
-    Host["Cliente MySQL no host"] -->|localhost:3306| DB
     DB --> Dados[(mysql_data)]
     App --> Uploads[(uploads_data)]
-    Codigo["Pasta api no host"] -->|Montada em /app| App
+    Web["Build da aplicação web (web/)"] -->|Copiado na imagem, /static/dist| App
 ```
 
-O serviço `app` usa o Dockerfile Python e depende do estado saudável de `db`. O serviço `db` usa a imagem `mysql:8.4`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
+O serviço `app` é construído pelo `api/Dockerfile` (um estágio Node gera o build de `web/` e o estágio Python serve a API e esse build) e depende do estado saudável de `db`. O serviço `db` usa a imagem `mysql:8.4`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
 
 ### Organização dos dados
 
@@ -122,13 +121,13 @@ O catálogo abaixo descreve as telas implementadas e aponta para seus componente
 
 ### Login
 
-| Tela e template | Rota | Conteúdo e ações |
+| Tela | Rota | Conteúdo e ações |
 | --- | --- | --- |
 | [Login](web/src/pages/login.jsx) | `/` | Campos de e-mail institucional e senha. Após autenticar, o usuário é direcionado ao painel de seu perfil. |
 
 ### Secretaria / administrador
 
-| Tela e template | Rota principal | Conteúdo e ações |
+| Tela | Rota principal | Conteúdo e ações |
 | --- | --- | --- |
 | [Dashboard da secretaria](web/src/pages/admin_painel.jsx) | `/admin/dashboard` | Saudação, totais de alunos e professores, matrículas pendentes e últimos registros. Menu lateral para as áreas administrativas. |
 | [Cadastro de alunos](web/src/pages/admin_cadastro_aluno.jsx) | `/admin/cadastro-alunos` | Dados pessoais e acadêmicos, matrícula, credenciais de acesso e foto de perfil. |
@@ -152,7 +151,7 @@ O [painel do professor](web/src/pages/professor_painel.jsx), em `/professor/dash
 
 ### Aluno
 
-| Tela e template | Rota principal | Conteúdo e ações |
+| Tela | Rota principal | Conteúdo e ações |
 | --- | --- | --- |
 | [Painel do aluno](web/src/pages/aluno_painel.jsx) | `/aluno/dashboard` (também `/aluno`) | Abas de disciplinas, notas e documentos. Exibe as disciplinas associadas, as notas e observações e as solicitações de documentos, com upload de resposta e arquivos enviados. |
 | [Detalhes da disciplina](web/src/pages/aluno_disciplina.jsx) | `/aluno/disciplinas/<disciplina_id>` | Informações da disciplina, professores e atividades com arquivos disponíveis para download. |
@@ -173,14 +172,14 @@ flowchart TD
     Admin --> Comunicados["Comunicados"]
     Professor --> PT["Turmas e atividades"]
     Professor --> PN["Notas"]
-    Professor --> PD["docs"]
+    Professor --> PD["Documentos"]
     Aluno --> AD["Disciplinas"]
     AD --> Disciplina["Detalhes da disciplina e atividades"]
     Aluno --> AN["Notas"]
-    Aluno --> AQ["docs"]
+    Aluno --> AQ["Documentos"]
 ```
 
-Para percorrer as telas com conteúdo, cadastre os usuários, configure as associações acadêmicas e lance dados conforme o [fluxo inicial](#5-preparar-o-fluxo-escolar). Listagens sem registros apresentam estados vazios; os dados exibidos dependem do perfil e dos vínculos cadastrados.
+Para percorrer as telas com conteúdo, cadastre os usuários, configure as associações acadêmicas e lance dados conforme o [fluxo inicial](docs/DOCUMENTACAO_DO_SISTEMA.md#104-preparação-funcional). Listagens sem registros apresentam estados vazios; os dados exibidos dependem do perfil e dos vínculos cadastrados.
 
 ## Estrutura do repositório
 

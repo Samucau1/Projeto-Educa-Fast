@@ -33,7 +33,7 @@ Cursos publicados são imutáveis. Para alterar o material, o professor usa **Du
 
 ## Arquitetura implementada
 
-Rotas em `app/routes/curso_routes.py`, regras em `app/services/cursos.py`, modelos em `app/models/curso_model.py` e templates `curso_*.html`. A navegação integra o layout existente. As rotas aceitam formulários HTML e JSON nas mutações; JSON exige sessão e cabeçalho CSRF. Elas não implementam autenticação Bearer independente.
+Rotas em `app/routes/curso_routes.py`, regras em `app/services/cursos.py`, modelos em `app/models/curso_model.py` e telas React `web/src/pages/curso_*.jsx`. A navegação integra o layout existente. As rotas aceitam formulários HTML e JSON nas mutações; JSON exige sessão e cabeçalho CSRF. Elas não implementam autenticação Bearer independente.
 
 ```mermaid
 flowchart LR

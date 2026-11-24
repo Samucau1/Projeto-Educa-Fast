@@ -1,6 +1,6 @@
 # Testes de API, carga e regressão — Educa Fast
 
-Resultado atual: [configuração institucional e design](RELATORIO_ESCOLA.md). A coleção tem 201 requisições e 269 verificações; a regressão completa tem 81 cenários, incluindo 8 unitários e quatro corridas transacionais exclusivas do MySQL. A [validação anterior](RELATORIO_VALIDACAO_FINAL.md) permanece como histórico de segurança/LGPD.
+Resultado atual: [migração da interface para React](RELATORIO_MIGRACAO_REACT.md). A coleção tem 201 requisições e 270 verificações; a suíte `unittest` tem 90 testes, dos quais 4 são exclusivos do MySQL e ficam pulados com SQLite. O [relatório de configuração institucional e design](RELATORIO_ESCOLA.md) permanece como histórico. A [validação anterior](RELATORIO_VALIDACAO_FINAL.md) permanece como histórico de segurança/LGPD.
 
 Para testar pelo navegador, use o [roteiro de teste manual com usuários e comandos Docker](TESTE_MANUAL.md).
 
@@ -69,7 +69,7 @@ Use o Desktop Agent se executar pela interface web do Postman. Se a porta estive
 
 As credenciais sintéticas do ambiente são `superadmin@teste.local`, `admin@teste.local`, `professor@teste.local`, `aluno@teste.local` e `outro_aluno@teste.local`, todas com senha `Teste-local-2026!`. Elas existem apenas no servidor descartável. Os identificadores do ambiente dependem dessas fixtures; não aponte esta coleção para o banco da instalação.
 
-A coleção tem 201 requisições e 269 verificações, incluindo cursos, LGPD e proteções de sessão. Algumas rotas são formulários HTML, não APIs JSON: nesses casos, a coleção verifica o status HTTP, os textos de validação e o conteúdo publicado. A troca de perfis e as cores são exercitadas e restauradas ao final.
+A coleção tem 201 requisições e 270 verificações, incluindo cursos, LGPD e proteções de sessão. As rotas de tela são pedidas como a aplicação web as pede (cabeçalho `X-EducaFast-SPA: 1`) e respondem com os dados da tela em JSON: a coleção verifica o status HTTP, os textos de validação, o conteúdo publicado e o token CSRF devolvido no contexto global. A troca de perfis e as cores são exercitadas e restauradas ao final.
 
 ## Cobertura
 

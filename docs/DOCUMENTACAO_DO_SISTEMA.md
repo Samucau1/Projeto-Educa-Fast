@@ -1,5 +1,7 @@
 # Documentação do sistema — Educa Fast
 
+> **Atualização de 23/11/2026 — interface em React:** todas as telas passaram a ser desenhadas pela aplicação React/Vite em `web/`, que consome a API Flask de `api/`. As rotas continuam decidindo permissões, dados e redirecionamentos, mas respondem com JSON para a aplicação web (`render_page`, em `api/app/spa.py`). Os templates Jinja e os scripts de `app/static/js` foram removidos; a aparência das telas foi preservada. As seções 2, 3, 4, 7, 10 e 13 foram atualizadas; as seções 11, 12 e 16 mantêm o registro das análises anteriores.
+
 > **Atualização de 22/10/2026:** superperfil, gestão de permissões, cores e leitura de mensagens foram implementados. Consulte a seção 16 ao final. As seções anteriores registram a análise de 21/10/2026 e devem ser interpretadas com essas alterações, especialmente o cadastro genérico, que passou a exigir autenticação administrativa.
 
 > **Regressão de 22/10/2026:** a suíte foi ampliada para 17 testes e uma coleção Postman de 100 requisições/124 verificações. Foram corrigidos login com JSON inválido, notas não finitas, revogação de JWT no upload e autorização no download por JWT. A exceção de download descrita na análise original foi corrigida. Veja o [guia de testes](testes/README.md) e o [relatório com evidências e limitações](testes/RELATORIO_REGRESSAO.md).
@@ -57,20 +59,22 @@ Não foram encontrados módulos de frequência, cobrança, biblioteca, recupera�
 
 | Componente | Versão/configuração no repositório | Uso |
 | --- | --- | --- |
-| Python | `3.12-slim` no Dockerfile | Backend |
-| Flask | `3.1.0` | HTTP, blueprints, sessão e templates |
+| Python | `3.12-slim` no Dockerfile | API |
+| Flask | `3.1.3` | HTTP, blueprints, sessão e respostas JSON das telas |
 | SQLAlchemy | `2.0.44` | ORM, consultas e transações |
 | PyMySQL | `1.1.2` | Conexão com MySQL |
-| python-dotenv | `1.0.1` | Leitura de `.env` |
-| cryptography | `>=42,<46` | Dependência criptográfica do ambiente Python |
+| python-dotenv | `1.2.2` | Leitura de `.env` |
+| cryptography | `>=50,<51` | Cifragem Fernet de dados pessoais e arquivos |
+| Gunicorn | `23.0.0` | Servidor da aplicação no container |
 | Werkzeug | Dependência do Flask | Hash de senha e sanitização de nomes de arquivos |
 | MySQL | `8.4` no Compose | Banco relacional |
-| React / ReactDOM | `18`, UMD via unpkg | Montagem do shell das páginas |
-| Tailwind CSS | Script CDN | Estilização utilitária |
-| HTML5, CSS, JavaScript e Jinja | Sem build frontend próprio | Interface |
+| React / ReactDOM | `18.3.1` | Aplicação web (`web/`) |
+| Vite | `6.4.6` | Build e servidor de desenvolvimento da aplicação web |
+| CSS próprio e Tailwind CSS | `web/public/css/` | Estilos; `utilities.css` é gerado pelo Tailwind e versionado |
+| Node.js | `22` no Dockerfile | Build da aplicação web |
 | Docker e Docker Compose | Serviços `app` e `db` | Ambiente integrado |
 
-As dependências estão em [requirements.txt](../api/requirements.txt). Não existe etapa necessária de `npm install` ou compilação JSX na interface atual.
+As dependências estão em [requirements.txt](../api/requirements.txt) e [web/package.json](../web/package.json). A interface não usa CDN: o build é servido pela própria API em `/static/dist/`.
 
 ## 3. Arquitetura e componentes
 
@@ -83,30 +87,30 @@ flowchart TD
     Guardas --> Controle["Controllers"]
     Controle --> Modelos["Modelos SQLAlchemy"]
     Modelos <--> Banco[(MySQL)]
-    Controle --> HTML["Views e templates Jinja"]
-    HTML --> React["Shell React e scripts de página"]
+    Controle --> Tela["render_page: dados da tela em JSON"]
+    Tela --> React["Aplicação React (web/)"]
     React --> Cliente
     Controle -->|JSON ou redirecionamento| Cliente
     Controle <--> Uploads["Pasta de uploads"]
 ```
 
-A separação lembra MVC. As views dedicadas atendem à home e ao painel administrativo; outras rotas chamam `render_template()` diretamente.
+A separação lembra MVC. A API entrega os dados de cada tela; a aplicação React os apresenta. As rotas chamam `render_page()` (ou as views de `app/views/`, que a utilizam).
 
 | Local em `api/` | Responsabilidade |
 | --- | --- |
-| `app.py` | Criar a aplicação e iniciar o servidor em `0.0.0.0:5000`, com debug. |
+| `app.py` | Criar a aplicação; a execução direta inicia o servidor de desenvolvimento em `127.0.0.1:5000`, sem debug. No container, o Gunicorn usa `app:create_app()`. |
 | `app/__init__.py` | Fábrica `create_app()`, configuração, banco e blueprints. |
 | `config.py` | Variáveis de ambiente e URL de conexão. |
 | `app/database.py` | Engine, `SessionLocal`, base declarativa e ajustes de esquema. |
 | `app/routes/` | Entrada HTTP, guardas e construção de respostas. |
 | `app/controllers/` | Validações, consultas e operações de aplicação. |
 | `app/models/` | Tabelas, colunas, relações e restrições. |
-| `app/views/` | Renderização da home e do dashboard administrativo. |
-| `app/templates/` | Páginas HTML/Jinja. |
-| `app/templates/partials/` | Runtime compartilhado de React. |
-| `app/static/js/compartilhado/` | Shell React, abas e eventos compartilhados. |
-| `app/static/js/paginas/` | Scripts de login, cadastro e consulta de registros. |
-| `app/static/css/` | Estilos gerais e por tela. |
+| `app/spa.py` | `render_page()`: dados da tela em JSON (ou o `index.html` do build) e o mapa de rotas `/api/rotas`. |
+| `app/views/` | Tela de entrada, painel administrativo e páginas de erro. |
+| `app/static/dist/` | Build da aplicação web (gerado por `npm run build`; fora do Git). |
+| `web/src/pages/` | Uma tela React por arquivo, com o mesmo nome usado por `render_page()`. |
+| `web/src/components/`, `web/src/core/` | Layouts, menu, ícones, abas, navegação, formulários e folhas de estilo de cada tela. |
+| `web/public/css/` | Estilos gerais e por tela. |
 | `app/seed.py` | Exclusão de usuários e criação do administrador de demonstração. |
 
 ### 3.2 Divisão dos controllers
@@ -121,9 +125,9 @@ A separação lembra MVC. As views dedicadas atendem à home e ao painel adminis
 
 ### 3.3 Interface
 
-Jinja gera o HTML no servidor. `shell_react.js` lê o template da página e insere o conteúdo usando `dangerouslySetInnerHTML`. Após montar, inicializa abas e dispara `react-shell:mounted`; scripts de página vinculam seus eventos a essa montagem.
+A aplicação React busca os dados de cada tela na própria rota da API, enviando o cabeçalho `X-EducaFast-SPA: 1`. A resposta traz o nome da tela, seus dados e o contexto global (sessão, tema, identidade da escola, token CSRF e mensagens). O componente de mesmo nome em `web/src/pages/` desenha a tela; as folhas de estilo dela são carregadas antes da troca, sem piscar.
 
-O React atua como shell do conteúdo renderizado. As páginas dependem de recursos externos para montagem e estilos. Conteúdo nessa estrutura deve continuar recebendo escape adequado no servidor.
+Links internos e formulários são tratados pela aplicação: navegam sem recarregar a página, enviam o token CSRF somente para a própria origem e seguem os redirecionamentos da API. Abrir um endereço diretamente no navegador devolve o `index.html` do build, que então busca os mesmos dados. Todo conteúdo vindo do banco é exibido como texto pelo React (nunca como HTML). Objetos do banco enviados às telas não incluem senha, CPF, `cpf_hash`, telefone nem data de nascimento; telas que exibem esses campos recebem valores preparados pelos controllers.
 
 ### 3.4 Containers
 
@@ -131,13 +135,11 @@ O React atua como shell do conteúdo renderizado. As páginas dependem de recurs
 flowchart LR
     Navegador -->|localhost:5000| App["app / flask_app"]
     App -->|db:3306| DB["db / mysql_db"]
-    SQL["Cliente SQL no host"] -->|localhost:3306| DB
-    Codigo["api no host"] -->|/app| App
     App -->|/app/uploads| Arquivos[(uploads_data)]
     DB -->|/var/lib/mysql| Dados[(mysql_data)]
 ```
 
-`app` é construído pelo Dockerfile e espera o healthcheck de `db`. Ambos usam `restart: unless-stopped`. O código é montado em `/app`; dados e uploads usam volumes nomeados.
+`app` é construído pelo `api/Dockerfile`, com a raiz do repositório como contexto: um estágio Node gera o build de `web/` e o estágio Python o copia para `app/static/dist`. O serviço espera o healthcheck de `db`, e ambos usam `restart: unless-stopped`. A aplicação é publicada somente em `127.0.0.1:5000`; o MySQL fica na rede interna, sem porta no host. Dados e uploads usam volumes nomeados.
 
 ## 4. Inicialização e configuração
 
@@ -147,8 +149,8 @@ flowchart LR
 2. Os modelos são importados e registram suas tabelas na base declarativa.
 3. A fábrica cria Flask e aplica os atributos de `Config`.
 4. `init_db()` cria tabelas ausentes e aplica ajustes pontuais.
-5. `register_routes()` registra home, autenticação, professor, aluno e documentos.
-6. A execução direta inicia o servidor de desenvolvimento na porta 5000.
+5. `register_routes()` registra home, autenticação, professor, aluno e documentos; em seguida entram cursos, acadêmico, escola, gestão, privacidade, segurança, a ponte com a aplicação web (`init_spa`) e as páginas de erro.
+6. A execução direta inicia o servidor de desenvolvimento em `127.0.0.1:5000`; no container, o Gunicorn atende em `0.0.0.0:5000` (publicado apenas no loopback do host).
 
 O banco precisa estar acessível na criação da aplicação. Não existe comando separado obrigatório de migração antes de iniciar.
 
@@ -156,7 +158,10 @@ O banco precisa estar acessível na criação da aplicação. Não existe comand
 
 | Variável | Padrão no código | Comportamento |
 | --- | --- | --- |
-| `SECRET_KEY` | `desenvolvimento-web-flask` | Assina sessão e JWT; obrigatória no Compose. |
+| `SECRET_KEY` | Sem padrão | Assina sessão e JWT; obrigatória, com pelo menos 32 caracteres aleatórios. |
+| `DATA_ENCRYPTION_KEY` | Sem padrão | Chave Fernet que cifra dados pessoais e arquivos; obrigatória e separada da `SECRET_KEY`. |
+| `LGPD_CONTROLADOR` / `LGPD_CONTATO` | `EducaFast` / vazio | Controlador e contato de privacidade; contato obrigatório em produção. |
+| `APP_ENV`, `COOKIE_SECURE`, `TRUSTED_HOSTS` | `development`, `0`, `localhost,127.0.0.1` | Ambiente, cookie apenas em HTTPS e hosts aceitos. |
 | `JWT_EXPIRATION_HOURS` | `8` | Inteiro; validade do JWT em horas. |
 | `UPLOAD_FOLDER` | `uploads` | Pasta resolvida com `os.path.abspath()`. |
 | `DB_HOST` | `localhost` | O Compose define `db`. |
@@ -169,9 +174,9 @@ O banco precisa estar acessível na criação da aplicação. Não existe comand
 
 A URL composta segue `mysql+pymysql://usuario:senha@host:porta/banco`. Caracteres reservados em credenciais precisam de codificação adequada; `DB_URL` permite informar a conexão completa.
 
-O Compose injeta as variáveis declaradas no serviço. `JWT_EXPIRATION_HOURS` e `DB_URL` não estão nesse bloco, mas podem ser carregadas do `.env` montado em `/app`. O dotenv padrão não sobrescreve variáveis já existentes no processo.
+O Compose lê o `.env` de `api/` e injeta no container somente as variáveis declaradas no serviço (o `.env` não é copiado para a imagem nem montado no container). `DB_URL` não está nesse bloco; para usá-la no Docker, acrescente-a ao `environment`. O dotenv não sobrescreve variáveis já existentes no processo.
 
-Mudar `DB_PORT` não muda a porta interna do MySQL nem o mapeamento fixo `3306:3306`. Para alterar somente a porta no host, ajuste o lado esquerdo do mapeamento e mantenha a conexão entre containers na porta interna correta.
+Mudar `DB_PORT` não muda a porta interna do MySQL. O Compose não publica o banco no host; para acessá-lo de um cliente SQL local, acrescente temporariamente um mapeamento de porta ao serviço `db`.
 
 ## 5. Modelo de dados
 
@@ -333,33 +338,33 @@ Há outros limites nas consultas de detalhes e associações. Não existe pagina
 
 ## 7. Telas e navegação
 
-São 13 templates de página, além do parcial React. Os links abrem os arquivos-fonte; não são capturas de tela.
+Cada tela é um componente React em [`web/src/pages/`](../web/src/pages/); os links abrem os arquivos-fonte, não capturas de tela. A tabela lista as telas principais; o catálogo completo está no [README](../README.md#telas-do-sistema).
 
-| Tela | Rota principal | Template e conteúdo |
+| Tela | Rota principal | Componente e conteúdo |
 | --- | --- | --- |
-| Login | `/` | [login.html](../api/app/templates/login.html): e-mail, senha e erros. |
-| Dashboard administrativo | `/admin/dashboard` | [admin_painel.html](../api/app/templates/admin_painel.html): indicadores e últimos registros. |
-| Cadastro de aluno | `/admin/cadastro-alunos` | [admin_cadastro_aluno.html](../api/app/templates/admin_cadastro_aluno.html): dados pessoais/acadêmicos, acesso e foto. |
-| Cadastro de professor | `/admin/cadastro-professores` | [admin_cadastro_professores.html](../api/app/templates/admin_cadastro_professores.html): dados profissionais, acesso e foto. |
-| Consulta de registros | `/admin/banco-de-dados` | [admin_banco_dados.html](../api/app/templates/admin_banco_dados.html): indicadores, pesquisa e acesso aos detalhes; não é console SQL. |
-| Detalhes do aluno | `/admin/alunos/<aluno_id>` | [admin_detalhes_aluno.html](../api/app/templates/admin_detalhes_aluno.html): perfil, edição e documentos. |
-| Detalhes do professor | `/admin/professores/<professor_id>` | [admin_detalhes_professor.html](../api/app/templates/admin_detalhes_professor.html): perfil, edição, atuação e documentos. |
-| Disciplinas | `/admin/disciplinas` | [admin_disciplinas.html](../api/app/templates/admin_disciplinas.html): cadastro, listagem e vínculo de professor. |
-| Turmas | `/admin/turmas` | [admin_turmas.html](../api/app/templates/admin_turmas.html): cadastro, alunos, professores e disciplinas. |
-| Comunicados | `/admin/comunicados` | [admin_comunicados.html](../api/app/templates/admin_comunicados.html): publicação e recados anteriores. |
-| Professor | `/professor` | [professor_painel.html](../api/app/templates/professor_painel.html): abas Turmas, Notas e Documentos. |
-| Aluno | `/aluno` | [aluno_painel.html](../api/app/templates/aluno_painel.html): abas Disciplinas, Notas e Documentos. |
-| Disciplina do aluno | `/aluno/disciplinas/<disciplina_id>` | [aluno_disciplina.html](../api/app/templates/aluno_disciplina.html): professores, atividades e arquivos. |
+| Login | `/` | [login.jsx](../web/src/pages/login.jsx): e-mail, senha e erros. |
+| Dashboard administrativo | `/admin/dashboard` | [admin_painel.jsx](../web/src/pages/admin_painel.jsx): indicadores e últimos registros. |
+| Cadastro de aluno | `/admin/cadastro-alunos` | [admin_cadastro_aluno.jsx](../web/src/pages/admin_cadastro_aluno.jsx): dados pessoais/acadêmicos, acesso e foto. |
+| Cadastro de professor | `/admin/cadastro-professores` | [admin_cadastro_professores.jsx](../web/src/pages/admin_cadastro_professores.jsx): dados profissionais, acesso e foto. |
+| Consulta de registros | `/admin/banco-de-dados` | [admin_banco_dados.jsx](../web/src/pages/admin_banco_dados.jsx): indicadores, pesquisa e acesso aos detalhes; não é console SQL. |
+| Detalhes do aluno | `/admin/alunos/<aluno_id>` | [admin_detalhes_aluno.jsx](../web/src/pages/admin_detalhes_aluno.jsx): perfil, edição e documentos. |
+| Detalhes do professor | `/admin/professores/<professor_id>` | [admin_detalhes_professor.jsx](../web/src/pages/admin_detalhes_professor.jsx): perfil, edição, atuação e documentos. |
+| Disciplinas | `/admin/disciplinas` | [admin_disciplinas.jsx](../web/src/pages/admin_disciplinas.jsx): cadastro, listagem e vínculo de professor. |
+| Turmas | `/admin/turmas` | [admin_turmas.jsx](../web/src/pages/admin_turmas.jsx): cadastro, alunos, professores e disciplinas. |
+| Comunicados | `/admin/comunicados` | [admin_comunicados.jsx](../web/src/pages/admin_comunicados.jsx): publicação e recados anteriores. |
+| Professor | `/professor` | [professor_painel.jsx](../web/src/pages/professor_painel.jsx): abas Turmas, Notas e Documentos. |
+| Aluno | `/aluno` | [aluno_painel.jsx](../web/src/pages/aluno_painel.jsx): abas Disciplinas, Notas e Documentos. |
+| Disciplina do aluno | `/aluno/disciplinas/<disciplina_id>` | [aluno_disciplina.jsx](../web/src/pages/aluno_disciplina.jsx): professores, atividades e arquivos. |
 
 Login leva ao painel do perfil. A secretaria navega pelo menu lateral, abre registros e seus detalhes. Professor e aluno alternam abas na mesma página; o aluno abre uma disciplina em página própria. Telas sem registros exibem estados vazios.
 
-O `dashboard.html` da raiz é avulso. A rota `/dashboard.html` é um alias protegido que renderiza `app/templates/admin_painel.html`, não o arquivo da raiz.
+O protótipo `docs/prototipo/dashboard.html` é avulso. A rota `/dashboard.html` é um alias protegido do painel administrativo, não esse arquivo.
 
 ## 8. Contratos HTTP
 
 ### 8.1 Convenções e respostas
 
-Há HTML, JSON, formulários e multipart, sem prefixo único `/api`. IDs com conversor `<int:...>` são inteiros; arquivos usam `<path:filename>`. Erros JSON normalmente usam `{"erro": "mensagem"}`; guardas de páginas podem retornar HTML.
+Há JSON, formulários e multipart, sem prefixo único `/api`. As rotas de tela respondem com JSON quando recebem `X-EducaFast-SPA: 1` (a aplicação web envia esse cabeçalho) e com o `index.html` da aplicação web no acesso direto pelo navegador; nos dois casos, o status HTTP é o da rota. IDs com conversor `<int:...>` são inteiros; arquivos usam `<path:filename>`. Erros JSON normalmente usam `{"erro": "mensagem"}`; erros de telas viram a tela de erro.
 
 | Status | Uso |
 | --- | --- |
@@ -372,9 +377,9 @@ Há HTML, JSON, formulários e multipart, sem prefixo único `/api`. IDs com con
 | 404 | Entidade/arquivo inexistente ou indisponível no contexto. |
 | 409 | Duplicidade de dado ou associação. |
 | 415 | Pode ocorrer em `/login` sem corpo identificado como JSON. |
-| 500 | Exceção não tratada; não há formato global padronizado. |
+| 500 | Exceção não tratada; na aplicação web, exibida na tela de erro. |
 
-Erros de turmas, disciplinas e comunicados podem aparecer no HTML com status 200, mesmo que o controller produza 400/409 internamente. Rotas administrativas de edição/solicitação redirecionam sem propagar explicitamente a falha retornada pelo controller; redirecionamento isolado não comprova gravação.
+Erros de turmas, disciplinas e comunicados aparecem na própria tela com status 200, mesmo que o controller produza 400/409 internamente. Rotas administrativas de edição/solicitação redirecionam sem propagar explicitamente a falha retornada pelo controller; redirecionamento isolado não comprova gravação.
 
 ### 8.2 Login, cadastro e busca
 
@@ -473,7 +478,7 @@ São observações estáticas do código, não resultados de exploração. Este 
 
 ### 10.1 Docker Compose
 
-Requer Git, Docker, Docker Compose e portas 5000/3306 disponíveis.
+Requer Git, Docker, Docker Compose e a porta 5000 disponível. O build da imagem também compila a aplicação web; não é preciso ter Node.js instalado.
 
 ```bash
 git clone https://github.com/Samucau1/Projeto-Educa-Fast.git
@@ -487,7 +492,7 @@ Copie o exemplo. No PowerShell:
 Copy-Item .env.example .env
 ```
 
-No Linux/macOS, use `cp .env.example .env`. Substitua `SECRET_KEY`, `DB_PASSWORD` e `MYSQL_ROOT_PASSWORD`. Não publique `.env` com credenciais reais.
+No Linux/macOS, use `cp .env.example .env`. Preencha `SECRET_KEY`, `DATA_ENCRYPTION_KEY`, `DB_PASSWORD` e `MYSQL_ROOT_PASSWORD` (os comandos para gerar as chaves estão no [README da API](../api/README.md)). Não publique `.env` com credenciais reais.
 
 ```bash
 docker compose up -d --build
@@ -517,10 +522,11 @@ Prepare MySQL com banco e usuário. Em `api/`, crie `.env` e configure `DB_HOST=
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+cd ..\web; npm ci; npm run build; cd ..\api
 python app.py
 ```
 
-No Linux/macOS, ative com `source .venv/bin/activate`. Depois da criação das tabelas, rode `python -m app.seed` em outro terminal com o ambiente ativo, observando o aviso anterior.
+No Linux/macOS, ative com `source .venv/bin/activate`. O build da aplicação web (Node.js 22) gera `app/static/dist`; sem ele, as telas exibem um aviso de build ausente. Depois da criação das tabelas, rode `python -m app.seed` em outro terminal com o ambiente ativo, observando o aviso anterior.
 
 ### 10.4 Preparação funcional
 
@@ -534,7 +540,7 @@ No Linux/macOS, ative com `source .venv/bin/activate`. Depois da criação das t
 
 ### 10.5 Persistência e backup
 
-`mysql_data` mantém `/var/lib/mysql`; `uploads_data` mantém `/app/uploads`. Mantenha `UPLOAD_FOLDER=uploads` para o volume configurado na execução em `/app`.
+`mysql_data` mantém `/var/lib/mysql`; `uploads_data` mantém `/app/uploads`. Mantenha `UPLOAD_FOLDER=uploads` para usar esse volume.
 
 `docker compose down` preserva os volumes. **`docker compose down -v` apaga também banco e uploads.** Não é um procedimento de atualização que preserve dados.
 
@@ -559,12 +565,12 @@ docker compose down
 | Sintoma | Conferir |
 | --- | --- |
 | Falha de banco | Healthcheck, credenciais persistidas, host e porta. |
-| Porta ocupada | Serviços em 5000/3306 e mapeamento do host. |
+| Porta ocupada | Serviço em 5000 e mapeamento do host. |
 | Cadastro rejeitado | Obrigatórios, duplicatas, datas e foto. |
 | Professor sem opções acadêmicas | Associações de disciplina e turma; texto de disciplina principal não basta. |
 | Aluno sem disciplinas | Vínculo aluno/turma e disciplinas da turma. |
 | Nota/atividade com 403 | Vínculos professor/turma/disciplina e aluno/turma para nota. |
-| Página sem montagem/estilo | Console do navegador e acesso às CDNs. |
+| Aviso de build ausente ou tela em branco | Build de `web/` (`npm run build`, ou reconstruir a imagem) e console do navegador. |
 | Arquivo não encontrado | Nome persistido, existência do binário e volume/pasta. |
 | Painel com 403 | Sessão e perfil; JWT sozinho não autentica páginas. |
 
@@ -619,9 +625,9 @@ As evoluções são propostas e não estão implementadas por este documento.
 
 ## 13. Manutenção e referências
 
-Ao alterar funcionalidade, confira rota e guardas, controller, modelos e template/script correspondente. Valide falhas e transações além do sucesso. Alterar um modelo não faz `create_all()` atualizar todas as colunas de tabelas existentes.
+Ao alterar funcionalidade, confira rota e guardas, controller, modelos e a tela React correspondente. Valide falhas e transações além do sucesso. Alterar um modelo não faz `create_all()` atualizar todas as colunas de tabelas existentes.
 
-Novas telas devem considerar runtime React, evento de montagem e estilos. Mudanças de acesso precisam cobrir sessão e JWT. Atualize esta documentação quando modificar contratos, campos ou regras.
+Novas telas devem chamar `render_page()` na rota e ter um componente de mesmo nome em `web/src/pages/`, com suas folhas de estilo declaradas; siga o [protocolo de design](PROTOCOLO_DESIGN.md). Mudanças de acesso precisam cobrir sessão e JWT. Atualize esta documentação quando modificar contratos, campos ou regras.
 
 - [README](../README.md)
 - [Casos de uso](Especificação%20de%20Casos%20de%20Uso.md)
@@ -631,10 +637,11 @@ Novas telas devem considerar runtime React, evento de montagem e estilos. Mudan�
 - [Rotas](../api/app/routes/)
 - [Controllers](../api/app/controllers/)
 - [Modelos](../api/app/models/)
-- [Templates](../api/app/templates/)
+- [Ponte com a aplicação web](../api/app/spa.py)
+- [Telas React](../web/src/pages/)
 - [Licença MIT](../LICENSE)
 
-Há também um plano de negócios na pasta de documentos. Os materiais de produto complementam os objetivos; o comportamento descrito aqui se baseia no código local analisado.
+O modelo de negócio está no [Business Model Canvas](BMC.md) e o modelo de dados em [DADOS.md](DADOS.md). Os materiais de produto complementam os objetivos; o comportamento descrito aqui se baseia no código local analisado.
 
 ## 14. Inventário completo de rotas
 
@@ -990,7 +997,7 @@ A tabela existente `comunicados` já possuía gravação no backend. A atualiza�
 
 A nova tabela `configuracoes` contém `id` inteiro como chave primária, `cor_fundo` e `cor_destaque` como `VARCHAR(7)`. O registro de ID 1 guarda o tema global. A tabela é criada automaticamente por `init_db()`; não é necessário alterar colunas de tabelas existentes. As cores aceitam somente `#RRGGBB`. Os padrões são `#06385d` e `#22d3ee`; os painéis aplicam o fundo e os destaques compartilhados após recarregar.
 
-Implementação: `app/routes/gestao_routes.py`, `app/models/configuracao_model.py`, templates `super_usuarios.html`, `super_layout.html`, `mensagens.html` e partial `partials/gestao_global.html`. Os guards administrativos, login e rotas de documentos reconhecem o superperfil.
+Implementação: `app/routes/gestao_routes.py`, `app/models/configuracao_model.py` e as telas `web/src/pages/super_usuarios.jsx`, `super_layout.jsx` e `mensagens.jsx` (na análise original, templates Jinja de mesmo nome). Os guards administrativos, login e rotas de documentos reconhecem o superperfil.
 
 ### 16.4 Validação
 

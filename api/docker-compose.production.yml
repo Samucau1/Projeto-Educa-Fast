@@ -1,7 +1,9 @@
 # Standalone deployment: do not combine with the development/manual files.
 services:
   app:
-    build: .
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
     restart: unless-stopped
     ports:
       - "443:5000"

@@ -1,4 +1,5 @@
-from flask import Blueprint, abort, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 
 from app.controllers.professor_controller import (
     get_teacher_area_data,
@@ -19,7 +20,7 @@ def dashboard():
     if not data:
         abort(404)
 
-    return render_template("professor_painel.html", **data)
+    return render_page("professor_painel.html", **data)
 
 
 @professor_bp.route("/professor/notas/salvar", methods=["POST"])

@@ -2,7 +2,8 @@ import re
 import secrets
 
 import click
-from flask import Blueprint, abort, flash, g, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, flash, g, redirect, request, session, url_for
+from app.spa import render_page
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 from werkzeug.security import generate_password_hash
@@ -34,7 +35,7 @@ def _render_usuarios(error=None, permission_error=None, edit_user_id=None, statu
                 "nome": cadastro.nome if cadastro else user.email.split("@")[0],
                 "tem_professor": user.professor is not None, "tem_aluno": user.aluno is not None,
             })
-    return render_template("super_usuarios.html", usuarios=users, error=error,
+    return render_page("super_usuarios.html", usuarios=users, error=error,
                            permission_error=permission_error, edit_user_id=edit_user_id), status
 
 
@@ -116,14 +117,14 @@ def layout():
                 db.commit()
             flash("Cores atualizadas. A nova aparência já está disponível.", "success")
             return redirect(url_for("gestao.layout"))
-    return render_template("super_layout.html", error=error)
+    return render_page("super_layout.html", error=error)
 
 
 @gestao_bp.get("/mensagens")
 def mensagens():
     if not session.get("user_id"):
         abort(403)
-    return render_template("mensagens.html", comunicados=get_comunicados(limit=100))
+    return render_page("mensagens.html", comunicados=get_comunicados(limit=100))
 
 
 def init_gestao(app):

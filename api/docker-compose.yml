@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: api/Dockerfile
     container_name: flask_app
     restart: unless-stopped
     ports:
@@ -18,8 +18,11 @@ services:
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
       DB_NAME: ${DB_NAME:-app_web}
+      APP_ENV: ${APP_ENV:-development}
+      COOKIE_SECURE: ${COOKIE_SECURE:-0}
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-localhost,127.0.0.1}
+      JWT_EXPIRATION_HOURS: ${JWT_EXPIRATION_HOURS:-8}
     volumes:
-      - .:/app
       - uploads_data:/app/uploads
     depends_on:
       db:

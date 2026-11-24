@@ -1,7 +1,7 @@
 """Cursos reutilizados entre turmas e anos; bancos sintéticos e descartáveis."""
 import unittest
 from werkzeug.exceptions import HTTPException
-from ambiente_teste import configurar_banco_testes, mysql_de_testes
+from ambiente_teste import configurar_banco_testes, mysql_de_testes, tela
 configurar_banco_testes()
 from app import create_app
 from app.database import Base, engine, get_session
@@ -81,8 +81,8 @@ class CursosTest(unittest.TestCase):
         self.assertEqual(self.client.get('/cursos').status_code, 200)
         self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
         self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
-        self.assertIn(b'100%', self.client.get(f'/aprender/{self.o}').data)
-        self.assertIn(b'0%', self.client.get(f'/aprender/{self.o2}').data)
+        self.assertEqual(tela(self.client.get(f'/aprender/{self.o}'))['dados']['progresso'], 100)
+        self.assertEqual(tela(self.client.get(f'/aprender/{self.o2}'))['dados']['progresso'], 0)
         with get_session() as db:
             self.assertEqual(db.query(ProgressoAulaModel).count(), 1)
             self.assertEqual(db.query(CursoModel).count(), 1)
@@ -125,7 +125,7 @@ class CursosTest(unittest.TestCase):
         self.assertEqual(len(progresso), 1)
         self.post(f'/aprender/{self.o}/aulas/{outra_aula}/concluir', {}, 404)
         self.assertEqual(self.progresso_registrado(), progresso)
-        self.assertIn(b'0%', self.client.get(f'/aprender/{outra_oferta}').data)
+        self.assertEqual(tela(self.client.get(f'/aprender/{outra_oferta}'))['dados']['progresso'], 0)
 
         # A aula é válida: sua conclusão só deve funcionar na oferta correta.
         self.post(f'/aprender/{outra_oferta}/aulas/{outra_aula}/concluir', {})
@@ -196,10 +196,10 @@ class CursosTest(unittest.TestCase):
         self.login('aluno')
         pagina = self.client.get(f'/aprender/{self.o}')
         self.assertEqual(pagina.status_code, 200)
-        self.assertIn(b'100%', pagina.data)
+        self.assertEqual(tela(pagina)['dados']['progresso'], 100)
         self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
         self.assertEqual(self.progresso_registrado(), progresso)
-        self.assertIn(b'0%', self.client.get(f'/aprender/{self.o2}').data)
+        self.assertEqual(tela(self.client.get(f'/aprender/{self.o2}'))['dados']['progresso'], 0)
 
     def test_removed_enrollment_preserves_progress_after_reenrollment(self):
         self.preparar()
@@ -222,10 +222,10 @@ class CursosTest(unittest.TestCase):
         self.login('aluno')
         pagina = self.client.get(f'/aprender/{self.o}')
         self.assertEqual(pagina.status_code, 200)
-        self.assertIn(b'100%', pagina.data)
+        self.assertEqual(tela(pagina)['dados']['progresso'], 100)
         self.post(f'/aprender/{self.o}/aulas/{self.aula}/concluir', {})
         self.assertEqual(self.progresso_registrado(), progresso)
-        self.assertIn(b'0%', self.client.get(f'/aprender/{self.o2}').data)
+        self.assertEqual(tela(self.client.get(f'/aprender/{self.o2}'))['dados']['progresso'], 0)
 
     def test_archived_class_blocks_access_and_teaching(self):
         self.preparar()
@@ -241,7 +241,7 @@ class CursosTest(unittest.TestCase):
         self.assertEqual(self.progresso_registrado(), progresso)
         outra_oferta = self.client.get(f'/aprender/{self.o2}')
         self.assertEqual(outra_oferta.status_code, 200)
-        self.assertIn(b'0%', outra_oferta.data)
+        self.assertEqual(tela(outra_oferta)['dados']['progresso'], 0)
         with get_session() as db:
             self.assertFalse(autoriza_docencia(db, self.ids['professor_id'], self.t, self.d))
 
@@ -286,7 +286,7 @@ class CursosTest(unittest.TestCase):
         self.post(f'/cursos/{novo}/estrutura', {'acao': 'adicionar', 'tipo': 'tema', 'pai_id': self.cap, 'titulo': 'Inválido'}, 404)
         page = self.client.get(f'/cursos/{self.c}')
         self.assertEqual(page.status_code, 200)
-        self.assertIn(b'&lt;script&gt;', page.data)
+        self.assertEqual(tela(page)['dados']['curso']['titulo'], 'Álgebra <script>')
 
     def test_reorder_edit_delete_and_empty_publish_block(self):
         self.preparar(False)

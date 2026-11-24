@@ -4,19 +4,20 @@ import re
 
 
 def verificar(root):
-    app = root / 'api/app'
+    web = root / 'web'
     erros = []
-    for path in sorted((app / 'templates').glob('escola_*.html')):
+    for path in sorted((web / 'src/pages').glob('escola_*.jsx')):
         text = path.read_text(encoding='utf-8')
-        if "extends 'gestao_base.html'" not in text:
+        if '<GestaoBase' not in text:
             erros.append(f'{path.name}: não usa o layout compartilhado')
-        if re.search(r'<style\b|\sstyle\s*=|\son\w+\s*=|https?://', text, re.I):
-            erros.append(f'{path.name}: estilo, evento inline ou recurso externo não permitido')
-    css = (app / 'static/css/escola.css').read_text(encoding='utf-8')
+        if re.search(r'<style\b|\sstyle\s*=|dangerouslySetInnerHTML|https?://', text, re.I):
+            erros.append(f'{path.name}: estilo, HTML inline ou recurso externo não permitido')
+    css = (web / 'public/css/escola.css').read_text(encoding='utf-8')
     if not all(token in css for token in ('var(--text)', 'var(--surface)', 'var(--accent)', 'var(--school-radius)')):
         erros.append('escola.css: faltam tokens compartilhados')
-    if '<style' in (app / 'templates/partials/curso_estilo.html').read_text(encoding='utf-8'):
-        erros.append('curso_estilo: estilos precisam estar centralizados')
+    for path in sorted((web / 'src/pages').glob('*.jsx')):
+        if re.search(r'<style\b', path.read_text(encoding='utf-8')):
+            erros.append(f'{path.name}: estilos precisam estar centralizados nos arquivos CSS')
     for name in ('docs/PROTOCOLO_DESIGN.md', 'AGENTS.md'):
         if not (root / name).is_file():
             erros.append(f'Arquivo obrigatório ausente: {name}')

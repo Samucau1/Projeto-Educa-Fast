@@ -7,11 +7,8 @@ from .routes import register_routes
 
 
 def create_app():
-    app = Flask(
-        __name__,
-        template_folder="templates",
-        static_folder="static",
-    )
+    # As telas são desenhadas pela aplicação React (web/); o build fica em static/dist.
+    app = Flask(__name__, static_folder="static")
     app.config.from_object(Config)
     secret = app.config.get("SECRET_KEY") or ""
     if len(secret) < 32 or secret in {"desenvolvimento-web-flask", "troque-esta-chave-por-uma-chave-longa-e-aleatoria"}:
@@ -39,6 +36,8 @@ def create_app():
     app.register_blueprint(privacidade_bp)
     from .security import init_security
     init_security(app)
+    from .spa import init_spa
+    init_spa(app)
     from .views.error_view import register_error_pages
     register_error_pages(app)
 

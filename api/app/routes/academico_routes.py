@@ -1,5 +1,6 @@
 from decimal import Decimal
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, flash, jsonify, redirect, request, session, url_for
+from app.spa import render_page
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 from app.database import get_session
@@ -23,14 +24,14 @@ def resposta(endpoint, status=200, **values):
 def erro(exc):
     if request.is_json or request.args.get('formato') == 'json':
         return jsonify(erro=exc.description), exc.code
-    return render_template('academico_erro.html', error=exc.description), exc.code
+    return render_page('academico_erro.html', error=exc.description), exc.code
 
 
 @academico_bp.errorhandler(IntegrityError)
 def conflito(exc):
     if request.is_json:
         return jsonify(erro='Registro duplicado ou conflito de gravação. Recarregue a página.'), 409
-    return render_template('academico_erro.html', error='Registro duplicado ou conflito. Recarregue a página.'), 409
+    return render_page('academico_erro.html', error='Registro duplicado ou conflito. Recarregue a página.'), 409
 
 
 @academico_bp.get('/academico')
@@ -58,7 +59,7 @@ def painel():
                 'disciplina_id': d.id, 'disciplina': d.nome} for v, t, d in offers],
                 periodos=[{'id': p.id, 'turma_id': p.turma_id, 'nome': p.nome, 'fechado': p.fechado}
                           for p in periodos if role != 'professor' or p.turma_id in turmas_ids])
-        return render_template('academico_painel.html', vinculos=offers, avaliacoes=avaliacoes,
+        return render_page('academico_painel.html', vinculos=offers, avaliacoes=avaliacoes,
             periodos=periodos, turmas=turmas, periodo_map={p.id: p for p in periodos},
             estados={e.turma_id: e for e in db.query(EstadoTurmaModel)})
 
@@ -149,7 +150,7 @@ def diario(avaliacao_id):
             return jsonify(avaliacao_id=avaliacao.id, publicada=avaliacao.publicada, periodo=periodo.nome,
                 alunos=[{'id': a.id, 'nome': a.nome, 'valor': str(notas[a.id].valor) if a.id in notas else None,
                          'versao': notas[a.id].versao if a.id in notas else 0} for a in alunos])
-        return render_template('academico_diario.html', avaliacao=avaliacao, periodo=periodo,
+        return render_page('academico_diario.html', avaliacao=avaliacao, periodo=periodo,
             turma=cursos.obter(db, TurmaModel, vinculo.turma_id), disciplina=cursos.obter(db, DisciplinaModel, vinculo.disciplina_id),
             alunos=alunos, notas=notas, ativa=cursos.turma_ativa(db, vinculo.turma_id))
 
@@ -204,7 +205,7 @@ def render_boletim(db, aluno):
     result = service.boletim(db, aluno.id)
     if request.args.get('formato') == 'json':
         return jsonify(aluno_id=aluno.id, **result)
-    return render_template('academico_boletim.html', aluno=aluno, **result)
+    return render_page('academico_boletim.html', aluno=aluno, **result)
 
 
 @academico_bp.get('/boletim')
@@ -230,7 +231,7 @@ def boletim_admin(aluno_id):
 def lista_reconciliacao():
     identidade(admin=True)
     with get_session() as db:
-        return render_template('academico_reconciliar.html', turmas=db.query(TurmaModel).order_by(TurmaModel.ano_letivo.desc()).all(),
+        return render_page('academico_reconciliar.html', turmas=db.query(TurmaModel).order_by(TurmaModel.ano_letivo.desc()).all(),
             estados={e.turma_id: e for e in db.query(EstadoTurmaModel)})
 
 
@@ -249,7 +250,7 @@ def reconciliar(turma_id):
             return jsonify(turma_id=turma.id, revisao=revisao,
                 candidatos=[{'chave': f'{p.id}:{d.id}', 'professor': p.nome, 'disciplina': d.nome,
                              'ativa': f'{p.id}:{d.id}' in ativos} for p, d in pares])
-        return render_template('academico_reconciliar.html', turma=turma, pares=pares, revisao=revisao, ativos=ativos)
+        return render_page('academico_reconciliar.html', turma=turma, pares=pares, revisao=revisao, ativos=ativos)
 
 
 @academico_bp.get('/academico/notas-antigas')
@@ -268,7 +269,7 @@ def notas_antigas():
                 AlunoTurmaModel.turma_id == TurmaModel.id).filter(AlunoTurmaModel.aluno_id == nota.aluno_id,
                 TurmaDisciplinaModel.disciplina_id == nota.disciplina_id, PeriodoLetivoModel.fechado.is_(False),
                 AvaliacaoModel.publicada.is_(False)).all()
-        return render_template('academico_legadas.html', notas=rows, migradas=ids, destinos=destinos)
+        return render_page('academico_legadas.html', notas=rows, migradas=ids, destinos=destinos)
 
 
 @academico_bp.post('/academico/notas-antigas/<int:nota_id>/vincular')

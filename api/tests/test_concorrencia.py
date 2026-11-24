@@ -6,10 +6,9 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from ambiente_teste import configurar_banco_testes, mysql_de_testes
+from ambiente_teste import ClienteSPA, configurar_banco_testes, mysql_de_testes
 configurar_banco_testes()
 from flask import request
-from flask.testing import FlaskClient
 from sqlalchemy.orm import Session
 from app import create_app
 from app.database import Base, engine, get_session
@@ -24,7 +23,7 @@ class ConcorrenciaTest(unittest.TestCase):
         exigir_banco_em_memoria()
         cls.app=create_app()
         cls.app.config['TESTING']=True
-        cls.app.test_client_class=FlaskClient
+        cls.app.test_client_class=ClienteSPA
 
     def setUp(self):
         Base.metadata.drop_all(engine); Base.metadata.create_all(engine)

@@ -1,0 +1,15 @@
+# Usado pelo api/Dockerfile (contexto na raiz do repositório).
+.git
+docs
+**/.env
+**/.env.*
+**/certs
+**/uploads
+**/__pycache__
+**/*.pyc
+**/node_modules
+api/tests
+api/app/static/dist
+.venv
+venv
+.cache

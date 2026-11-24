@@ -1,8 +1,8 @@
 """Legacy workflow tests act like forms. Security tests use the unmodified client."""
-from flask.testing import FlaskClient
+from ambiente_teste import ClienteSPA
 
 
-class FormClient(FlaskClient):
+class FormClient(ClienteSPA):
     def post(self, *args, **kwargs):
         data = kwargs.get("data") or {}
         # Existing explicit CSRF tests intentionally omit the token on these routes.

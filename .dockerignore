@@ -11,3 +11,4 @@ docs/*
 **/uploads
 **/certs
 **/node_modules
+api/app/static/dist

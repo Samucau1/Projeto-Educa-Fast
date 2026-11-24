@@ -4,7 +4,7 @@ import os
 import tempfile
 import unittest
 
-from ambiente_teste import configurar_banco_testes
+from ambiente_teste import configurar_banco_testes, tela
 from csrf_client import FormClient
 configurar_banco_testes()
 
@@ -104,7 +104,7 @@ class RegressaoTest(unittest.TestCase):
         self.login("aluno")
         page = self.client.get(f"/aluno/disciplinas/{self.disciplina_id}")
         self.assertEqual(page.status_code, 200)
-        self.assertIn("Atividade de regressão".encode(), page.data)
+        self.assertIn("Atividade de regressão", [a["titulo"] for a in tela(page)["dados"]["atividades"]])
         self.login("outro_aluno")
         self.assertEqual(self.client.get(f"/aluno/disciplinas/{self.disciplina_id}").status_code, 404)
 
@@ -180,7 +180,7 @@ class RegressaoTest(unittest.TestCase):
         self.client.post("/logout")
         self.assertEqual(self.client.get("/mensagens").status_code, 403)
         self.login("aluno")
-        self.assertIn(b"Texto integral\nLinha 2", self.client.get("/mensagens").data)
+        self.assertIn("Texto integral\nLinha 2", [c["mensagem"] for c in tela(self.client.get("/mensagens"))["dados"]["comunicados"]])
         with get_session() as db:
             self.assertEqual(db.query(ComunicadoModel).count(), 1)
 

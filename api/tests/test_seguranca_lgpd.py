@@ -5,9 +5,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from ambiente_teste import configurar_banco_testes
+from ambiente_teste import ClienteSPA, configurar_banco_testes, tela
 configurar_banco_testes()
-from flask.testing import FlaskClient
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from app import create_app
@@ -26,7 +25,7 @@ class SegurancaLGPDTest(unittest.TestCase):
     def setUpClass(cls):
         exigir_banco_em_memoria()
         cls.app = create_app()
-        cls.app.test_client_class = FlaskClient
+        cls.app.test_client_class = ClienteSPA
         cls.app.config.update(TESTING=True)
 
     def setUp(self):
@@ -175,7 +174,7 @@ class SegurancaLGPDTest(unittest.TestCase):
         self.assertEqual(self.client.get('/minha-privacidade').status_code, 403)
         self.login('aluno')
         self.assertEqual(self.post('/minha-privacidade',data={'tipo':'correcao','detalhe':'Nome <script>alert(1)</script>'}).status_code,302)
-        self.assertIn(b'&lt;script&gt;',self.client.get('/minha-privacidade').data)
+        self.assertIn('Nome <script>alert(1)</script>',[p['detalhe'] for p in tela(self.client.get('/minha-privacidade'))['dados']['pedidos']])
         exported=self.post('/minha-privacidade/exportar?usuario_id='+str(self.ids['admin']))
         self.assertEqual(exported.json['conta']['email'],'aluno@teste.local')
         self.assertNotIn(b'senha',exported.data)

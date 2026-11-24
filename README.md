@@ -41,21 +41,21 @@ Os cadastros incluem dados específicos de cada perfil e foto opcional em JPG ou
 
 ## Tecnologias e arquitetura
 
-- **Backend:** Python 3.12, Flask 3.1 e templates Jinja.
+- **API (`api/`):** Python 3.12 e Flask 3.1.
 - **Banco:** SQLAlchemy 2.0, PyMySQL e MySQL 8.4.
-- **Interface:** HTML5, CSS, JavaScript, Tailwind CSS e React 18 via CDN.
+- **Aplicação web (`web/`):** React 18 e Vite, com CSS próprio e utilitários Tailwind pré-compilados.
 - **Ambiente:** Docker, Docker Compose e python-dotenv.
 - **Dependência de criptografia:** cryptography, incluída nos requisitos Python.
 
-O ponto de entrada `api/app.py` chama `create_app()`, carrega a configuração, inicializa o banco e registra os blueprints. As rotas encaminham as operações aos controllers, que consultam os modelos SQLAlchemy e retornam páginas ou respostas JSON.
+O ponto de entrada `api/app.py` chama `create_app()`, carrega a configuração, inicializa o banco e registra os blueprints. As rotas encaminham as operações aos controllers, que consultam os modelos SQLAlchemy e respondem em JSON.
 
-O HTML é renderizado no servidor com Jinja. Um shell React monta esse conteúdo no navegador, e scripts compartilhados e por página controlam abas, formulários e interações. Não há etapa de build com Node.js. O navegador precisa de internet para carregar as dependências externas da interface.
+As telas são desenhadas no navegador pela aplicação React (`web/`). Cada rota de tela da API continua decidindo permissões, dados e redirecionamentos e, por meio de `render_page` (`api/app/spa.py`), responde com JSON quando a SPA pede (cabeçalho `X-EducaFast-SPA`) ou com o `index.html` do build quando o navegador abre o endereço diretamente. Links e formulários são tratados pela SPA, sem recarregar a página. O build do React é servido pela própria API em `/static/dist/`, na mesma origem, então sessão e CSRF funcionam sem CORS. A interface não depende de recursos externos.
 
 O login verifica senhas armazenadas como hash pelo Werkzeug, estabelece uma sessão Flask e retorna um JWT HS256. As páginas verificam o perfil pela sessão; algumas rotas JSON exigem o cabeçalho `Authorization: Bearer <token>`.
 
 ## Arquitetura em camadas
 
-A organização segue uma separação de responsabilidades semelhante ao MVC, com blueprints para as rotas. As views de `app/views/` atendem à página inicial e ao dashboard administrativo; outras rotas renderizam os templates diretamente.
+A organização segue uma separação de responsabilidades semelhante ao MVC, com blueprints para as rotas. A API entrega os dados de cada tela; a aplicação React (`web/`) os apresenta.
 
 ```mermaid
 flowchart TD
@@ -65,8 +65,8 @@ flowchart TD
     Controllers["Controllers: operações e validações"]
     Modelos["Modelos SQLAlchemy e sessões do banco"]
     Banco[(MySQL)]
-    Templates["Views e templates Jinja"]
-    Interface["Shell React, JavaScript e CSS"]
+    Spa["render_page: dados da tela em JSON"]
+    Interface["Aplicação React (web/)"]
     Arquivos["Pasta de uploads"]
 
     Navegador -->|Requisição HTTP| Rotas
@@ -74,9 +74,9 @@ flowchart TD
     Acesso --> Controllers
     Controllers --> Modelos
     Modelos <--> Banco
-    Controllers -->|Contexto da página| Templates
-    Templates --> Interface
-    Interface -->|HTML e interações| Navegador
+    Controllers -->|Dados da tela| Spa
+    Spa --> Interface
+    Interface -->|Telas e interações| Navegador
     Controllers -->|Resposta JSON ou redirecionamento| Navegador
     Controllers <--> Arquivos
 ```
@@ -88,9 +88,9 @@ flowchart TD
 | Autenticação e acesso | `app/auth.py`, `app/routes/guards.py` | Assinar/validar JWTs e verificar o perfil nas rotas protegidas. |
 | Aplicação | `app/controllers/` | Executar cadastros, associações, consultas dos painéis, notas, atividades e documentos. |
 | Persistência | `app/models/`, `app/database.py` | Mapear entidades e vínculos, abrir sessões e inicializar o esquema. |
-| Apresentação | `app/views/`, `app/templates/` | Renderizar páginas com os dados preparados pelo backend. |
-| Interação no navegador | `app/static/js/compartilhado/`, `app/static/js/paginas/` | Montar o shell React, alternar abas e processar interações específicas. |
-| Estilos e recursos comuns | `app/static/css/`, `app/templates/partials/` | Definir estilos por tela e carregar o runtime compartilhado do React. |
+| Ponte com a interface | `app/spa.py`, `app/views/` | Entregar os dados de cada tela em JSON (ou o `index.html` do build) e o mapa de rotas (`/api/rotas`). |
+| Telas | `web/src/pages/`, `web/src/components/` | Desenhar cada tela, abas, filtros e diálogos em React. |
+| Navegação e estilos | `web/src/core/`, `web/public/css/` | Navegação sem recarga, envio de formulários com CSRF e folhas de estilo de cada tela. |
 
 ### Implantação com containers
 
@@ -118,31 +118,31 @@ O serviço `app` usa o Dockerfile Python e depende do estado saudável de `db`. 
 
 ## Telas do sistema
 
-O catálogo abaixo descreve as telas implementadas e aponta para seus templates. Para visualizá-las em funcionamento, execute a aplicação e entre com o perfil correspondente. As abas dos painéis de professor e aluno são seções da mesma página.
+O catálogo abaixo descreve as telas implementadas e aponta para seus componentes React. Para visualizá-las em funcionamento, execute a aplicação e entre com o perfil correspondente. As abas dos painéis de professor e aluno são seções da mesma página.
 
 ### Login
 
 | Tela e template | Rota | Conteúdo e ações |
 | --- | --- | --- |
-| [Login](api/app/templates/login.html) | `/` | Campos de e-mail institucional e senha. Após autenticar, o usuário é direcionado ao painel de seu perfil. |
+| [Login](web/src/pages/login.jsx) | `/` | Campos de e-mail institucional e senha. Após autenticar, o usuário é direcionado ao painel de seu perfil. |
 
 ### Secretaria / administrador
 
 | Tela e template | Rota principal | Conteúdo e ações |
 | --- | --- | --- |
-| [Dashboard da secretaria](api/app/templates/admin_painel.html) | `/admin/dashboard` | Saudação, totais de alunos e professores, matrículas pendentes e últimos registros. Menu lateral para as áreas administrativas. |
-| [Cadastro de alunos](api/app/templates/admin_cadastro_aluno.html) | `/admin/cadastro-alunos` | Dados pessoais e acadêmicos, matrícula, credenciais de acesso e foto de perfil. |
-| [Cadastro de professores](api/app/templates/admin_cadastro_professores.html) | `/admin/cadastro-professores` | Nome, CPF, contato, disciplina principal, formação, regime de trabalho, admissão, credenciais e foto. |
-| [Banco de dados](api/app/templates/admin_banco_dados.html) | `/admin/banco-de-dados` | Indicadores, listagem de registros acadêmicos e busca por nome ou ID, com acesso aos detalhes dos cadastros. É uma tela de consulta de pessoas, sem editor SQL. |
-| [Detalhes do aluno](api/app/templates/admin_detalhes_aluno.html) | `/admin/alunos/<aluno_id>` | Perfil, edição cadastral, solicitações de documentos e arquivos enviados. |
-| [Detalhes do professor](api/app/templates/admin_detalhes_professor.html) | `/admin/professores/<professor_id>` | Perfil e edição cadastral, aba de atuação e aba de documentos com solicitações e arquivos enviados. |
-| [Disciplinas](api/app/templates/admin_disciplinas.html) | `/admin/disciplinas` | Criação com nome, código e carga horária; listagem e associação de professores. |
-| [Turmas](api/app/templates/admin_turmas.html) | `/admin/turmas` | Cadastro e listagem de turmas, associação de alunos e professores e consulta das disciplinas vinculadas. |
-| [Comunicados](api/app/templates/admin_comunicados.html) | `/admin/comunicados` | Formulário com título e mensagem e consulta dos recados publicados. |
+| [Dashboard da secretaria](web/src/pages/admin_painel.jsx) | `/admin/dashboard` | Saudação, totais de alunos e professores, matrículas pendentes e últimos registros. Menu lateral para as áreas administrativas. |
+| [Cadastro de alunos](web/src/pages/admin_cadastro_aluno.jsx) | `/admin/cadastro-alunos` | Dados pessoais e acadêmicos, matrícula, credenciais de acesso e foto de perfil. |
+| [Cadastro de professores](web/src/pages/admin_cadastro_professores.jsx) | `/admin/cadastro-professores` | Nome, CPF, contato, disciplina principal, formação, regime de trabalho, admissão, credenciais e foto. |
+| [Banco de dados](web/src/pages/admin_banco_dados.jsx) | `/admin/banco-de-dados` | Indicadores, listagem de registros acadêmicos e busca por nome ou ID, com acesso aos detalhes dos cadastros. É uma tela de consulta de pessoas, sem editor SQL. |
+| [Detalhes do aluno](web/src/pages/admin_detalhes_aluno.jsx) | `/admin/alunos/<aluno_id>` | Perfil, edição cadastral, solicitações de documentos e arquivos enviados. |
+| [Detalhes do professor](web/src/pages/admin_detalhes_professor.jsx) | `/admin/professores/<professor_id>` | Perfil e edição cadastral, aba de atuação e aba de documentos com solicitações e arquivos enviados. |
+| [Disciplinas](web/src/pages/admin_disciplinas.jsx) | `/admin/disciplinas` | Criação com nome, código e carga horária; listagem e associação de professores. |
+| [Turmas](web/src/pages/admin_turmas.jsx) | `/admin/turmas` | Cadastro e listagem de turmas, associação de alunos e professores e consulta das disciplinas vinculadas. |
+| [Comunicados](web/src/pages/admin_comunicados.jsx) | `/admin/comunicados` | Formulário com título e mensagem e consulta dos recados publicados. |
 
 ### Professor
 
-O [painel do professor](api/app/templates/professor_painel.html), em `/professor/dashboard` (também `/professor`), reúne:
+O [painel do professor](web/src/pages/professor_painel.jsx), em `/professor/dashboard` (também `/professor`), reúne:
 
 | Aba | Conteúdo e ações |
 | --- | --- |
@@ -154,8 +154,8 @@ O [painel do professor](api/app/templates/professor_painel.html), em `/professor
 
 | Tela e template | Rota principal | Conteúdo e ações |
 | --- | --- | --- |
-| [Painel do aluno](api/app/templates/aluno_painel.html) | `/aluno/dashboard` (também `/aluno`) | Abas de disciplinas, notas e documentos. Exibe as disciplinas associadas, as notas e observações e as solicitações de documentos, com upload de resposta e arquivos enviados. |
-| [Detalhes da disciplina](api/app/templates/aluno_disciplina.html) | `/aluno/disciplinas/<disciplina_id>` | Informações da disciplina, professores e atividades com arquivos disponíveis para download. |
+| [Painel do aluno](web/src/pages/aluno_painel.jsx) | `/aluno/dashboard` (também `/aluno`) | Abas de disciplinas, notas e documentos. Exibe as disciplinas associadas, as notas e observações e as solicitações de documentos, com upload de resposta e arquivos enviados. |
+| [Detalhes da disciplina](web/src/pages/aluno_disciplina.jsx) | `/aluno/disciplinas/<disciplina_id>` | Informações da disciplina, professores e atividades com arquivos disponíveis para download. |
 
 ### Navegação entre as telas
 
@@ -187,8 +187,8 @@ Para percorrer as telas com conteúdo, cadastre os usuários, configure as assoc
 ```text
 Projeto-Educa-Fast/
 ├── docs/       # Documentação: integrantes, BMC, modelo de dados, casos de uso, testes e protótipo
-├── api/        # Backend Flask (API e, nesta versão, as telas Jinja)
-├── web/        # Aplicação web React/Vite (migração em andamento)
+├── api/        # API Flask (dados, regras e permissões; serve o build da web)
+├── web/        # Aplicação web React/Vite (todas as telas)
 ├── .github/    # CI (GitHub Actions)
 ├── iniciar-educafast.ps1 / .cmd      # Atalhos para o ambiente de teste manual (Windows)
 ├── LICENSE
@@ -199,7 +199,7 @@ Cada aplicação tem seu próprio `README.md`, com instalação, configuração 
 
 ## Como executar
 
-O sistema completo roda a partir da pasta `api/`. Siga o passo a passo de [`api/README.md`](api/README.md). Resumo com Docker:
+Com Docker, o build da aplicação web é feito automaticamente junto com a API. Siga o passo a passo de [`api/README.md`](api/README.md); para desenvolver as telas, veja [`web/README.md`](web/README.md). Resumo com Docker:
 
 ```bash
 cd api
@@ -210,7 +210,7 @@ docker compose exec app python -m app.seed
 
 Depois acesse [http://localhost:5000](http://localhost:5000).
 
-A pasta [`web/`](web/README.md) guarda a nova interface React, que ainda está em migração. Por enquanto as telas em uso são servidas pela própria API.
+Sem Docker, gere o build da web (`npm ci` e `npm run build` em `web/`) antes de iniciar a API.
 
 ## Validação e limites atuais
 

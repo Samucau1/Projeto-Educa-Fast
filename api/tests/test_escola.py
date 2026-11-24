@@ -4,7 +4,7 @@ from decimal import Decimal
 from pathlib import Path
 import json
 import unittest
-from ambiente_teste import configurar_banco_testes
+from ambiente_teste import configurar_banco_testes, tela, texto_tela
 configurar_banco_testes()
 import test_cursos as curso_tests
 from app import create_app
@@ -68,9 +68,10 @@ class EscolaTest(unittest.TestCase):
         self.post('/super/escola/identidade', data, 409)
         self.login('aluno')
         page = self.client.get('/mensagens')
-        self.assertIn(b'Escola &lt;script&gt;', page.data)
-        self.assertIn(b'ABC', page.data)
-        self.assertIn(b'--school-radius:12px', page.data)
+        escola = tela(page)['global']['escola']
+        self.assertEqual(escola['nome'], 'Escola <script>')
+        self.assertEqual(escola['sigla'], 'ABC')
+        self.assertEqual(escola['raio'], '12')
 
     def test_invalid_theme_values_and_low_contrast_rejected(self):
         self.login('superadmin')
@@ -90,7 +91,9 @@ class EscolaTest(unittest.TestCase):
         current = self.meta()['identidade']
         self.assertEqual(current['versao'], 2)
         self.assertEqual(current['destaque'], '#1e40af')
-        self.assertIn(b'school-theme', self.client.get('/super/escola').data)
+        escola = tela(self.client.get('/super/escola'))['global']['escola']
+        self.assertGreater(escola['versao'], 0)
+        self.assertEqual(escola['modo'], 'claro')
 
     def test_calendar_weekdays_holidays_and_makeup_days(self):
         cid = self.calendario('2026-01-05', '2026-01-11', 5)
@@ -102,7 +105,7 @@ class EscolaTest(unittest.TestCase):
             'tipo': 'letivo', 'inicio': '2026-01-10'}, 201)
         self.assertEqual(self.meta()['calendarios'][0]['dias_planejados'], 5)
         self.login('aluno')
-        self.assertIn('Reposição'.encode(), self.client.get('/calendario-escolar').data)
+        self.assertIn('Reposição', texto_tela(self.client.get('/calendario-escolar')))
 
     def test_calendar_conflicts_invalid_ranges_and_atomic_event_batch(self):
         cid = self.calendario('2026-01-05', '2026-01-11', 5)

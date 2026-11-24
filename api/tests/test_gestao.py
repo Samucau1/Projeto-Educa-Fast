@@ -2,7 +2,7 @@
 import os
 import unittest
 
-from ambiente_teste import configurar_banco_testes
+from ambiente_teste import configurar_banco_testes, tela
 from csrf_client import FormClient
 configurar_banco_testes()
 
@@ -50,8 +50,8 @@ class GestaoTest(unittest.TestCase):
             self.login(role)
             page = self.client.get("/mensagens")
             self.assertEqual(page.status_code, 200)
-            self.assertIn(b"Mensagem para todos", page.data)
-            self.assertIn(b"&lt;script&gt;", page.data)
+            mensagens = [c["mensagem"] for c in tela(page)["dados"]["comunicados"]]
+            self.assertIn("Mensagem para todos <script>alert(1)</script>", mensagens)
         for role in ("aluno", "professor"):
             token = self.login(role)
             self.assertEqual(self.client.post("/admin/comunicados", data={"titulo": "X", "mensagem": "X", "csrf_token": token}).status_code, 403)
@@ -82,11 +82,11 @@ class GestaoTest(unittest.TestCase):
         self.assertEqual(self.client.post("/super/layout", data={"cor_fundo": "#123456", "cor_destaque": "#abcdef"}).status_code, 400)
         self.assertEqual(self.client.post("/super/layout", data={"cor_fundo": "#123456", "cor_destaque": "#abcdef", "csrf_token": token}).status_code, 302)
         self.login("aluno")
-        self.assertIn(b"#123456", self.client.get("/mensagens").data)
+        self.assertEqual(tela(self.client.get("/mensagens"))["global"]["tema"]["cor_fundo"], "#123456")
         self.assertEqual(self.client.get("/super/layout").status_code, 403)
         token = self.login("superadmin")
         self.client.post("/super/layout", data={"cor_fundo": "red;}", "cor_destaque": "#abcdef", "csrf_token": token})
-        self.assertIn(b"#123456", self.client.get("/mensagens").data)
+        self.assertEqual(tela(self.client.get("/mensagens"))["global"]["tema"]["cor_fundo"], "#123456")
 
     def test_old_jwt_uses_current_role(self):
         with self.app.app_context(), get_session() as db:
@@ -110,7 +110,7 @@ class GestaoTest(unittest.TestCase):
             data["csrf_token"] = token
             response = self.client.post("/admin/comunicados", data=data)
             self.assertEqual(response.status_code, 200)
-            self.assertIn(b"obrigatorios" if not data["titulo"] else b"150", response.data)
+            self.assertIn("obrigatorios" if not data["titulo"] else "150", tela(response)["dados"]["error"])
         self.assertEqual(self.client.post("/admin/comunicados", data={"titulo": "X", "mensagem": "X"}).status_code, 400)
 
 

@@ -4,12 +4,13 @@
 
 | Nome completo | Matrícula | Turma |
 | --- | --- | --- |
-| NOME COMPLETO 1 | 000000000 | TURMA |
-| NOME COMPLETO 2 | 000000000 | TURMA |
-| NOME COMPLETO 3 | 000000000 | TURMA |
-| NOME COMPLETO 4 | 000000000 | TURMA |
+| Pedro Henrique Moreira Sobreira | UC23200607 | GPE17M80081 |
+| Roberto Qiming Li | UC23101571 | GPE17M80081 |
+| Samuel Galvão Fernandes | UC23101483 | GPE17M80081 |
+| Vittor Kawe Araujo Sousa | UC23101551 | GPE17M80081 |
+| Yago Coutinho de Oliveira | UC23200421 | GPE17M80081 |
 
-<!-- Liste os integrantes em ordem alfabética. Adicione ou remova linhas conforme necessário. -->
+
 
 ## Vídeo de apresentação
 

@@ -1,7 +1,5 @@
 # Business Model Canvas — Educa Fast
 
-> **Rascunho para revisão do grupo.** Este canvas foi montado a partir das funcionalidades implementadas e da documentação do projeto. Ajustem segmentos, canais, custos e receitas conforme o material apresentado na primeira atividade (proposta do semestre anterior) antes da entrega.
-
 Educa Fast é uma plataforma web de gestão escolar que reúne num só lugar a secretaria, os professores e os alunos: cadastros, turmas, diário e boletim, cursos em vídeo, documentos e comunicados.
 
 | Parceiros-chave | Atividades-chave | Proposta de valor | Relacionamento com clientes | Segmentos de clientes |

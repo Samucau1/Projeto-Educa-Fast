@@ -32,3 +32,6 @@ web/playwright-report/
 # Private TLS material must never enter Git.
 **/certs/
 *.key
+
+# Folha de logins gerada pelo iniciar-educafast.sh
+LOGINS-EDUCAFAST.txt

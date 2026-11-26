@@ -36,6 +36,27 @@ Opções pelo PowerShell:
 
 `-Acao Parar` remove os containers e **descarta os dados de demonstração**. Os mesmos parâmetros funcionam com `iniciar-educafast.cmd`. O Docker deve continuar aberto para manter os serviços funcionando.
 
+## Iniciar no macOS (com tutorial guiado)
+
+No Finder, dê dois cliques em **`iniciar-educafast.command`**. Na primeira vez, se o macOS avisar que o arquivo é de desenvolvedor não identificado, clique com o botão direito no arquivo, escolha **Abrir** e confirme. É necessário ter o [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado; o script abre o Docker sozinho se ele estiver fechado.
+
+Pelo Terminal, na pasta do projeto:
+
+```bash
+./iniciar-educafast.sh                          # sobe o ambiente, faz o tutorial e abre o menu
+./iniciar-educafast.sh iniciar --sem-tutorial   # vai direto ao menu de logins
+./iniciar-educafast.sh logins                   # mostra os logins de teste
+./iniciar-educafast.sh status                   # mostra os containers
+./iniciar-educafast.sh parar                    # encerra e descarta os dados de demonstração
+```
+
+O script:
+
+1. Sobe a aplicação e o MySQL de testes no Docker (o mesmo ambiente do Windows, porta 5050).
+2. Salva a folha **`LOGINS-EDUCAFAST.txt`** na raiz do projeto com o endereço, a senha e os e-mails de cada perfil.
+3. Faz um tutorial em 4 passos (superperfil, administrador, professor e aluno). Em cada passo abre o login no navegador e copia o e-mail e a senha para a área de transferência.
+4. Termina num menu para entrar com qualquer perfil, rever os logins, abrir este roteiro ou encerrar o ambiente. O sistema continua rodando mesmo depois de fechar o menu.
+
 ## Iniciar com um clique
 
 Na raiz do repositório, dê dois cliques em **`iniciar-teste-manual.cmd`** (atalho compatível com o iniciador acima). Não exige Python nem a senha do MySQL instalado; é necessário ter Docker Desktop instalado e configurado para containers Linux. Na primeira execução, o Docker pode baixar as imagens.

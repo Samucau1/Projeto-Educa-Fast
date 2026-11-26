@@ -190,6 +190,7 @@ Projeto-Educa-Fast/
 ├── web/        # Aplicação web React/Vite (todas as telas)
 ├── .github/    # CI (GitHub Actions)
 ├── iniciar-educafast.ps1 / .cmd      # Atalhos para o ambiente de teste manual (Windows)
+├── iniciar-educafast.sh / .command  # Ambiente de teste manual com tutorial guiado (macOS)
 ├── LICENSE
 └── README.md
 ```
@@ -222,7 +223,7 @@ O Compose local usa Gunicorn, sem depuração, e publica a aplicação somente e
 - [Documentação completa do sistema](docs/DOCUMENTACAO_DO_SISTEMA.md)
 - [Segurança, criptografia e LGPD — configuração e responsabilidades](docs/SEGURANCA_E_LGPD.md)
 - [Testes de API/Postman e regressão](docs/testes/README.md)
-- [Iniciar o ambiente manual](docs/testes/TESTE_MANUAL.md#iniciar-o-ambiente-em-segundo-plano): execute `.\iniciar-educafast.ps1` no PowerShell ou `.\iniciar-educafast.cmd` no CMD, na raiz do projeto.
+- [Iniciar o ambiente manual](docs/testes/TESTE_MANUAL.md#iniciar-o-ambiente-em-segundo-plano): execute `.\iniciar-educafast.ps1` no PowerShell ou `.\iniciar-educafast.cmd` no CMD, na raiz do projeto. No macOS, dê dois cliques em `iniciar-educafast.command` ([detalhes](docs/testes/TESTE_MANUAL.md#iniciar-no-macos-com-tutorial-guiado)).
 - [Especificação de casos de uso](docs/Especificação%20de%20Casos%20de%20Uso.md)
 - [Documentos do projeto](docs/) — integrantes e vídeo em [docs/README.md](docs/README.md)
 - [Business Model Canvas](docs/BMC.md) e [modelo de dados](docs/DADOS.md) ([PDF](docs/DADOS.pdf))

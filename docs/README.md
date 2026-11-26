@@ -15,3 +15,17 @@
 ## Vídeo de apresentação
 
 [Assistir no YouTube](https://www.youtube.com/watch?v=YIObY_EzHO8)
+
+## Prints da solução
+
+### Tela de login
+
+![Tela de login](prints/01-login.png)
+
+### Painel do superadministrador
+
+![Painel inicial do superadministrador](prints/02-superadmin.png)
+
+### Página inicial do professor
+
+![Página inicial do professor](prints/03-professor.png)

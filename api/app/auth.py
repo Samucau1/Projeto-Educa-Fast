@@ -86,10 +86,14 @@ def decode_token_from_request():
     from app.models import UsuarioModel
     from app import escolas
     if payload.get("esc"):
+        from app.database import engine
         try:
             g.escola_schema = escolas.validar_schema(payload["esc"])
         except ValueError:
             return None, (jsonify({"erro": "Token JWT invalido"}), 401)
+        # Escola desativada pelo ADM Supremo: o token deixa de valer na hora, como a sessão.
+        if not escolas.escola_ativa(engine, g.escola_schema):
+            return None, (jsonify({"erro": "Escola sem acesso ativo"}), 401)
     try:
         user_id = int(payload.get("sub", ""))
     except (TypeError, ValueError):

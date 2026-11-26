@@ -170,6 +170,22 @@ class MultiEscolaTest(unittest.TestCase):
         payload = json.loads(base64.urlsafe_b64decode(corpo + "=" * (-len(corpo) % 4)))
         self.assertEqual(payload["esc"], "escola_alfa")
 
+    def test_token_de_escola_desativada_deixa_de_valer(self):
+        supremo = self.supremo_com_duas_escolas()
+        _, resposta = self.entrar("direcao@alfa.local", SENHA_ESCOLAS)
+        token = resposta.json["token"]
+        with self.app.test_request_context(headers={"Authorization": f"Bearer {token}"}):
+            from app.auth import decode_token_from_request
+            payload, erro = decode_token_from_request()
+            self.assertIsNone(erro)
+        escola_id = next(e["id"] for e in tela(supremo.get("/supremo"))["dados"]["escolas"] if e["slug"] == "alfa")
+        supremo.post(f"/supremo/escolas/{escola_id}/situacao", data={"ativa": "0", "csrf_token": self.token(supremo)})
+        with self.app.test_request_context(headers={"Authorization": f"Bearer {token}"}):
+            from app.auth import decode_token_from_request
+            payload, erro = decode_token_from_request()
+            self.assertIsNone(payload)
+            self.assertEqual(erro[1], 401)
+
     def test_arquivos_de_cada_escola_ficam_em_pastas_separadas(self):
         self.supremo_com_duas_escolas()
         with self.app.test_request_context():

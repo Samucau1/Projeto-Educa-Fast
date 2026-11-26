@@ -13,7 +13,8 @@ from app.security import save_upload
 
 
 def get_upload_folder():
-    return os.path.abspath(current_app.config["UPLOAD_FOLDER"])
+    from app.escolas import pasta_uploads
+    return pasta_uploads(current_app.config["UPLOAD_FOLDER"])
 
 
 def _get_or_create_disciplina(session_db, disciplina_id=None):

@@ -30,6 +30,17 @@ def login_usuario(data):
     if not isinstance(email, str) or not isinstance(senha, str) or not email or not senha or len(email) > 120 or len(senha) > 1024:
         return {"erro": "E-mail e senha sao obrigatorios"}, 400
 
+    from flask import g
+    from app import escolas
+    from app.database import engine
+    if escolas.multiescola_ativo(engine):
+        operador = _login_operador(engine, email, senha)
+        if operador:
+            return operador
+        # O diretório da plataforma diz a qual escola o e-mail pertence; sem registro, escola padrão.
+        escola = escolas.escola_do_email(engine, email)
+        g.escola_schema = escola.schema_nome if escola else escolas.SCHEMA_PADRAO
+
     session = get_session()
     try:
         user = session.query(UsuarioModel).filter(UsuarioModel.email == email).first()
@@ -53,6 +64,24 @@ def login_usuario(data):
         # O JWT tambem inclui a role para o front enviar nas proximas chamadas protegidas.
         "token": generate_token(user),
     }, 200
+
+
+def _login_operador(engine, email, senha):
+    """ADM Supremo: entra pela mesma tela, mas não pertence a nenhuma escola."""
+    from sqlalchemy import select
+    from sqlalchemy.orm import Session
+    from app.escolas import OperadorModel, normalizar_email
+    with Session(engine) as db:
+        operador = db.execute(select(OperadorModel).where(OperadorModel.email == normalizar_email(email))).scalar()
+    if operador is None:
+        return None
+    try:
+        ok = check_password_hash(operador.senha, senha)
+    except (ValueError, UnicodeError):
+        ok = False
+    if not ok:
+        return {"erro": "Credenciais invalidas"}, 401
+    return {"id": operador.id, "email": operador.email, "tipo": "SUPREMO", "role": "supremo", "operador": True}, 200
 
 
 def _parse_date(value):
@@ -84,7 +113,8 @@ def _save_profile_photo(files):
     if file_size > MAX_PROFILE_PHOTO_BYTES:
         return None, ({"erro": "A foto deve ter no maximo 2MB"}, 400)
 
-    upload_folder = os.path.abspath(current_app.config["UPLOAD_FOLDER"])
+    from app.escolas import pasta_uploads
+    upload_folder = pasta_uploads(current_app.config["UPLOAD_FOLDER"])
     os.makedirs(upload_folder, exist_ok=True)
 
     filename = f"perfil_{uuid4().hex}_{original_filename}"
@@ -97,7 +127,8 @@ def _remove_saved_file(filename):
     if not filename:
         return
 
-    path = os.path.join(os.path.abspath(current_app.config["UPLOAD_FOLDER"]), filename)
+    from app.escolas import pasta_uploads
+    path = os.path.join(pasta_uploads(current_app.config["UPLOAD_FOLDER"]), filename)
     if os.path.exists(path):
         os.remove(path)
 

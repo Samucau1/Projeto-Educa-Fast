@@ -27,7 +27,13 @@ def login():
     if status == 200:
         session.clear()
         session["csrf_token"] = secrets.token_hex(32)
-        session["user_id"] = response["id"]
+        if response.pop("operador", False):
+            # ADM Supremo: sessão da plataforma, sem usuário de escola.
+            session["operador_id"] = response["id"]
+        else:
+            session["user_id"] = response["id"]
+            if g.get("escola_schema"):
+                session["escola_schema"] = g.escola_schema
         session["user_email"] = response["email"]
         session["user_role"] = response["role"]
         response["csrf_token"] = session["csrf_token"]

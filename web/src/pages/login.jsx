@@ -9,7 +9,7 @@ export const head = (g) => [...headWorkspace(g), css('login.css')];
 export const bodyClass = 'login-page';
 export const titulo = (_d, g) => `Entrar | ${g.escola?.nome ?? 'Educa Fast'}`;
 
-const DESTINOS = { SUPERADMIN: '/super/usuarios', ADMIN: '/admin/dashboard', ALUNO: '/aluno', PROFESSOR: '/professor' };
+const DESTINOS = { SUPREMO: '/supremo', SUPERADMIN: '/super/usuarios', ADMIN: '/admin/dashboard', ALUNO: '/aluno', PROFESSOR: '/professor' };
 
 export default function Login({ g }) {
     const { navegar } = useApp();

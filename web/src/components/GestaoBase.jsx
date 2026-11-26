@@ -6,7 +6,8 @@ import { useApp } from '../core/contexto';
 // Layout padrão das telas de gestão (antes: gestao_base.html).
 export default function GestaoBase({ titulo, error, children }) {
     const app = useApp();
-    const logado = Boolean(app.global.sessao.user_id);
+    // ADM Supremo não é usuário de escola, mas usa o mesmo layout.
+    const logado = Boolean(app.global.sessao.user_id || app.global.sessao.operador);
     useRotulosTabelas(app.chave);
     return (
         <>
@@ -16,7 +17,9 @@ export default function GestaoBase({ titulo, error, children }) {
                 {logado && <WorkspaceTopbar titulo={titulo} />}
                 <main id="main-content" className="app-content">
                     {error && <div className="notice notice-error" role="alert">{error}</div>}
-                    {app.mensagens.map(([, mensagem], i) => <div key={i} className="notice notice-success" role="status">{mensagem}</div>)}
+                    {app.mensagens.map(([categoria, mensagem], i) => categoria === 'error'
+                        ? <div key={i} className="notice notice-error" role="alert">{mensagem}</div>
+                        : <div key={i} className="notice notice-success" role="status">{mensagem}</div>)}
                     {children}
                 </main>
             </div>

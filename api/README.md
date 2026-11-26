@@ -9,11 +9,11 @@ API do Educa Fast: dados, regras de negócio e permissões de todas as telas. El
 | Forma de execução | Requisitos |
 | --- | --- |
 | Docker (recomendado) | Git, Docker e Docker Compose (comando `docker compose`), porta `5000` livre |
-| Local, sem Docker | Git, Python 3.12, Node.js 22 e npm (build da web), MySQL 8 com banco e usuário criados |
+| Local, sem Docker | Git, Python 3.12, Node.js 22 e npm (build da web), Postgres 16 com banco e usuário criados |
 
 ### Dependências
 
-As dependências Python estão em [`requirements.txt`](requirements.txt): Flask, SQLAlchemy, PyMySQL, python-dotenv, cryptography, gunicorn e as demais bibliotecas usadas. As dependências da interface estão em [`web/package.json`](../web/package.json). No Docker, tudo é instalado e compilado automaticamente durante o build da imagem. Fora do Docker, siga os passos 3 e 4 da execução local.
+As dependências Python estão em [`requirements.txt`](requirements.txt): Flask, SQLAlchemy, psycopg, python-dotenv, cryptography, gunicorn e as demais bibliotecas usadas. As dependências da interface estão em [`web/package.json`](../web/package.json). No Docker, tudo é instalado e compilado automaticamente durante o build da imagem. Fora do Docker, siga os passos 3 e 4 da execução local.
 
 ### Variáveis de ambiente
 
@@ -42,9 +42,8 @@ O primeiro comando gera a `SECRET_KEY` e o segundo, a `DATA_ENCRYPTION_KEY`. Se 
 | `SECRET_KEY` | Sim | Assina sessões e JWTs, com no mínimo 32 caracteres aleatórios. |
 | `DATA_ENCRYPTION_KEY` | Sim | Chave Fernet que cifra dados pessoais e arquivos. Guarde uma cópia: sem ela, os dados não podem ser lidos. |
 | `DB_PASSWORD` | Sim | Senha do usuário do banco. |
-| `MYSQL_ROOT_PASSWORD` | Sim (Docker) | Senha root do container MySQL. |
-| `DB_HOST` | Não | Host do MySQL. Padrão `localhost`; no Docker, o Compose define `db`. |
-| `DB_PORT` | Não | Porta do MySQL. Padrão `3306`. |
+| `DB_HOST` | Não | Host do Postgres. Padrão `localhost`; no Docker, o Compose define `db`. |
+| `DB_PORT` | Não | Porta do Postgres. Padrão `5432`. |
 | `DB_USER` | Não | Usuário do banco. Padrão `app_user` no Compose e `root` no modo local. |
 | `DB_NAME` | Não | Nome do banco. Padrão `app_web`. |
 | `DB_URL` | Não | URL SQLAlchemy completa. Substitui as variáveis `DB_*`. |
@@ -67,7 +66,7 @@ docker compose up -d --build
 docker compose ps
 ```
 
-O MySQL sobe junto e as tabelas são criadas na primeira inicialização. Depois crie os acessos iniciais:
+O Postgres sobe junto e as tabelas são criadas na primeira inicialização. Depois crie os acessos iniciais:
 
 ```bash
 docker compose exec app python -m app.seed
@@ -84,7 +83,7 @@ Acesse [http://localhost:5000](http://localhost:5000). Para ver os logs, use `do
 
 ### Executar localmente (sem Docker)
 
-1. Crie no MySQL o banco e o usuário informados no `.env` e defina `DB_HOST=localhost`.
+1. Crie no Postgres o banco e o usuário informados no `.env` e defina `DB_HOST=localhost`.
 2. Crie e ative o ambiente virtual:
 
    ```bash
@@ -120,13 +119,13 @@ Acesse [http://localhost:5000](http://localhost:5000). Para ver os logs, use `do
 
 ### Executar os testes
 
-Os testes usam SQLite em memória e não precisam de MySQL. Com as dependências instaladas:
+Os testes usam SQLite em memória e não precisam de Postgres (os testes de várias escolas e de concorrência só rodam no Postgres de testes). Com as dependências instaladas:
 
 ```bash
 cd tests && PYTHONPATH=.. python -m unittest discover -p "test_*.py" -v
 ```
 
-As suítes de regressão com MySQL, Postman e estresse estão descritas em [`docs/testes/README.md`](../docs/testes/README.md).
+As suítes de regressão com Postgres, Postman e estresse estão descritas em [`docs/testes/README.md`](../docs/testes/README.md).
 
 ---
 
@@ -152,7 +151,7 @@ api/
 ├── config.py           # Leitura das variáveis de ambiente
 ├── gunicorn.conf.py
 ├── Dockerfile
-├── docker-compose.yml             # Ambiente local (app + MySQL)
+├── docker-compose.yml             # Ambiente local (app + Postgres)
 ├── docker-compose.test.yml        # Ambiente descartável de testes
 ├── docker-compose.production.yml  # Produção com HTTPS
 └── requirements.txt
@@ -180,6 +179,6 @@ Os demais endpoints (cursos, diário, escola e privacidade) estão em `app/route
 
 ## Persistência
 
-No Compose, o volume `mysql_data` guarda o banco e o `uploads_data` guarda os arquivos enviados. As variáveis de criação do MySQL valem só na primeira inicialização de um volume vazio. Faça backup do banco, dos uploads **e** da `DATA_ENCRYPTION_KEY` antes de qualquer mudança no ambiente.
+No Compose, o volume `postgres_data` guarda o banco e o `uploads_data` guarda os arquivos enviados (cada escola criada pelo ADM Supremo fica em `uploads/escolas/<schema>`). As variáveis de criação do Postgres valem só na primeira inicialização de um volume vazio. Faça backup do banco, dos uploads **e** da `DATA_ENCRYPTION_KEY` antes de qualquer mudança no ambiente.
 
 Para produção com HTTPS, use `docker-compose.production.yml` conforme [Segurança e LGPD](../docs/SEGURANCA_E_LGPD.md).

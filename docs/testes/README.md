@@ -4,15 +4,15 @@ Resultado atual: [migração da interface para React](RELATORIO_MIGRACAO_REACT.m
 
 Para testar pelo navegador, use o [roteiro de teste manual com usuários e comandos Docker](TESTE_MANUAL.md).
 
-Os testes usam dados sintéticos e bancos descartáveis: SQLite localmente ou MySQL 8.4 no Docker. Não alteram o banco configurado no `.env`. O servidor HTTP do Postman escuta somente em `127.0.0.1`.
+Os testes usam dados sintéticos e bancos descartáveis: SQLite localmente ou Postgres 16 no Docker. Não alteram o banco configurado no `.env`. O servidor HTTP do Postman escuta somente em `127.0.0.1`.
 
-## Executar com MySQL no Docker
+## Executar com Postgres no Docker
 
 Com Docker Desktop iniciado, execute na raiz do repositório, em sequência:
 
 ```powershell
 docker compose -p educafast-validacao -f api/docker-compose.test.yml build testes
-docker compose -p educafast-validacao -f api/docker-compose.test.yml up -d --wait mysql_test
+docker compose -p educafast-validacao -f api/docker-compose.test.yml up -d --wait postgres_test
 
 docker compose -p educafast-validacao -f api/docker-compose.test.yml run --rm testes python tests/executar_estresse.py --confirmar-banco-descartavel
 
@@ -22,9 +22,9 @@ docker compose -p educafast-validacao -f api/docker-compose.test.yml run --rm te
 docker compose -p educafast-validacao -f api/docker-compose.test.yml down
 ```
 
-Confira o resultado de cada suíte antes de continuar. Não execute as duas simultaneamente: elas recriam as tabelas do banco exclusivo `educafast_regressao`. Ao terminar, o último comando remove os containers e a rede desse projeto de testes. Os dados do MySQL ficam em `tmpfs` e são descartados com o container; as evidências permanecem em [`resultados/mysql/`](resultados/mysql/).
+Confira o resultado de cada suíte antes de continuar. Não execute as duas simultaneamente: elas recriam as tabelas do banco exclusivo `educafast_regressao`. Ao terminar, o último comando remove os containers e a rede desse projeto de testes. Os dados do Postgres ficam em `tmpfs` e são descartados com o container; as evidências novas ficam em `resultados/postgres/` (as de antes da migração continuam em [`resultados/mysql/`](resultados/mysql/)).
 
-Esse Compose não publica portas, não usa volumes persistentes e não exige a senha do root do MySQL instalado. As credenciais declaradas nele são sintéticas e exclusivas do ambiente de testes. Os executores só aceitam MySQL quando o modo de testes está habilitado e a conexão corresponde ao serviço, banco e usuário definidos nesse Compose. Não precisa instalar Python ou Newman no Windows para essa execução; a imagem inclui Python 3.12 e Newman 6.2.1.
+Esse Compose não publica portas, não usa volumes persistentes e não exige senha de nenhum banco instalado. As credenciais declaradas nele são sintéticas e exclusivas do ambiente de testes. Os executores só aceitam Postgres quando o modo de testes está habilitado e a conexão corresponde ao serviço, banco e usuário definidos nesse Compose. Não precisa instalar Python ou Newman no Windows para essa execução; a imagem inclui Python 3.12 e Newman 6.2.1.
 
 ## Executar pela linha de comando
 

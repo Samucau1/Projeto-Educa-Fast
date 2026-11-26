@@ -86,6 +86,7 @@ try {
             Write-Host "`nTeste manual pronto: $manualUrl" -ForegroundColor Green
             Write-Host 'Aplicação e banco estão rodando em segundo plano. Você pode fechar este terminal.'
             Write-Host 'Senha de todos os usuários de exemplo: Teste-local-2026!'
+            Write-Host '  ADM Supremo: supremo@teste.local (cria escolas)'
             Write-Host '  Superperfil: superadmin@teste.local'
             Write-Host '  Admin:       admin@teste.local'
             Write-Host '  Professor:   professor@teste.local'

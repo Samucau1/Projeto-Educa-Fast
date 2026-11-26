@@ -21,8 +21,9 @@ ROTEIRO="$RAIZ/docs/testes/TESTE_MANUAL.md"
 LOG="${TMPDIR:-/tmp}/educafast-iniciar.log"
 
 # Perfis criados automaticamente no primeiro uso do banco (api/tests/fixtures.py).
-PERFIS=('Superperfil (direção / dono da plataforma)' 'Administrador (secretaria)' 'Professor' 'Aluno' 'Outro aluno (sem vínculo com a turma)')
-EMAILS=('superadmin@teste.local' 'admin@teste.local' 'professor@teste.local' 'aluno@teste.local' 'outro_aluno@teste.local')
+# Índice 0 = ADM Supremo (plataforma); os demais pertencem à escola padrão.
+PERFIS=('ADM Supremo (dono da plataforma)' 'Superperfil (direção da escola)' 'Administrador (secretaria)' 'Professor' 'Aluno' 'Outro aluno (sem vínculo com a turma)')
+EMAILS=('supremo@teste.local' 'superadmin@teste.local' 'admin@teste.local' 'professor@teste.local' 'aluno@teste.local' 'outro_aluno@teste.local')
 
 ACAO='iniciar'
 SEM_TUTORIAL=0
@@ -182,7 +183,7 @@ passo() {
     local numero="$1" perfil="$2"
     shift 2
     echo
-    printf '%s━━━ Passo %s de 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s\n' "$AZUL" "$numero" "$FIM"
+    printf '%s━━━ Passo %s de 5 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━%s\n' "$AZUL" "$numero" "$FIM"
     printf '%s%s%s\n' "$NEGRITO" "${PERFIS[$perfil]}" "$FIM"
     local linha
     for linha in "$@"; do echo "  • $linha"; done
@@ -196,7 +197,7 @@ passo() {
 tutorial() {
     echo
     printf '%sTUTORIAL GUIADO DO EDUCAFAST%s\n' "$NEGRITO" "$FIM"
-    echo 'Vamos passar pelos 4 perfis do sistema. Em cada passo o navegador abre no login'
+    echo 'Vamos passar pelos 5 perfis do sistema. Em cada passo o navegador abre no login'
     echo 'e o e-mail já vai copiado. Digite "p" e Enter para pular o tutorial.'
     if [ -t 0 ]; then
         printf 'Começar? [Enter = sim / p = pular] '
@@ -206,26 +207,32 @@ tutorial() {
     fi
 
     passo 1 0 \
-        'É o dono da escola na plataforma: define as regras da instituição.' \
+        'É o dono da plataforma: várias escolas no mesmo servidor, cada uma com sua área no banco.' \
+        'Veja as escolas cadastradas e os totais de alunos e professores de todas elas.' \
+        'Em "Nova escola", crie uma escola de teste com o e-mail e a senha do diretor dela.' \
+        'Saia e entre com o e-mail do diretor criado: ele só enxerga a escola dele.'
+
+    passo 2 1 \
+        'É a direção da escola: define as regras da instituição.' \
         'Abra a gestão de usuários: veja todos os perfis já cadastrados.' \
         'Crie um usuário novo (ex.: outro professor) e teste o login dele depois.' \
         'Abra "Cores do layout" e "Mensagens": só o superperfil mexe nas cores.'
 
-    passo 2 1 \
+    passo 3 2 \
         'É a secretaria: cuida de turmas, disciplinas, alunos e documentos.' \
         'Confira a Turma A e as disciplinas de demonstração (Matemática e Física).' \
         'Publique um comunicado e veja que ele aparece para todos.' \
         'Repare que o administrador NÃO acessa a gestão do superperfil.'
 
-    passo 3 2 \
+    passo 4 3 \
         'O professor rege as disciplinas em que está vinculado.' \
         'Abra Matemática: lance uma atividade e uma nota para o aluno.' \
         'Veja o curso "Álgebra para todos os anos" e as aulas dele.' \
         'Ele lê mensagens, mas não acessa as telas da secretaria.'
 
-    passo 4 3 \
+    passo 5 4 \
         'O aluno vê as disciplinas, o curso, as notas e os comunicados.' \
-        'Abra Matemática e confira a atividade e a nota lançadas no passo 3.' \
+        'Abra Matemática e confira a atividade e a nota lançadas no passo 4.' \
         'Tente abrir /super/usuarios na barra de endereço: deve dar acesso negado.' \
         'Opcional: entre como "outro_aluno@teste.local", que não vê a turma.'
 
@@ -254,7 +261,7 @@ menu() {
         local op=''
         read -r op || break
         case "$op" in
-            [1-5]) entrar_como $((op - 1)) ;;
+            [1-6]) entrar_como $((op - 1)) ;;
             l|L) mostrar_logins ;;
             r|R) abrir "$ROTEIRO" ;;
             t|T) tutorial ;;

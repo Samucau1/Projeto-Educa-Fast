@@ -42,7 +42,7 @@ Os cadastros incluem dados específicos de cada perfil e foto opcional em JPG ou
 ## Tecnologias e arquitetura
 
 - **API (`api/`):** Python 3.12 e Flask 3.1.
-- **Banco:** SQLAlchemy 2.0, PyMySQL e MySQL 8.4.
+- **Banco:** SQLAlchemy 2.0, psycopg 3 e Postgres 16, com várias escolas no mesmo banco (um schema por escola; veja [Várias escolas](docs/MULTIESCOLA.md)).
 - **Aplicação web (`web/`):** React 18 e Vite, com CSS próprio e utilitários Tailwind pré-compilados.
 - **Ambiente:** Docker, Docker Compose e python-dotenv.
 - **Dependência de criptografia:** cryptography, incluída nos requisitos Python.
@@ -64,7 +64,7 @@ flowchart TD
     Acesso["Sessão Flask, guards e validação JWT"]
     Controllers["Controllers: operações e validações"]
     Modelos["Modelos SQLAlchemy e sessões do banco"]
-    Banco[(MySQL)]
+    Banco[(Postgres)]
     Spa["render_page: dados da tela em JSON"]
     Interface["Aplicação React (web/)"]
     Arquivos["Pasta de uploads"]
@@ -97,13 +97,13 @@ flowchart TD
 ```mermaid
 flowchart LR
     Browser["Navegador"] -->|localhost:5000| App["Serviço app / flask_app\nAPI Flask + telas React :5000"]
-    App -->|db:3306| DB["Serviço db / mysql_db\nMySQL 8.4"]
-    DB --> Dados[(mysql_data)]
+    App -->|db:5432| DB["Serviço db / postgres_db\nPostgres 16"]
+    DB --> Dados[(postgres_data)]
     App --> Uploads[(uploads_data)]
     Web["Build da aplicação web (web/)"] -->|Copiado na imagem, /static/dist| App
 ```
 
-O serviço `app` é construído pelo `api/Dockerfile` (um estágio Node gera o build de `web/` e o estágio Python serve a API e esse build) e depende do estado saudável de `db`. O serviço `db` usa a imagem `mysql:8.4`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
+O serviço `app` é construído pelo `api/Dockerfile` (um estágio Node gera o build de `web/` e o estágio Python serve a API e esse build) e depende do estado saudável de `db`. O serviço `db` usa a imagem `postgres:16-alpine`. A aplicação acessa o banco pelo nome do serviço na rede interna do Compose; os volumes mantêm os dados e os anexos entre reinicializações.
 
 ### Organização dos dados
 
@@ -216,7 +216,7 @@ Sem Docker, gere o build da web (`npm ci` e `npm run build` em `web/`) antes de 
 
 O repositório inclui regressão automatizada, cenários de segurança/LGPD e coleção Postman. Consulte [Testes](docs/testes/README.md). Para o fluxo manual, entre com cada perfil, configure os vínculos de turma/disciplina e confira os controles de acesso e privacidade em banco descartável.
 
-O Compose local usa Gunicorn, sem depuração, e publica a aplicação somente em loopback. Para produção com HTTPS e TLS verificado no MySQL, use o arquivo independente `api/docker-compose.production.yml`, após preparar chaves e certificados conforme [Segurança e LGPD](docs/SEGURANCA_E_LGPD.md). Não publique o servidor de desenvolvimento.
+O Compose local usa Gunicorn, sem depuração, e publica a aplicação somente em loopback. Para produção com HTTPS e TLS verificado no Postgres (o arquivo `certs/pg_hba.conf` deve aceitar somente `hostssl`), use o arquivo independente `api/docker-compose.production.yml`, após preparar chaves e certificados conforme [Segurança e LGPD](docs/SEGURANCA_E_LGPD.md). Não publique o servidor de desenvolvimento.
 
 ## Documentação e licença
 

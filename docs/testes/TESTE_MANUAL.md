@@ -12,7 +12,7 @@ No **PowerShell**, aberto na pasta do projeto, execute:
 .\iniciar-educafast.ps1
 ```
 
-O script abre o Docker Desktop se necessário, constrói a aplicação, sobe o MySQL, cria o esquema e os exemplos no primeiro uso, aguarda os serviços saudáveis e abre **http://127.0.0.1:5050**. Ao terminar o comando, os containers continuam rodando em segundo plano; você pode fechar o terminal.
+O script abre o Docker Desktop se necessário, constrói a aplicação, sobe o Postgres, cria o esquema e os exemplos no primeiro uso, aguarda os serviços saudáveis e abre **http://127.0.0.1:5050**. Ao terminar o comando, os containers continuam rodando em segundo plano; você pode fechar o terminal.
 
 No **CMD**, use o iniciador equivalente, pois arquivos `.ps1` são executados pelo PowerShell:
 
@@ -52,25 +52,26 @@ Pelo Terminal, na pasta do projeto:
 
 O script:
 
-1. Sobe a aplicação e o MySQL de testes no Docker (o mesmo ambiente do Windows, porta 5050).
+1. Sobe a aplicação e o Postgres de testes no Docker (o mesmo ambiente do Windows, porta 5050).
 2. Salva a folha **`LOGINS-EDUCAFAST.txt`** na raiz do projeto com o endereço, a senha e os e-mails de cada perfil.
-3. Faz um tutorial em 4 passos (superperfil, administrador, professor e aluno). Em cada passo abre o login no navegador e copia o e-mail e a senha para a área de transferência.
+3. Faz um tutorial em 5 passos (ADM Supremo, superperfil, administrador, professor e aluno). Em cada passo abre o login no navegador e copia o e-mail e a senha para a área de transferência.
 4. Termina num menu para entrar com qualquer perfil, rever os logins, abrir este roteiro ou encerrar o ambiente. O sistema continua rodando mesmo depois de fechar o menu.
 
 ## Iniciar com um clique
 
 Na raiz do repositório, dê dois cliques em **`iniciar-teste-manual.cmd`** (atalho compatível com o iniciador acima). Não exige Python nem a senha do MySQL instalado; é necessário ter Docker Desktop instalado e configurado para containers Linux. Na primeira execução, o Docker pode baixar as imagens.
 
-Iniciar novamente atualiza a aplicação e preserva os dados do MySQL manual que ainda estiver ativo. O script trabalha somente com o projeto Docker `educafast-manual` e a porta local 5050.
+Iniciar novamente atualiza a aplicação e preserva os dados do Postgres manual que ainda estiver ativo. O script trabalha somente com o projeto Docker `educafast-manual` e a porta local 5050.
 
 ## Acessar o sistema
 
-Abra **http://127.0.0.1:5050**. A aplicação e o MySQL rodam no Docker, no projeto separado `educafast-manual`.
+Abra **http://127.0.0.1:5050**. A aplicação e o Postgres rodam no Docker, no projeto separado `educafast-manual`.
 
 Todos os usuários abaixo usam a senha **`Teste-local-2026!`**:
 
 | Perfil | E-mail |
 | --- | --- |
+| ADM Supremo (dono da plataforma, cria escolas) | `supremo@teste.local` |
 | Superperfil | `superadmin@teste.local` |
 | Administrador | `admin@teste.local` |
 | Professor | `professor@teste.local` |
@@ -117,7 +118,7 @@ Para encerrar e remover esse ambiente:
 docker compose -p educafast-manual -f api/docker-compose.test.yml --profile manual down
 ```
 
-Os dados são descartáveis. Ao remover/recriar o container MySQL, seus testes manuais serão perdidos e os usuários de exemplo serão recriados na próxima inicialização. Reiniciar somente a aplicação preserva os dados do banco ainda ativo. O serviço não redefine usuários nem cores quando encontra um banco já preenchido.
+Os dados são descartáveis. Ao remover/recriar o container do Postgres, seus testes manuais serão perdidos e os usuários de exemplo serão recriados na próxima inicialização. Reiniciar somente a aplicação preserva os dados do banco ainda ativo. O serviço não redefine usuários nem cores quando encontra um banco já preenchido.
 
 Use o projeto `educafast-validacao` para as suítes automáticas e `educafast-manual` para o navegador: as suítes recriam tabelas e não devem usar o ambiente em que você está fazendo o teste manual.
 

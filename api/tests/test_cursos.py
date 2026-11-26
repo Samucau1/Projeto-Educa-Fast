@@ -1,7 +1,7 @@
 """Cursos reutilizados entre turmas e anos; bancos sintéticos e descartáveis."""
 import unittest
 from werkzeug.exceptions import HTTPException
-from ambiente_teste import configurar_banco_testes, mysql_de_testes, tela
+from ambiente_teste import configurar_banco_testes, banco_real_de_testes, tela
 configurar_banco_testes()
 from app import create_app
 from app.database import Base, engine, get_session
@@ -361,7 +361,7 @@ class CursosTest(unittest.TestCase):
             self.assertEqual(launch_activity(self.ids['professor'], data)[1], 403)
         self.assertNotIn(b'Turma 2026', self.client.get('/professor').data)
 
-    @unittest.skipUnless(mysql_de_testes(), 'Concorrência de progresso exige MySQL isolado')
+    @unittest.skipUnless(banco_real_de_testes(), 'Concorrência de progresso exige Postgres isolado')
     def test_concurrent_completion_is_idempotent(self):
         from concurrent.futures import ThreadPoolExecutor
         import threading

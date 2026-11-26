@@ -1,4 +1,4 @@
-"""Carga limitada de cursos, exclusivamente no MySQL descartável do Compose."""
+"""Carga limitada de cursos, exclusivamente no Postgres descartável de testes."""
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -14,7 +14,7 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'api'))
-from ambiente_teste import configurar_banco_testes, mysql_de_testes, validar_mysql
+from ambiente_teste import configurar_banco_testes, banco_real_de_testes, validar_banco_testes
 
 
 def main():
@@ -22,10 +22,10 @@ def main():
     parser.add_argument('--confirmar-banco-descartavel', action='store_true')
     args = parser.parse_args()
     configurar_banco_testes()
-    if not args.confirmar_banco_descartavel or not mysql_de_testes():
-        parser.error('Exige confirmação e MySQL de testes isolado.')
+    if not args.confirmar_banco_descartavel or not banco_real_de_testes():
+        parser.error('Exige confirmação e Postgres de testes isolado.')
     from app.database import engine, get_session
-    validar_mysql(engine.url)
+    validar_banco_testes(engine.url)
     from test_cursos import CursosTest
     from app.models.curso_model import ProgressoAulaModel
     from werkzeug.serving import make_server
@@ -76,10 +76,10 @@ def main():
             if db.query(ProgressoAulaModel).count() != 1:
                 raise AssertionError('Conclusão concorrente duplicada')
         summary = {'aprovado': True, 'data': datetime.now(timezone.utc).isoformat(),
-                   'banco': 'MySQL 8.4 descartável', 'etapas': stages,
+                   'banco': 'Postgres 16 descartável', 'etapas': stages,
                    'requisicoes': sum(s['requisicoes'] for s in stages), 'progressos_persistidos': 1,
                    'limites': 'Rajadas locais curtas; não estabelece capacidade ou SLA de produção.'}
-        output = ROOT / 'docs/testes/resultados/mysql/cursos-carga-resumo.json'
+        output = ROOT / 'docs/testes/resultados/postgres/cursos-carga-resumo.json'
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         print(json.dumps(summary, ensure_ascii=False, indent=2))

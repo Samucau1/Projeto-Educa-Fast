@@ -7,7 +7,8 @@ engine = create_engine(
     Config.SQLALCHEMY_DATABASE_URI,
     pool_pre_ping=True,
     hide_parameters=True,
-    connect_args=({"ssl_ca": Config.DB_SSL_CA, "ssl_verify_cert": True, "ssl_verify_identity": True}
+    # Postgres: com DB_SSL_CA a conexao exige TLS e confere certificado e nome do servidor.
+    connect_args=({"sslmode": "verify-full", "sslrootcert": Config.DB_SSL_CA}
                   if Config.DB_SSL_CA else {}),
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

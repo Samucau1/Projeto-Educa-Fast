@@ -8,9 +8,9 @@ SENHA = "Teste-local-2026!"
 
 
 def exigir_banco_em_memoria():
-    from ambiente_teste import mysql_de_testes, validar_mysql
-    if mysql_de_testes():
-        validar_mysql(engine.url)
+    from ambiente_teste import banco_real_de_testes, validar_banco_testes
+    if banco_real_de_testes():
+        validar_banco_testes(engine.url)
         return
     if str(engine.url) != "sqlite:///:memory:":
         raise RuntimeError("Regressão permitida somente com SQLite em memória.")

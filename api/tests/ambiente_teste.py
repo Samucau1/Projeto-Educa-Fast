@@ -1,4 +1,4 @@
-"""Autoriza somente SQLite descartável ou o MySQL exclusivo do Compose de testes."""
+"""Autoriza somente SQLite descartável ou o Postgres exclusivo de testes."""
 import os
 
 from flask.testing import FlaskClient
@@ -28,16 +28,20 @@ def texto_tela(resposta):
     return json.dumps(tela(resposta), ensure_ascii=False)
 
 
-def mysql_de_testes():
-    return os.environ.get("EDUCAFAST_TEST_MYSQL") == "1"
+# Hosts aceitos para o Postgres descartável: o serviço do Compose de testes ou um servidor local.
+HOSTS_TESTE = {"postgres_test", "127.0.0.1", "localhost"}
 
 
-def validar_mysql(url):
+def banco_real_de_testes():
+    return os.environ.get("EDUCAFAST_TEST_DB") == "1"
+
+
+def validar_banco_testes(url):
     parsed = make_url(url)
-    if not (mysql_de_testes() and parsed.drivername == "mysql+pymysql"
-            and parsed.host == "mysql_test" and parsed.database == "educafast_regressao"
+    if not (banco_real_de_testes() and parsed.drivername == "postgresql+psycopg"
+            and parsed.host in HOSTS_TESTE and parsed.database == "educafast_regressao"
             and parsed.username == "testes"):
-        raise RuntimeError("Operação permitida somente no MySQL isolado do Compose de testes.")
+        raise RuntimeError("Operação permitida somente no Postgres isolado de testes (banco educafast_regressao).")
 
 
 def configurar_banco_testes():
@@ -47,11 +51,11 @@ def configurar_banco_testes():
     # Somente o ambiente de testes recebe esta chave sintetica.
     os.environ["SECRET_KEY"] = "testes-isolados-chave-sintetica-2026-educafast"
     os.environ["DATA_ENCRYPTION_KEY"] = "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
-    if mysql_de_testes():
-        validar_mysql(os.environ.get("DB_URL", ""))
+    if banco_real_de_testes():
+        validar_banco_testes(os.environ.get("DB_URL", ""))
     else:
         os.environ["DB_URL"] = "sqlite:///:memory:"
 
 
 def pasta_resultados(root):
-    return root / "docs/testes/resultados" / ("mysql" if mysql_de_testes() else "")
+    return root / "docs/testes/resultados" / ("postgres" if banco_real_de_testes() else "")

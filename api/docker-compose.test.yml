@@ -1,16 +1,15 @@
 # Ambiente descartável: não utiliza .env, portas ou volumes do MySQL instalado.
 services:
-  mysql_test:
-    image: mysql:8.4
+  postgres_test:
+    image: postgres:16-alpine
     environment:
-      MYSQL_ROOT_PASSWORD: root-exclusivo-do-container-de-testes
-      MYSQL_DATABASE: educafast_regressao
-      MYSQL_USER: testes
-      MYSQL_PASSWORD: senha-exclusiva-de-testes
+      POSTGRES_DB: educafast_regressao
+      POSTGRES_USER: testes
+      POSTGRES_PASSWORD: senha-exclusiva-de-testes
     tmpfs:
-      - /var/lib/mysql
+      - /var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u testes -D educafast_regressao -e 'SELECT 1' >/dev/null 2>&1"]
+      test: ["CMD-SHELL", "pg_isready -U testes -d educafast_regressao"]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -20,14 +19,14 @@ services:
       context: ..
       dockerfile: api/tests/Dockerfile
     environment:
-      EDUCAFAST_TEST_MYSQL: "1"
-      DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
+      EDUCAFAST_TEST_DB: "1"
+      DB_URL: postgresql+psycopg://testes:senha-exclusiva-de-testes@postgres_test:5432/educafast_regressao
       SECRET_KEY: chave-exclusiva-do-container-de-testes
       DATA_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
     volumes:
       - ../docs/testes/resultados:/workspace/docs/testes/resultados
     depends_on:
-      mysql_test:
+      postgres_test:
         condition: service_healthy
   manual:
     profiles: ["manual"]
@@ -37,15 +36,15 @@ services:
     command: ["python", "tests/servidor_manual.py"]
     environment:
       EDUCAFAST_MANUAL: "1"
-      EDUCAFAST_TEST_MYSQL: "1"
-      DB_URL: mysql+pymysql://testes:senha-exclusiva-de-testes@mysql_test:3306/educafast_regressao
+      EDUCAFAST_TEST_DB: "1"
+      DB_URL: postgresql+psycopg://testes:senha-exclusiva-de-testes@postgres_test:5432/educafast_regressao
       SECRET_KEY: chave-exclusiva-do-ambiente-manual
       DATA_ENCRYPTION_KEY: MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=
       UPLOAD_FOLDER: /tmp/educafast-uploads
     ports:
       - "127.0.0.1:5050:5000"
     depends_on:
-      mysql_test:
+      postgres_test:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=3)"]

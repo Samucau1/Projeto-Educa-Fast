@@ -1,4 +1,4 @@
-"""Transaction races use the real disposable MySQL; SQLite is not a substitute."""
+"""Transaction races use the real disposable Postgres; SQLite is not a substitute."""
 import io
 from concurrent.futures import ThreadPoolExecutor
 import tempfile
@@ -6,7 +6,7 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from ambiente_teste import ClienteSPA, configurar_banco_testes, mysql_de_testes
+from ambiente_teste import ClienteSPA, configurar_banco_testes, banco_real_de_testes
 configurar_banco_testes()
 from flask import request
 from sqlalchemy.orm import Session
@@ -16,7 +16,7 @@ from app.models import SolicitacaoDocumentoModel, DocumentoModel, PedidoPrivacid
 from fixtures import criar_usuarios, exigir_banco_em_memoria, SENHA
 
 
-@unittest.skipUnless(mysql_de_testes(), 'Corridas transacionais exigem MySQL isolado')
+@unittest.skipUnless(banco_real_de_testes(), 'Corridas transacionais exigem Postgres isolado')
 class ConcorrenciaTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

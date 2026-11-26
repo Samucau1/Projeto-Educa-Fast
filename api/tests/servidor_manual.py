@@ -3,13 +3,13 @@ import os
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from ambiente_teste import validar_mysql
+from ambiente_teste import validar_banco_testes
 
 
 def main():
     if os.environ.get('EDUCAFAST_MANUAL') != '1':
         raise RuntimeError('Use o serviço manual do Compose de testes.')
-    validar_mysql(os.environ.get('DB_URL', ''))
+    validar_banco_testes(os.environ.get('DB_URL', ''))
     from app import create_app
     from app.database import get_session
     from app.models import UsuarioModel

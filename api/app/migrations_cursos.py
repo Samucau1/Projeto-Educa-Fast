@@ -19,7 +19,7 @@ def migrar_cursos(engine, metadata):
         for version in range(1, VERSION + 1):
             if version in applied:
                 continue
-            # DDL do MySQL não é transacional: checkfirst permite retomar uma execução interrompida.
+            # checkfirst permite retomar uma execução interrompida com segurança.
             for table in tabelas_cursos(metadata):
                 table_version = 3 if table.name.startswith('escola_') else 2 if table.name.startswith('academico_') else 1
                 if table_version == version:

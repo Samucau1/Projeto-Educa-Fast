@@ -3,7 +3,7 @@ import Marca from './Marca';
 import { useApp } from '../core/contexto';
 import { urlFor } from '../core/urls';
 
-export const ROLE_LABELS = { superadmin: 'Superperfil', admin: 'Administrador', professor: 'Professor', aluno: 'Aluno' };
+export const ROLE_LABELS = { supremo: 'ADM Supremo', superadmin: 'Superperfil', admin: 'Administrador', professor: 'Professor', aluno: 'Aluno' };
 
 function NavLink({ endpoint, text, symbol, related = [] }) {
     const atual = useApp().global.endpoint;
@@ -15,11 +15,29 @@ function NavLink({ endpoint, text, symbol, related = [] }) {
     );
 }
 
+// ADM Supremo: dono da plataforma, enxerga as escolas e não os dados internos delas.
+function SidebarSupremo({ g }) {
+    return (
+        <aside className="workspace-sidebar">
+            <Marca escola={g.escola} />
+            <div className="workspace-label">ESPAÇO DE TRABALHO <span>PLATAFORMA</span></div>
+            <nav className="sidebar-nav" aria-label="Navegação principal">
+                <span className="nav-section">PLATAFORMA</span>
+                <NavLink endpoint="supremo.painel" text="Escolas" symbol="grid" />
+            </nav>
+            <div className="sidebar-bottom">
+                <div className="account"><span className="avatar avatar-superadmin"><Icon name="shield" /></span><div><strong>{ROLE_LABELS.supremo}</strong><small title={g.sessao.user_email}>{g.sessao.user_email}</small></div><a href={urlFor('auth.logout')} aria-label="Sair do sistema" title="Sair do sistema"><Icon name="logout" /></a></div>
+            </div>
+        </aside>
+    );
+}
+
 // Navegação principal por perfil (antes: partials/workspace_sidebar.html).
 export default function WorkspaceSidebar() {
     const { global: g } = useApp();
     const role = g.sessao.user_role;
     const admin = role === 'admin' || role === 'superadmin';
+    if (role === 'supremo') return <SidebarSupremo g={g} />;
     return (
         <aside className="workspace-sidebar">
             <Marca escola={g.escola} />

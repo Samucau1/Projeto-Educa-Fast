@@ -42,6 +42,9 @@ def generate_token(user):
         "tipo": role,
         "exp": int(expires_at.timestamp()),
     }
+    # Escola dona do usuário: o token só vale dentro da área dela no banco.
+    if g.get("escola_schema"):
+        payload["esc"] = g.escola_schema
     header_part = _b64url_encode(json.dumps(header, separators=(",", ":")).encode("utf-8"))
     payload_part = _b64url_encode(json.dumps(payload, separators=(",", ":")).encode("utf-8"))
     message = f"{header_part}.{payload_part}"
@@ -81,6 +84,16 @@ def decode_token_from_request():
 
     from app.database import get_session
     from app.models import UsuarioModel
+    from app import escolas
+    if payload.get("esc"):
+        from app.database import engine
+        try:
+            g.escola_schema = escolas.validar_schema(payload["esc"])
+        except ValueError:
+            return None, (jsonify({"erro": "Token JWT invalido"}), 401)
+        # Escola desativada pelo ADM Supremo: o token deixa de valer na hora, como a sessão.
+        if not escolas.escola_ativa(engine, g.escola_schema):
+            return None, (jsonify({"erro": "Escola sem acesso ativo"}), 401)
     try:
         user_id = int(payload.get("sub", ""))
     except (TypeError, ValueError):

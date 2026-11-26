@@ -13,7 +13,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "api"))
-from ambiente_teste import configurar_banco_testes, mysql_de_testes, pasta_resultados
+from ambiente_teste import configurar_banco_testes, banco_real_de_testes, pasta_resultados
 configurar_banco_testes()
 
 
@@ -36,7 +36,7 @@ def main():
         "data_sao_paulo": datetime.now(timezone(timedelta(hours=-3))).isoformat(),
         "python": platform.python_version(),
         "flask": version("Flask"), "sqlalchemy": version("SQLAlchemy"),
-        "banco": "Nao utilizado (testes unitarios)" if args.somente_unitarios else "MySQL 8.4 isolado no Docker" if mysql_de_testes() else "SQLite em memória com foreign_keys=ON",
+        "banco": "Nao utilizado (testes unitarios)" if args.somente_unitarios else "Postgres 16 isolado" if banco_real_de_testes() else "SQLite em memória com foreign_keys=ON",
         "testes": result.testsRun, "falhas": len(result.failures), "erros": len(result.errors),
         "ignorados": len(result.skipped), "duracao_segundos": round(elapsed, 3), "aprovado": result.wasSuccessful(),
     }

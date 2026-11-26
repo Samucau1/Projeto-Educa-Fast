@@ -14,7 +14,7 @@ services:
       LGPD_CONTATO: ${LGPD_CONTATO:-}
       UPLOAD_FOLDER: ${UPLOAD_FOLDER:-uploads}
       DB_HOST: db
-      DB_PORT: ${DB_PORT:-3306}
+      DB_PORT: ${DB_PORT:-5432}
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
       DB_NAME: ${DB_NAME:-app_web}
@@ -29,23 +29,22 @@ services:
         condition: service_healthy
 
   db:
-    image: mysql:8.4
-    container_name: mysql_db
+    image: postgres:16-alpine
+    container_name: postgres_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Defina MYSQL_ROOT_PASSWORD no arquivo .env}
-      MYSQL_DATABASE: ${DB_NAME:-app_web}
-      MYSQL_USER: ${DB_USER:-app_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
+      POSTGRES_DB: ${DB_NAME:-app_web}
+      POSTGRES_USER: ${DB_USER:-app_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 20s
 
 volumes:
-  mysql_data:
+  postgres_data:
   uploads_data:

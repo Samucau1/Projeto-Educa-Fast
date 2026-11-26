@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, inspect, text
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from config import Config
 
@@ -7,15 +7,35 @@ engine = create_engine(
     Config.SQLALCHEMY_DATABASE_URI,
     pool_pre_ping=True,
     hide_parameters=True,
-    connect_args=({"ssl_ca": Config.DB_SSL_CA, "ssl_verify_cert": True, "ssl_verify_identity": True}
+    # Postgres: com DB_SSL_CA a conexao exige TLS e confere certificado e nome do servidor.
+    connect_args=({"sslmode": "verify-full", "sslrootcert": Config.DB_SSL_CA}
                   if Config.DB_SSL_CA else {}),
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_session():
-    return SessionLocal()
+def get_session(schema=None):
+    """Sessao no schema da escola atual (sessao/JWT) ou no informado; padrao: escola unica."""
+    from app import escolas
+    multiescola = escolas.multiescola_ativo(engine)
+    if multiescola:
+        schema = escolas.validar_schema(schema) if schema else escolas.schema_da_requisicao()
+    else:
+        schema = None
+    info = {"multiescola": multiescola, "escola_schema": schema or escolas.SCHEMA_PADRAO}
+    if schema and schema != escolas.SCHEMA_PADRAO:
+        # Todas as tabelas sem schema explicito passam a apontar para a area desta escola.
+        return SessionLocal(bind=engine.execution_options(schema_translate_map={None: schema}), info=info)
+    return SessionLocal(info=info)
+
+
+def inicializar_escola(bind, schema=None):
+    """Cria/atualiza as tabelas de uma escola nova (bind ja traduzido para o schema dela)."""
+    from .migrations_cursos import migrar_cursos, tabelas_cursos
+    novas = set(tabelas_cursos(Base.metadata))
+    Base.metadata.create_all(bind=bind, tables=[t for t in Base.metadata.sorted_tables if t not in novas])
+    migrar_cursos(bind, Base.metadata, schema=schema)
 
 
 def init_db():
@@ -25,6 +45,9 @@ def init_db():
     migrar_cursos(engine, Base.metadata)
     _ensure_schema_updates()
     _protect_legacy_fields()
+    from app import escolas
+    if escolas.multiescola_ativo(engine):
+        escolas.preparar_plataforma(engine, inicializar_escola)
 
 
 def _protect_legacy_fields():
@@ -159,3 +182,11 @@ def _make_nullable_if_needed(inspector, table_name, column_name, column_definiti
         connection.execute(
             text(f"ALTER TABLE {table_name} MODIFY COLUMN {column_name} {column_definition}")
         )
+
+
+def _instalar_diretorio_de_logins():
+    from app import escolas
+    escolas.instalar_diretorio(Session)
+
+
+_instalar_diretorio_de_logins()

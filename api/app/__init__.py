@@ -22,6 +22,9 @@ def create_app():
         if not app.config["SESSION_COOKIE_SECURE"] or not app.config["DB_SSL_CA"] or not app.config["LGPD_CONTATO"]:
             raise RuntimeError("Producao exige COOKIE_SECURE=1, DB_SSL_CA e LGPD_CONTATO.")
     init_db()
+    from .database import engine
+    from .escolas import instalar_validacao_de_sessao
+    instalar_validacao_de_sessao(app, engine)
 
     register_routes(app)
     from .routes.curso_routes import cursos_bp
@@ -32,6 +35,8 @@ def create_app():
     app.register_blueprint(escola_bp)
     from .routes.gestao_routes import init_gestao
     init_gestao(app)
+    from .routes.supremo_routes import init_supremo
+    init_supremo(app)
     from .routes.privacidade_routes import privacidade_bp
     app.register_blueprint(privacidade_bp)
     from .security import init_security

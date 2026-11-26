@@ -1,4 +1,4 @@
-"""Bounded HTTP stress of every functional family, only on the disposable MySQL.
+"""Bounded HTTP stress of every functional family, only on the disposable Postgres.
 
 No target URL is accepted. Starts its own threaded server on loopback, creates
 synthetic users, and asserts HTTP contracts plus persistence after concurrency.
@@ -24,7 +24,7 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'api'))
-from ambiente_teste import configurar_banco_testes, mysql_de_testes, validar_mysql
+from ambiente_teste import configurar_banco_testes, banco_real_de_testes, validar_banco_testes
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -208,9 +208,9 @@ def main():
     parser.add_argument('--confirmar-banco-descartavel',action='store_true',required=True)
     parser.add_argument('--max-usuarios',type=int,default=8,choices=range(1,17))
     args=parser.parse_args()
-    if not mysql_de_testes(): raise RuntimeError('Estresse exige o MySQL descartavel do Compose de testes.')
+    if not banco_real_de_testes(): raise RuntimeError('Estresse exige o Postgres descartavel de testes.')
     import os
-    validar_mysql(os.environ.get('DB_URL',''))
+    validar_banco_testes(os.environ.get('DB_URL',''))
     configurar_banco_testes()
     from app import create_app
     from app.database import Base, engine, get_session
@@ -256,13 +256,13 @@ def main():
             groups=defaultdict(list)
             for row in run.records: groups[row['label']].append(row)
             summary={'data_sao_paulo':datetime.now(timezone(timedelta(hours=-3))).isoformat(),
-                     'servidor':'Werkzeug HTTP threaded, loopback, MySQL 8.4 descartavel',
+                     'servidor':'Werkzeug HTTP threaded, loopback, Postgres 16 descartavel',
                      'limites':'Amostra limitada, nao determina capacidade maxima nem substitui soak prolongado.',
                      'etapas':run.stages,'total':metrics(run.records),'familias':{k:metrics(v) for k,v in sorted(groups.items())},
                      'ciclos_completos':run.cycles,'persistencia':counts,'esperado':expected,'integridade':integrity,
                      'erros':run.errors,'criterio_p95_ms':5000,
                      'aprovado':not run.errors and integrity and all(s['inesperadas']==0 and s['p95_ms']<=5000 for s in run.stages)}
-            reports=ROOT/'docs/testes/resultados/mysql'; reports.mkdir(parents=True,exist_ok=True)
+            reports=ROOT/'docs/testes/resultados/postgres'; reports.mkdir(parents=True,exist_ok=True)
             (reports/'estresse-resumo.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
             print(json.dumps({'aprovado':summary['aprovado'],'total':summary['total'],'integridade':integrity,'erros':run.errors},ensure_ascii=False),flush=True)
             return 0 if summary['aprovado'] else 1

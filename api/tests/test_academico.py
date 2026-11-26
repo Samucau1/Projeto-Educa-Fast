@@ -1,7 +1,7 @@
 """Homologação de vínculos antigos e notas por oferta/período."""
 import unittest
 from decimal import Decimal
-from ambiente_teste import configurar_banco_testes, mysql_de_testes
+from ambiente_teste import configurar_banco_testes, banco_real_de_testes
 configurar_banco_testes()
 import test_cursos as curso_tests
 from app import create_app
@@ -243,7 +243,7 @@ class AcademicoTest(unittest.TestCase):
         self.assertEqual(self.client.get(f'/aprender/{self.o2}').status_code, 200)
         self.assertEqual([p['media'] for p in self.ler_boletim()['periodos']], ['9.00', '5.00'])
 
-    @unittest.skipUnless(mysql_de_testes(), 'Concorrência de notas exige MySQL isolado')
+    @unittest.skipUnless(banco_real_de_testes(), 'Concorrência de notas exige Postgres isolado')
     def test_concurrent_correction_has_one_winner(self):
         from concurrent.futures import ThreadPoolExecutor
         import threading

@@ -59,12 +59,16 @@ def storage_lock(folder):
 
 
 def save_upload(file, path):
-    folder = os.path.abspath(current_app.config["UPLOAD_FOLDER"])
+    from app.escolas import PASTA_ESCOLAS, pasta_uploads
+    folder = pasta_uploads(current_app.config["UPLOAD_FOLDER"])
+    os.makedirs(folder, exist_ok=True)
     limit = current_app.config["MAX_UPLOAD_BYTES"]
     quota = current_app.config["UPLOAD_QUOTA_BYTES"]
     with storage_lock(folder):
         used = 0
-        for root, _, names in os.walk(folder):
+        for root, dirs, names in os.walk(folder):
+            if root == folder and PASTA_ESCOLAS in dirs:
+                dirs.remove(PASTA_ESCOLAS)  # a cota da escola padrão não conta as outras escolas
             for name in names:
                 if name == ".storage.lock":
                     continue

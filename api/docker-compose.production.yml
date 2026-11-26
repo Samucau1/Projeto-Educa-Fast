@@ -16,7 +16,7 @@ services:
       LGPD_CONTATO: ${LGPD_CONTATO:?Configure LGPD_CONTATO}
       TRUSTED_HOSTS: ${TRUSTED_HOSTS:?Configure o dominio publico}
       DB_HOST: db
-      DB_PORT: "3306"
+      DB_PORT: "5432"
       DB_NAME: ${DB_NAME:-app_web}
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD}
@@ -34,22 +34,24 @@ services:
       db:
         condition: service_healthy
   db:
-    image: mysql:8.4
+    image: postgres:16-alpine
     restart: unless-stopped
-    command: ["--require-secure-transport=ON", "--ssl-ca=/run/tls/ca.crt", "--ssl-cert=/run/tls/db.crt", "--ssl-key=/run/tls/db.key"]
+    # TLS obrigatorio: hostssl no pg_hba recusa conexoes sem criptografia vindas da rede.
+    command: ["-c", "ssl=on", "-c", "ssl_ca_file=/run/tls/ca.crt", "-c", "ssl_cert_file=/run/tls/db.crt",
+              "-c", "ssl_key_file=/run/tls/db.key", "-c", "hba_file=/run/tls/pg_hba.conf"]
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Configure MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME:-app_web}
-      MYSQL_USER: ${DB_USER:-app_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-app_web}
+      POSTGRES_USER: ${DB_USER:-app_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD}
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
+      - ./certs/pg_hba.conf:/run/tls/pg_hba.conf:ro
       - ./certs/ca.crt:/run/tls/ca.crt:ro
       - ./certs/db.crt:/run/tls/db.crt:ro
       - ./certs/db.key:/run/tls/db.key:ro
     networks: [backend]
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping --protocol=socket -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -59,5 +61,5 @@ networks:
   backend:
     internal: true
 volumes:
-  mysql_data:
+  postgres_data:
   uploads_data:

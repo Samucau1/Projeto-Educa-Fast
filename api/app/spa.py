@@ -89,6 +89,7 @@ def global_context():
             "user_id": session.get("user_id"),
             "user_role": session.get("user_role"),
             "user_email": session.get("user_email"),
+            "operador": bool(session.get("operador_id")),
         },
         "endpoint": request.endpoint,
         "tema": to_json(getattr(g, "tema", {})),

@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "api"))
-from ambiente_teste import mysql_de_testes, validar_mysql, pasta_resultados
+from ambiente_teste import banco_real_de_testes, validar_banco_testes, pasta_resultados
 
 
 def main():
@@ -33,8 +33,8 @@ def main():
 
     with tempfile.TemporaryDirectory(prefix="educafast-postman-") as temp:
         # Sobrescreve a URL antes de importar a aplicação. Nunca utiliza o banco do .env.
-        if mysql_de_testes():
-            validar_mysql(os.environ.get("DB_URL", ""))
+        if banco_real_de_testes():
+            validar_banco_testes(os.environ.get("DB_URL", ""))
         else:
             os.environ["DB_URL"] = "sqlite:///" + (Path(temp) / "teste.sqlite").as_posix()
         os.environ["SECRET_KEY"] = "testes-isolados-chave-sintetica-2026-educafast"
@@ -46,7 +46,7 @@ def main():
         from gerar_postman import build
         from werkzeug.serving import make_server
 
-        if mysql_de_testes():
+        if banco_real_de_testes():
             Base.metadata.drop_all(engine)
         else:
             @event.listens_for(engine, "connect")
@@ -82,7 +82,7 @@ def main():
             summary = {
                 "data_sao_paulo": datetime.now(timezone(timedelta(hours=-3))).isoformat(),
                 "newman": json.loads((newman.parents[1] / "package.json").read_text(encoding="utf-8"))["version"],
-                "banco": "MySQL 8.4 isolado no Docker" if mysql_de_testes() else "SQLite descartável com foreign_keys=ON",
+                "banco": "Postgres 16 isolado" if banco_real_de_testes() else "SQLite descartável com foreign_keys=ON",
                 "requisicoes": len(xml.findall("testsuite")), "verificacoes": len(xml.findall(".//testcase")),
                 "falhas": len(xml.findall(".//failure")), "erros": len(xml.findall(".//error")),
                 "duracao_segundos": round(time.monotonic() - start, 3),
